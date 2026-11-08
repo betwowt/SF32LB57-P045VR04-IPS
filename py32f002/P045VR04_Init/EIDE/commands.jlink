@@ -1,0 +1,6 @@
+r
+halt
+loadfile "Project\P045VR04_Init.hex"
+r
+go
+exit

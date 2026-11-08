@@ -1,0 +1,28 @@
+diff --git a/drivers/hal/bf0_hal_lcdc_aux.c b/drivers/hal/bf0_hal_lcdc_aux.c
+index c512e225..a7c8f4b0 100644
+--- a/drivers/hal/bf0_hal_lcdc_aux.c
++++ b/drivers/hal/bf0_hal_lcdc_aux.c
+@@ -90,12 +90,22 @@ void DPI_HW_FSM_START(LCDC_HandleTypeDef *lcdc)
+ 
+ 
+     SRAM_BUF_LINES = lcdc->sram_buf_bytes / bytes_per_line;
++    if (0 == SRAM_BUF_LINES)
++        SRAM_BUF_LINES = 1;
++
++    /* The DPI FSM replays the line buffer VAH/(2*SRAM_BUF_LINES) times, so VAH
++     * must be a multiple of 2*SRAM_BUF_LINES.  The buffer may hold more lines
++     * than that (e.g. 1920 B = 2 lines of RGB565 for a 480-wide panel), but a
++     * panel height such as 854 = 2*7*61 does not divide by 4.  Using fewer
++     * lines than the buffer can hold is harmless, so shrink until it fits. */
++    while ((SRAM_BUF_LINES > 1) && (0 != (init->cfg.dpi.VAH % (2 * SRAM_BUF_LINES))))
++        SRAM_BUF_LINES--;
+ 
+     sram_buf_bytes = SRAM_BUF_LINES * bytes_per_line;
+     sram_buf_words = (sram_buf_bytes / 4);
+ 
+     //HW FSM repeat count(Part1+Part3 repeated once, Part2 repeated 'repeat_count-1' times)
+-    uint32_t repeat_count = init->cfg.dpi.VAH / (SRAM_BUF_LINES * 2);
++    uint32_t repeat_count = init->cfg.dpi.VAH / (2 * SRAM_BUF_LINES);
+     HAL_LCDC_ASSERT(0 == (init->cfg.dpi.VAH % (2 * SRAM_BUF_LINES)));
+ 
+     {

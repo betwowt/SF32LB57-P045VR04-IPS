@@ -1,0 +1,35 @@
+# ---------- SiFli / RT-Thread build output ----------
+app/project/build_*/
+*.o
+*.d
+*.map
+*.elf
+*.bin
+*.hex
+*.axf
+*.lst
+*.crf
+*.lnp
+*.dep
+*.htm
+.sconsign.dblite
+__pycache__/
+*.pyc
+
+# ---------- PY32 (MDK / EIDE) build output ----------
+py32f002/P045VR04_Init/MDK-ARM/Output/
+py32f002/P045VR04_Init/MDK-ARM/JLinkLog.txt
+py32f002/P045VR04_Init/EIDE/build/
+py32f002/P045VR04_Init/EIDE/Project/
+py32f002/P045VR04_Init/EIDE/.eide/log/
+py32f002/P045VR04_Init/EIDE/.eide.usr.ctx.json
+
+# ---------- vendor pack, downloaded locally ----------
+PY32F0xx_Firmware_V1.5.0/
+
+# ---------- editor / OS ----------
+/.vscode/
+.idea/
+*.uvguix.*
+.DS_Store
+Thumbs.db

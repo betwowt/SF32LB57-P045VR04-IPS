@@ -1,0 +1,15 @@
+config BSP_USING_BOARD_SF32LB57_P045VR04
+    bool
+    select SOC_SF32LB57X
+    select SOC_SF32LB57GYD7N6
+    select BF0_HCPU
+    default y
+
+config LCD_READY_PIN
+    int "LCD READY GPIO pin (-1: use fixed delay)"
+    default -1
+    help
+      GPIO connected to the H743_RGB_Adapter H_LCD_READY net.  Leave -1
+      when the pin is not wired and the driver will use a fixed delay.
+
+rsource "../Kconfig.board"

@@ -1,0 +1,25 @@
+from building import *
+import os
+import rtconfig
+
+cwd = GetCurrentDir()
+sdk = os.getenv('SIFLI_SDK')
+
+src = Glob('./*.c')
+
+path = [
+    cwd,
+    os.path.join(cwd, '../include'),
+    os.path.join(sdk, 'customer/peripherals/ioexpander/aw9523'),
+]
+
+group = DefineGroup('Drivers', src, depend = ['BSP_USING_BOARD_SF32LB57_P045VR04'], CPPPATH = path)
+
+if GetDepend('BSP_USING_BOARD_SF32LB57_P045VR04') and not GetDepend('CFG_BOOTLOADER'):
+    for sub in ('panel', 'touch'):
+        src_dir = os.path.join(cwd, '../../drivers', sub)
+        build_dir = os.path.join(Dir('#').abspath, rtconfig.OUTPUT_DIR, 'drivers', sub)
+        group = group + SConscript(os.path.join(src_dir, 'SConscript'),
+                                   variant_dir = build_dir, duplicate = 0)
+
+Return('group')

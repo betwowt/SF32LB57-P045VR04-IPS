@@ -1,0 +1,42 @@
+diff --git a/customer/boards/Kconfig_lcd b/customer/boards/Kconfig_lcd
+index 2c4e2730..75be935b 100644
+--- a/customer/boards/Kconfig_lcd
++++ b/customer/boards/Kconfig_lcd
+@@ -353,6 +353,13 @@ if BSP_USING_BUILTIN_LCD
+             select LCD_USING_PWM_AS_BACKLIGHT
+             depends on BSP_SUPPORT_DPI
+ 
++        config LCD_USING_P045VR04_IPS_DPI
++            bool "4.5 rect RGB 480x854 LCD(P045VR04-IPS ST7701S)"
++            select BSP_LCDC_USING_DPI
++            # No PWM backlight: BL_PWM (PA11) has no GPTIM function on SF32LB57,
++            # the board drives it as a plain GPIO (see BSP_LCD_Backlight).
++            depends on BSP_SUPPORT_DPI
++
+         config LCD_USING_TFT_GC9A01A
+             bool "1.28 rect SPI LCD(240x240 TFT-GC9A01A)"
+             select LCD_USING_GC9A01A
+@@ -556,6 +563,7 @@ if BSP_USING_BUILTIN_LCD
+         default 1024 if LCD_USING_JD9165A_DPI
+         default 800 if LCD_USING_TFT_H080A11HDIFT4C30_V0_1
+         default 1024 if LCD_USING_HTM_H070A20_RGB_A01
++        default 480 if LCD_USING_P045VR04_IPS_DPI
+         default 800 if LCD_USING_HTM_H070A20_RGB_A02
+         default 240 if  LCD_USING_TFT_GC9A01A
+         default 720 if LCD_USING_TFT_NV3052C
+@@ -609,6 +617,7 @@ if BSP_USING_BUILTIN_LCD
+         default 272 if LCD_USING_TFT_NV3041A
+         default 600 if LCD_USING_JD9165A_DPI
+         default 600 if LCD_USING_HTM_H070A20_RGB_A01
++        default 854 if LCD_USING_P045VR04_IPS_DPI
+         default 480 if LCD_USING_HTM_H070A20_RGB_A02
+         default 240 if LCD_USING_TFT_GC9A01A
+         default 1280 if LCD_USING_TFT_H080A11HDIFT4C30_V0_1
+@@ -662,6 +671,7 @@ if BSP_USING_BUILTIN_LCD
+         default 315 if LCD_USING_TFT_NV3041A
+         default 315 if LCD_USING_JD9165A_DPI
+         default 315 if LCD_USING_HTM_H070A20_RGB_A01
++        default 218 if LCD_USING_P045VR04_IPS_DPI
+         default 200 if LCD_USING_HTM_H070A20_RGB_A02
+         default 240 if LCD_USING_TFT_GC9A01A
+         default 235 if LCD_USING_TFT_H080A11HDIFT4C30_V0_1
