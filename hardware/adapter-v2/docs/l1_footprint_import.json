@@ -1,0 +1,52 @@
+{
+  "source_project": "F:\\projects\\正点原子t113转接板\\T113_MIPI_Adapter",
+  "footprint_id": "Adapter:L_T113_2.5x2.0",
+  "library_uri": "${KIPRJMOD}/Adapter.pretty",
+  "schematic_reference": "L1",
+  "schematic_value": "4.7uH",
+  "pads": [
+    {
+      "number": "1",
+      "x_mm": -0.83,
+      "y_mm": 0.0,
+      "width_mm": 0.85,
+      "height_mm": 2.0
+    },
+    {
+      "number": "2",
+      "x_mm": 0.83,
+      "y_mm": 0.0,
+      "width_mm": 0.85,
+      "height_mm": 2.0
+    }
+  ],
+  "models": [
+    "${KIPRJMOD}/Adapter.3dshapes/IND-SMD_L2.5-W2.0-VLS252012CX-150M.wrl"
+  ],
+  "files": [
+    {
+      "path": "Adapter.pretty/L_T113_2.5x2.0.kicad_mod",
+      "sha256": "95f44fb2d771dd7e04199454e75fce210cb37fce9e8ea01986aa8c5e7ced2470",
+      "source_geometry": "source footprint with local library/model path"
+    },
+    {
+      "path": "Adapter.3dshapes/IND-SMD_L2.5-W2.0-VLS252012CX-150M.wrl",
+      "sha256": "8c4a0234974d1288a587030133557dbb954452d68bd446d55ea16d57a48b343d",
+      "source_geometry": "source 3D model"
+    },
+    {
+      "path": "Adapter.3dshapes/IND-SMD_L2.5-W2.0-VLS252012CX-150M.step",
+      "sha256": "e8eaf0b7da9c0e80f9cdd34f38a34d704398bb254cfdd7ad3c5e018a2ba50050",
+      "source_geometry": "source 3D model"
+    }
+  ],
+  "kicad_load_success": true,
+  "schematics_and_pcb_unchanged": false,
+  "pcb_L1_present": false,
+  "backup": "F:\\projects\\正点原子h743-RGB转接板\\backups\\l1_footprint_import_20260925_204625",
+  "schematic_footprint": "Adapter:L_T113_2.5x2.0",
+  "temporary_validation_namespace_removed": true,
+  "schematic_footprint_configured": true,
+  "pcb_unchanged": true,
+  "schematic_changed_only_for_footprint_assignment": true
+}

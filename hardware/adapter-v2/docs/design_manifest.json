@@ -1,0 +1,1084 @@
+[
+  {
+    "ref": "J1",
+    "value": "H743 / XF2M-4015-1A",
+    "symbol": "HOST_FPC40",
+    "footprint": "Adapter:Omron_XF2M_40",
+    "nets": {
+      "1": "+5V",
+      "2": "+5V",
+      "3": "GND",
+      "4": "GND",
+      "5": "GND",
+      "6": "H_R3",
+      "7": "H_R4",
+      "8": "H_R5",
+      "9": "H_R6",
+      "10": "H_R7",
+      "11": "GND",
+      "12": "GND",
+      "13": "GND",
+      "14": "H_G2",
+      "15": "H_G3",
+      "16": "H_G4",
+      "17": "H_G5",
+      "18": "H_G6",
+      "19": "H_G7",
+      "20": "GND",
+      "21": "GND",
+      "22": "GND",
+      "23": "GND",
+      "24": "H_B3",
+      "25": "H_B4",
+      "26": "H_B5",
+      "27": "H_B6",
+      "28": "H_B7",
+      "29": "GND",
+      "30": "H_PCLK",
+      "31": "H_HSYNC",
+      "32": "H_VSYNC",
+      "33": "H_DE",
+      "34": "H_BL_PWM",
+      "35": "CTP_RST",
+      "36": "CTP_SDA",
+      "37": "H_LCD_READY",
+      "38": "CTP_SCL",
+      "39": "CTP_INT",
+      "40": "H_NRST",
+      "MP": "GND"
+    },
+    "uuid": "cfcd9cde-a006-5535-b6ee-3eb69f05acdb",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "40pin 0.5mm confirmed by user. Verify pin1-to-pin1 continuity; two MP pads are ground.",
+    "datasheet": "",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "RN1",
+    "value": "33R x4 / CAY16-330J4LF",
+    "symbol": "R_Array4",
+    "footprint": "Adapter:R_Array4_0603",
+    "nets": {
+      "1": "H_R3",
+      "8": "LCD_R3",
+      "2": "H_R4",
+      "7": "LCD_R4",
+      "3": "H_R5",
+      "6": "LCD_R5",
+      "4": "H_R6",
+      "5": "LCD_R6"
+    },
+    "uuid": "bdcea64f-e4cf-5739-9738-590afec88692",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",
+    "datasheet": "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "RN2",
+    "value": "33R x4 / CAY16-330J4LF",
+    "symbol": "R_Array4",
+    "footprint": "Adapter:R_Array4_0603",
+    "nets": {
+      "1": "H_R7",
+      "8": "LCD_R7",
+      "2": "H_G2",
+      "7": "LCD_G2",
+      "3": "H_G3",
+      "6": "LCD_G3",
+      "4": "H_G4",
+      "5": "LCD_G4"
+    },
+    "uuid": "ab01d802-5380-5aab-8a63-7e30c77b92b4",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",
+    "datasheet": "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "RN3",
+    "value": "33R x4 / CAY16-330J4LF",
+    "symbol": "R_Array4",
+    "footprint": "Adapter:R_Array4_0603",
+    "nets": {
+      "1": "H_G5",
+      "8": "LCD_G5",
+      "2": "H_G6",
+      "7": "LCD_G6",
+      "3": "H_G7",
+      "6": "LCD_G7",
+      "4": "H_B3",
+      "5": "LCD_B3"
+    },
+    "uuid": "f091d9dd-7ea2-54eb-a0b7-0efcb9cd28a8",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",
+    "datasheet": "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "RN4",
+    "value": "33R x4 / CAY16-330J4LF",
+    "symbol": "R_Array4",
+    "footprint": "Adapter:R_Array4_0603",
+    "nets": {
+      "1": "H_B4",
+      "8": "LCD_B4",
+      "2": "H_B5",
+      "7": "LCD_B5",
+      "3": "H_B6",
+      "6": "LCD_B6",
+      "4": "H_B7",
+      "5": "LCD_B7"
+    },
+    "uuid": "501d8b61-46fc-58ec-97dd-0dc6254b0301",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",
+    "datasheet": "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "RN5",
+    "value": "33R x4 / CAY16-330J4LF",
+    "symbol": "R_Array4",
+    "footprint": "Adapter:R_Array4_0603",
+    "nets": {
+      "1": "H_PCLK",
+      "8": "LCD_PCLK",
+      "2": "H_HSYNC",
+      "7": "LCD_HSYNC",
+      "3": "H_VSYNC",
+      "6": "LCD_VSYNC",
+      "4": "H_DE",
+      "5": "LCD_DE"
+    },
+    "uuid": "0004d577-7dd8-5d58-ba97-d76504862420",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",
+    "datasheet": "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "C1",
+    "value": "100n / 16V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+5V",
+      "2": "GND"
+    },
+    "uuid": "a5867f20-ad45-580a-b634-6df385b5e5db",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "H743_RGB_Adapter"
+  },
+  {
+    "ref": "J2",
+    "value": "SCREEN A / XF2M-4015-1A",
+    "symbol": "LCD_A",
+    "footprint": "Adapter:Omron_XF2M_40",
+    "nets": {
+      "1": "LCD_SDA",
+      "2": "LCD_SCL",
+      "3": "LCD_RST",
+      "4": "LCD_CS",
+      "5": "GND",
+      "6": null,
+      "7": "LCD_DE",
+      "8": "LCD_VSYNC",
+      "9": "LCD_HSYNC",
+      "10": null,
+      "11": "LCD_PCLK",
+      "12": "GND",
+      "37": "+3V3",
+      "38": "GND",
+      "39": "LEDA",
+      "40": "LEDK",
+      "MP": "GND",
+      "20": "GND",
+      "19": "GND",
+      "18": "GND",
+      "17": "LCD_B3",
+      "16": "LCD_B4",
+      "15": "LCD_B5",
+      "14": "LCD_B6",
+      "13": "LCD_B7",
+      "28": "GND",
+      "27": "GND",
+      "26": "LCD_G2",
+      "25": "LCD_G3",
+      "24": "LCD_G4",
+      "23": "LCD_G5",
+      "22": "LCD_G6",
+      "21": "LCD_G7",
+      "36": "GND",
+      "35": "GND",
+      "34": "GND",
+      "33": "LCD_R3",
+      "32": "LCD_R4",
+      "31": "LCD_R5",
+      "30": "LCD_R6",
+      "29": "LCD_R7"
+    },
+    "uuid": "88a3ba54-7859-5434-8167-b1c08d1e86de",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "Dedicated image2 pinout, pins6/10 NC. Candidate dual-contact seat supports top-contact tail; confirm 0.3+/-0.05mm thickness and pin1.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "J7",
+    "value": "SCREEN B / XF2M-4015-1A",
+    "symbol": "LCD_B",
+    "footprint": "Adapter:Omron_XF2M_40",
+    "nets": {
+      "1": "LCD_SDA",
+      "2": "LCD_SCL",
+      "3": "LCD_CS",
+      "4": "LCD_RST",
+      "5": "GND",
+      "6": "GND",
+      "7": "LCD_DE",
+      "8": "LCD_VSYNC",
+      "9": "LCD_HSYNC",
+      "10": "+3V3",
+      "11": "LCD_PCLK",
+      "12": "GND",
+      "37": "+3V3",
+      "38": "GND",
+      "39": "LEDA",
+      "40": "LEDK",
+      "MP": "GND",
+      "20": "GND",
+      "19": "GND",
+      "18": "GND",
+      "17": "LCD_B3",
+      "16": "LCD_B4",
+      "15": "LCD_B5",
+      "14": "LCD_B6",
+      "13": "LCD_B7",
+      "28": "GND",
+      "27": "GND",
+      "26": "LCD_G2",
+      "25": "LCD_G3",
+      "24": "LCD_G4",
+      "23": "LCD_G5",
+      "22": "LCD_G6",
+      "21": "LCD_G7",
+      "36": "GND",
+      "35": "GND",
+      "34": "GND",
+      "33": "LCD_R3",
+      "32": "LCD_R4",
+      "31": "LCD_R5",
+      "30": "LCD_R6",
+      "29": "LCD_R7"
+    },
+    "uuid": "77206405-c779-5f0e-8d4b-fc685de8768c",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "Dedicated image3 pinout, pin6 GND and pin10 3V3. Candidate dual-contact seat supports bottom-contact tail; confirm 0.3+/-0.05mm thickness and pin1.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "C2",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "d905e598-99c7-5012-ba9f-c2e48a62af87",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "C3",
+    "value": "10u / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "838608ef-c60b-5799-9a0e-aa7e300ed6e1",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "C16",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "e2e46f71-ea33-5772-ac31-29fae503d945",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "C17",
+    "value": "10u / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "89444b03-7aaa-5a46-a33e-100be4037b53",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "J3",
+    "value": "XF2M-0615-1A",
+    "symbol": "CTP_A",
+    "footprint": "Adapter:Omron_XF2M_6",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND",
+      "3": "CTP_SCL",
+      "4": "CTP_SDA",
+      "5": "CTP_INT",
+      "6": "CTP_RST",
+      "MP": "GND"
+    },
+    "uuid": "e3699e67-c7f2-5d82-a9d6-75ca38406c6e",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "J4",
+    "value": "XF2M-0615-1A",
+    "symbol": "CTP_B",
+    "footprint": "Adapter:Omron_XF2M_6",
+    "nets": {
+      "1": "GND",
+      "2": "+3V3",
+      "3": "CTP_INT",
+      "4": "CTP_SCL",
+      "5": "CTP_SDA",
+      "6": "CTP_RST",
+      "MP": "GND"
+    },
+    "uuid": "e93fd132-35b4-581d-8c1a-e3bfeb6dcf16",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "J5",
+    "value": "XF2M-0615-1A",
+    "symbol": "CTP_A",
+    "footprint": "Adapter:Omron_XF2M_6",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND",
+      "3": "CTP_SCL",
+      "4": "CTP_SDA",
+      "5": "CTP_INT",
+      "6": "CTP_RST",
+      "MP": "GND"
+    },
+    "uuid": "071f35c3-a53a-5e41-adac-b42d3e50c4d8",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "R1",
+    "value": "4k7",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "CTP_SCL"
+    },
+    "uuid": "529726f0-603a-52a8-95bd-f73004468be7",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "DNP if equivalent pullups already fitted on touch module.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "R2",
+    "value": "4k7",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "CTP_SDA"
+    },
+    "uuid": "343ea853-eaa4-556e-baa2-6380e93527e9",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "DNP if equivalent pullups already fitted on touch module.",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "R3",
+    "value": "10k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "CTP_RST"
+    },
+    "uuid": "37993731-37fd-57b0-be40-ebd172669233",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "C4",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "73d5f6d0-adc0-5c91-9265-cb0a633bed34",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/d34b6741-0780-5a08-bdf9-2b1a54f92c4e",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "02_LCD_Touch"
+  },
+  {
+    "ref": "U1",
+    "value": "AP2112K-3.3TRG1",
+    "symbol": "AP2112K_3V3",
+    "footprint": "Adapter:SOT23_5",
+    "nets": {
+      "1": "+5V",
+      "2": "GND",
+      "3": "+5V",
+      "4": null,
+      "5": "+3V3"
+    },
+    "uuid": "e447979d-7634-5694-ba60-e6e4ff44d632",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "https://www.diodes.com/datasheet/download/AP2112.pdf",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C5",
+    "value": "10u / 16V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+5V",
+      "2": "GND"
+    },
+    "uuid": "e8d4489a-a3ce-5d53-8cc4-a931f2bf661d",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C6",
+    "value": "100n / 16V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+5V",
+      "2": "GND"
+    },
+    "uuid": "7f1bf70b-efa2-5307-a91b-21f52d94357d",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C7",
+    "value": "10u / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "4d57e4da-d931-5aac-84d0-cce46b7b8f5c",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C8",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "60be605c-fabf-5fa6-ab0e-b748a841b4fd",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "L1",
+    "value": "4.7uH",
+    "symbol": "L",
+    "footprint": "Adapter:L_T113_2.5x2.0",
+    "nets": {
+      "1": "+5V",
+      "2": "BL_LX"
+    },
+    "uuid": "a5bf32c3-179d-54ee-9243-e58458ff3d7e",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "T113_MIPI_Adapter placement/footprint; selected 4.7uH part, verify Isat, DCR and thermal.",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "D1",
+    "value": "SS14",
+    "symbol": "D_Schottky",
+    "footprint": "Adapter:D_SMA",
+    "nets": {
+      "1": "LEDA",
+      "2": "BL_LX"
+    },
+    "uuid": "53c2a294-dc08-557a-8a44-d5cf747fbfdc",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "U2",
+    "value": "SY7200ABC",
+    "symbol": "SY7200A",
+    "footprint": "Adapter:SOT23_6",
+    "nets": {
+      "1": "BL_LX",
+      "2": "GND",
+      "3": "LEDK",
+      "4": "BL_EN",
+      "5": "LEDA",
+      "6": "+5V"
+    },
+    "uuid": "63705d22-2676-5640-b63b-b989b6c5471f",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "https://www.silergy.com/download/downloadFile?ftype=note&id=4351&type=product",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C9",
+    "value": "10uF / 50V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+5V",
+      "2": "GND"
+    },
+    "uuid": "f149e555-7bc6-53fb-8c4d-e552ae255d16",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C10",
+    "value": "1uF / 50V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "+5V",
+      "2": "GND"
+    },
+    "uuid": "611b7a6a-26ab-5e8b-93dc-e6a16bd4ecf1",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C11",
+    "value": "10uF / 50V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0805",
+    "nets": {
+      "1": "LEDA",
+      "2": "GND"
+    },
+    "uuid": "5f066a9d-aedf-5246-bacf-0ccfa290b5eb",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "T113 backlight output capacitor; 50V X7R, account for DC bias.",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "R4",
+    "value": "5R1 / 1%",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "LEDK",
+      "2": "GND"
+    },
+    "uuid": "5211bc0e-a6ef-5828-a0d4-6fa3e8a35a41",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "Feedback value retained at 5.1 ohm / 1%; only the T113 0603 body and placement are adopted.",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "U4",
+    "value": "SN74LVC1G08DBVR",
+    "symbol": "LVC1G08",
+    "footprint": "Adapter:SOT23_5",
+    "nets": {
+      "1": "H_BL_PWM",
+      "2": "LCD_READY",
+      "3": "GND",
+      "4": "BL_GATE",
+      "5": "+3V3"
+    },
+    "uuid": "71986d78-740f-55d0-a90c-7d5a5d3bfa0d",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "https://www.ti.com/lit/ds/symlink/sn74lvc1g08.pdf",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "R5",
+    "value": "10k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "BL_GATE",
+      "2": "BL_EN"
+    },
+    "uuid": "ff335fc7-dfa9-5cf6-8014-6485d7b96046",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "R6",
+    "value": "100k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "BL_GATE",
+      "2": "GND"
+    },
+    "uuid": "3ac548ff-74e3-56f3-a4bc-97091f46ed35",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "R7",
+    "value": "100k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "H_BL_PWM",
+      "2": "GND"
+    },
+    "uuid": "6a9ee091-ccc0-5c49-a3af-8f388415d917",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "C12",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "c3d0399c-146c-5ef5-9ca5-902965c78107",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/f4eceb35-cdd0-592b-a145-60e5ed82e946",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "03_Power_Backlight"
+  },
+  {
+    "ref": "U3",
+    "value": "PY32F002AW15S / SOP16",
+    "symbol": "PY32F002AW15S",
+    "footprint": "Adapter:SOIC16",
+    "nets": {
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": "+3V3",
+      "5": "PY_TX_LOG",
+      "6": "PY_SWDIO",
+      "7": "PY_SWCLK",
+      "8": "PY_NRST",
+      "9": null,
+      "10": null,
+      "11": "PY_LCD_SCK",
+      "12": "PY_LCD_SDA",
+      "13": "GND",
+      "14": "PY_LCD_CS",
+      "15": "PY_LCD_RST",
+      "16": "LCD_READY"
+    },
+    "uuid": "5cac98fb-65e9-5a72-a97d-d0ba4811d78d",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "Select exact PY32F002AW15S orderable suffix. Other PY32F002 variants/packages have different pinouts.",
+    "datasheet": "https://www.puyasemi.com/download_path/%E6%95%B0%E6%8D%AE%E6%89%8B%E5%86%8C/MCU%20%E5%BE%AE%E5%A4%84%E7%90%86%E5%99%A8/PY32F002A_Datasheet_V0.2.pdf",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R8",
+    "value": "100R",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "PY_LCD_SCK",
+      "2": "LCD_SCL"
+    },
+    "uuid": "94f139be-b4ed-5a6e-bc8f-d56a0c1a1a08",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R9",
+    "value": "100R",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "PY_LCD_SDA",
+      "2": "LCD_SDA"
+    },
+    "uuid": "9a4b22b0-4aef-5f28-9466-88fde0b6e1e0",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R10",
+    "value": "100R",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "PY_LCD_CS",
+      "2": "LCD_CS"
+    },
+    "uuid": "ff82c676-20bf-5d72-97ba-02d2ddcee93d",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R11",
+    "value": "100R",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "PY_LCD_RST",
+      "2": "LCD_RST"
+    },
+    "uuid": "fe82963e-92a7-5767-9fd6-846d4f7ba1c2",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R12",
+    "value": "10k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_CS"
+    },
+    "uuid": "632f52f5-3be5-5bdb-a091-5eb44e7e4cef",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R13",
+    "value": "10k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "LCD_RST"
+    },
+    "uuid": "03ca1dc6-1e00-5f9d-97bc-a666aa1c1310",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R14",
+    "value": "100k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "LCD_READY",
+      "2": "GND"
+    },
+    "uuid": "104f7307-949c-5afd-b5ed-f4359558a3be",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R15",
+    "value": "1k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "LCD_READY",
+      "2": "H_LCD_READY"
+    },
+    "uuid": "0c839ad0-6e5f-5570-aae8-c4c2ec2964e7",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "PG3 on host must be INPUT; provides init-ready handshake.",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R16",
+    "value": "0R",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "H_NRST",
+      "2": "PY_NRST"
+    },
+    "uuid": "61d78292-bf84-5dee-b280-7efa83ceae5a",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "Host reset link. DNP for isolated MCU debugging; confirm host RESET is 3.3V domain.",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "R17",
+    "value": "10k",
+    "symbol": "R",
+    "footprint": "Adapter:R_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "PY_NRST"
+    },
+    "uuid": "39091e37-82d0-5e28-a1b9-59fdbe1695bb",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "C13",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "PY_NRST",
+      "2": "GND"
+    },
+    "uuid": "4042cbfc-934e-506e-a409-a8b5f91856d6",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "C14",
+    "value": "100n / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "e09428db-b054-5fc1-b431-6659df69164a",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "C15",
+    "value": "1u / 10V",
+    "symbol": "C",
+    "footprint": "Adapter:C_0603",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND"
+    },
+    "uuid": "52f99991-2589-5b06-a2e9-178d5399e50a",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "J6",
+    "value": "PY32 SWD / 2.54mm",
+    "symbol": "SWD6",
+    "footprint": "Adapter:Header1x06",
+    "nets": {
+      "1": "+3V3",
+      "2": "GND",
+      "3": "PY_SWDIO",
+      "4": "PY_SWCLK",
+      "5": "PY_NRST",
+      "6": "PY_TX_LOG"
+    },
+    "uuid": "b97512c3-e849-5278-ae82-13c35719455b",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "VTREF is a reference output; do not back-power through debugger. PA9 debug UART is firmware-dependent.",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "TP1",
+    "value": "+5V",
+    "symbol": "TESTPOINT",
+    "footprint": "Adapter:TestPoint",
+    "nets": {
+      "1": "+5V"
+    },
+    "uuid": "e62d972c-26ab-53f1-8f5a-a2796bd1496f",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "TP2",
+    "value": "+3V3",
+    "symbol": "TESTPOINT",
+    "footprint": "Adapter:TestPoint",
+    "nets": {
+      "1": "+3V3"
+    },
+    "uuid": "3513bc18-80d5-5eb7-b1b4-62b3cc6a2730",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "TP3",
+    "value": "GND",
+    "symbol": "TESTPOINT",
+    "footprint": "Adapter:TestPoint",
+    "nets": {
+      "1": "GND"
+    },
+    "uuid": "47c06588-81c9-5dea-9e9c-24d62f9115a3",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  },
+  {
+    "ref": "TP4",
+    "value": "LCD_READY",
+    "symbol": "TESTPOINT",
+    "footprint": "Adapter:TestPoint",
+    "nets": {
+      "1": "LCD_READY"
+    },
+    "uuid": "93f09abb-25a3-52ab-bbca-c72694c5069b",
+    "sheet_path": "/dfffab9b-b9a5-5155-8f44-524a66bec62b/5d36580d-f5d9-5499-be38-a3a4e2fe8a95",
+    "dnp": false,
+    "notes": "",
+    "datasheet": "",
+    "sheet": "04_PY32_Init"
+  }
+]

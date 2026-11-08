@@ -1,0 +1,57 @@
+﻿Reference,Value,Footprint,DNP,Design_note,Datasheet
+J1,H743 / XF2M-4015-1A,Adapter:Omron_XF2M_40,False,40pin 0.5mm confirmed by user. Verify pin1-to-pin1 continuity; two MP pads are ground.,
+RN1,33R x4 / CAY16-330J4LF,Adapter:R_Array4_0603,False,"4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf
+RN2,33R x4 / CAY16-330J4LF,Adapter:R_Array4_0603,False,"4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf
+RN3,33R x4 / CAY16-330J4LF,Adapter:R_Array4_0603,False,"4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf
+RN4,33R x4 / CAY16-330J4LF,Adapter:R_Array4_0603,False,"4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf
+RN5,33R x4 / CAY16-330J4LF,Adapter:R_Array4_0603,False,"4 isolated elements, never commoned. Initial 33R; adapter-side series link is not ideal source termination for long FFC.",https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf
+C1,100n / 16V,Adapter:C_0603,False,,
+J2,SCREEN A / XF2M-4015-1A,Adapter:Omron_XF2M_40,False,"Dedicated image2 pinout, pins6/10 NC. Candidate dual-contact seat supports top-contact tail; confirm 0.3+/-0.05mm thickness and pin1.",
+J7,SCREEN B / XF2M-4015-1A,Adapter:Omron_XF2M_40,False,"Dedicated image3 pinout, pin6 GND and pin10 3V3. Candidate dual-contact seat supports bottom-contact tail; confirm 0.3+/-0.05mm thickness and pin1.",
+C2,100n / 10V,Adapter:C_0603,False,,
+C3,10u / 10V,Adapter:C_0805,False,,
+C16,100n / 10V,Adapter:C_0603,False,,
+C17,10u / 10V,Adapter:C_0805,False,,
+J3,XF2M-0615-1A,Adapter:Omron_XF2M_6,False,0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.,
+J4,XF2M-0615-1A,Adapter:Omron_XF2M_6,False,0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.,
+J5,XF2M-0615-1A,Adapter:Omron_XF2M_6,False,0.5mm/0.3mm candidate; confirm actual touch tail dimensions/contact direction. Only one of J3/J4/J5 may be used.,
+R1,4k7,Adapter:R_0603,False,DNP if equivalent pullups already fitted on touch module.,
+R2,4k7,Adapter:R_0603,False,DNP if equivalent pullups already fitted on touch module.,
+R3,10k,Adapter:R_0603,False,,
+C4,100n / 10V,Adapter:C_0603,False,,
+U1,AP2112K-3.3TRG1,Adapter:SOT23_5,False,,https://www.diodes.com/datasheet/download/AP2112.pdf
+C5,10u / 16V,Adapter:C_0805,False,,
+C6,100n / 16V,Adapter:C_0603,False,,
+C7,10u / 10V,Adapter:C_0805,False,,
+C8,100n / 10V,Adapter:C_0603,False,,
+L1,4.7uH,Adapter:L_T113_2.5x2.0,False,"T113_MIPI_Adapter placement/footprint; selected 4.7uH part, verify Isat, DCR and thermal.",
+D1,SS14,Adapter:D_SMA,False,,
+U2,SY7200ABC,Adapter:SOT23_6,False,,https://www.silergy.com/download/downloadFile?ftype=note&id=4351&type=product
+C9,10uF / 50V,Adapter:C_0805,False,,
+C10,1uF / 50V,Adapter:C_0805,False,,
+C11,10uF / 50V,Adapter:C_0805,False,"T113 backlight output capacitor; 50V X7R, account for DC bias.",
+R4,5R1 / 1%,Adapter:R_0603,False,Feedback value retained at 5.1 ohm / 1%; only the T113 0603 body and placement are adopted.,
+U4,SN74LVC1G08DBVR,Adapter:SOT23_5,False,,https://www.ti.com/lit/ds/symlink/sn74lvc1g08.pdf
+R5,10k,Adapter:R_0603,False,,
+R6,100k,Adapter:R_0603,False,,
+R7,100k,Adapter:R_0603,False,,
+C12,100n / 10V,Adapter:C_0603,False,,
+U3,PY32F002AW15S / SOP16,Adapter:SOIC16,False,Select exact PY32F002AW15S orderable suffix. Other PY32F002 variants/packages have different pinouts.,https://www.puyasemi.com/download_path/%E6%95%B0%E6%8D%AE%E6%89%8B%E5%86%8C/MCU%20%E5%BE%AE%E5%A4%84%E7%90%86%E5%99%A8/PY32F002A_Datasheet_V0.2.pdf
+R8,100R,Adapter:R_0603,False,,
+R9,100R,Adapter:R_0603,False,,
+R10,100R,Adapter:R_0603,False,,
+R11,100R,Adapter:R_0603,False,,
+R12,10k,Adapter:R_0603,False,,
+R13,10k,Adapter:R_0603,False,,
+R14,100k,Adapter:R_0603,False,,
+R15,1k,Adapter:R_0603,False,PG3 on host must be INPUT; provides init-ready handshake.,
+R16,0R,Adapter:R_0603,False,Host reset link. DNP for isolated MCU debugging; confirm host RESET is 3.3V domain.,
+R17,10k,Adapter:R_0603,False,,
+C13,100n / 10V,Adapter:C_0603,False,,
+C14,100n / 10V,Adapter:C_0603,False,,
+C15,1u / 10V,Adapter:C_0603,False,,
+J6,PY32 SWD / 2.54mm,Adapter:Header1x06,False,VTREF is a reference output; do not back-power through debugger. PA9 debug UART is firmware-dependent.,
+TP1,+5V,Adapter:TestPoint,False,,
+TP2,+3V3,Adapter:TestPoint,False,,
+TP3,GND,Adapter:TestPoint,False,,
+TP4,LCD_READY,Adapter:TestPoint,False,,

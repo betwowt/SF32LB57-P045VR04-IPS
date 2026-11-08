@@ -1,0 +1,97 @@
+(module "L_T113_2.5x2.0"
+  (layer F.Cu)
+  (tedit 5DC5F6A4)
+  (attr smd)
+  (fp_text reference REF**
+    (at 0 -2)
+    (layer F.SilkS)
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12))))
+  (fp_text value C5832360_IND-SMD_L2.5-W2.0-VLS252012CX-150M
+    (at 0.000 4.000)
+    (layer F.Fab)
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))) hide)
+  (fp_text user %R
+    (at 0 0)
+    (layer F.Fab)
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "LCSC Part" "C5832360")
+  (fp_line
+    (start 0.29 1.10)
+    (end -0.29 1.10)
+    (layer F.SilkS)
+    (width 0.10))
+  (fp_line
+    (start -0.29 -1.10)
+    (end 0.29 -1.10)
+    (layer F.SilkS)
+    (width 0.10))
+  (pad 2 smd rect
+    (at 0.83 0.00 0.00)
+    (size 0.850 2.000)
+    (layers F.Cu F.Paste F.Mask))
+  (pad 1 smd rect
+    (at -0.83 0.00 0.00)
+    (size 0.850 2.000)
+    (layers F.Cu F.Paste F.Mask))
+  (fp_circle
+    (center -1.25 1.00)
+    (end -1.22 1.00)
+    (layer F.SilkS)
+    (width 0.06))
+  (model "${KIPRJMOD}/Adapter.3dshapes/IND-SMD_L2.5-W2.0-VLS252012CX-150M.wrl"
+    (offset
+      (xyz 0.000 0.000 0.000))
+    (scale
+      (xyz 1 1 1))
+    (rotate
+      (xyz 0 0 0)))
+  (descr "Selected FTC252010S4R7MBCA, 4.7uH, C5832360. Source CAD pads 0.85x2.00mm retained; datasheet recommended pads 0.95x2.10mm. Supplier-linked shared VLS model is about 1.2mm high; FTC252010S datasheet specifies 1.0mm max. Visual reference only.")
+  (fp_line
+    (start -1.25 -1)
+    (end 1.25 -1)
+    (layer F.Fab)
+    (width 0.1))
+  (fp_line
+    (start 1.25 -1)
+    (end 1.25 1)
+    (layer F.Fab)
+    (width 0.1))
+  (fp_line
+    (start 1.25 1)
+    (end -1.25 1)
+    (layer F.Fab)
+    (width 0.1))
+  (fp_line
+    (start -1.25 1)
+    (end -1.25 -1)
+    (layer F.Fab)
+    (width 0.1))
+  (fp_line
+    (start -1.55 -1.3)
+    (end 1.55 -1.3)
+    (layer F.CrtYd)
+    (width 0.05))
+  (fp_line
+    (start 1.55 -1.3)
+    (end 1.55 1.3)
+    (layer F.CrtYd)
+    (width 0.05))
+  (fp_line
+    (start 1.55 1.3)
+    (end -1.55 1.3)
+    (layer F.CrtYd)
+    (width 0.05))
+  (fp_line
+    (start -1.55 1.3)
+    (end -1.55 -1.3)
+    (layer F.CrtYd)
+    (width 0.05)))

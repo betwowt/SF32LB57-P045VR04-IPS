@@ -35,6 +35,9 @@ SF32LB57-P045VR04-IPS/
 ├─ py32f002/P045VR04_Init/        # 适配板上 PY32F002 的 3 线 SPI 初始化固件
 │  ├─ Src/ Inc/                   # ST7701S 初始化表 + 3 线 SPI + READY 握手
 │  └─ MDK-ARM/ EIDE/              # 两套工程（共用同一份 Src/Inc）
+├─ hardware/adapter-v2/          # H743_RGB_Adapter v2 的 KiCad 源文件
+│  ├─ *.kicad_pro/_sch/_pcb      # 原理图(4 页层次) + PCB(78×75mm, 4 层)
+│  └─ Adapter.* easyeda_convertlib.* docs/ scripts/
 ├─ patches/0001-add-p045vr04-panel.patch
 ├─ patches/0002-lcdc-dpi-linebuf-height.patch
 └─ README.md

@@ -1,0 +1,18 @@
+{
+  "R_0603": "Resistor_SMD:R_0603_1608Metric",
+  "R_0805": "Resistor_SMD:R_0805_2012Metric",
+  "R_Array4_0603": "Resistor_SMD:R_Array_Convex_4x0603",
+  "C_0603": "Capacitor_SMD:C_0603_1608Metric",
+  "C_0805": "Capacitor_SMD:C_0805_2012Metric",
+  "D_SMA": "Diode_SMD:D_SMA",
+  "L_T113_2.5x2.0": "T113_MIPI_Adapter:JLC_Imported:C5832360_IND-SMD_L2.5-W2.0-VLS252012CX-150M (copied locally; C5832360)",
+  "SOT23_5": "Package_TO_SOT_SMD:SOT-23-5",
+  "SOT23_6": "Package_TO_SOT_SMD:SOT-23-6",
+  "SOIC16": "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm",
+  "Header1x06": "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical",
+  "SJ2": "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm",
+  "SJ3": "Jumper:SolderJumper-3_P1.3mm_Open_RoundedPad1.0x1.5mm_NumberLabels",
+  "TestPoint": "TestPoint:TestPoint_Pad_D1.5mm",
+  "Omron_XF2M_40": "Connector_FFC-FPC:Omron_XF2M-4015-1A_1x40-1MP_P0.5mm_Horizontal",
+  "Omron_XF2M_6": "Connector_FFC-FPC:Omron_XF2M-4015-1A_1x40-1MP_P0.5mm_Horizontal"
+}

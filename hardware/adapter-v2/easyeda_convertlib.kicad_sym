@@ -1,0 +1,845 @@
+(kicad_symbol_lib
+  (version 20211014)
+  (generator EasyKiConverter)
+  (symbol "AFC01-S40FCA-00"
+    (in_bom yes)
+    (on_board yes)
+    (property
+      "Reference"
+      "FPC"
+      (id 0)
+      (at 6.35 12.70 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Value"
+      "AFC01-S40FCA-00"
+      (id 1)
+      (at 6.35 -111.76 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Footprint"
+      "easyeda_convertlib:FPC-SMD_AFC01-S40FCA-00"
+      (id 2)
+      (at 6.35 -114.30 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Datasheet"
+      "https://lcsc.com/product-detail/Others_JUSHUO-AFC01-S40FCA-00_C262674.html"
+      (id 3)
+      (at 6.35 -116.84 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Manufacturer"
+      "JS(钜硕电子)"
+      (id 4)
+      (at 6.35 -119.38 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "LCSC Part"
+      "C262674"
+      (id 5)
+      (at 6.35 -121.92 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "ki_description"
+      "AFC01-S40FCA-00"
+      (id 6)
+      (at 6.35 -124.46 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (rectangle
+      (start 5.08 2.54)
+      (end 12.70 -101.60)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (pin unspecified line
+      (at 0.00 0.00 0)
+      (length 5.08)
+      (name "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -2.54 0)
+      (length 5.08)
+      (name "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -5.08 0)
+      (length 5.08)
+      (name "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -7.62 0)
+      (length 5.08)
+      (name "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -10.16 0)
+      (length 5.08)
+      (name "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -12.70 0)
+      (length 5.08)
+      (name "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -15.24 0)
+      (length 5.08)
+      (name "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -17.78 0)
+      (length 5.08)
+      (name "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -20.32 0)
+      (length 5.08)
+      (name "9" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "9" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -22.86 0)
+      (length 5.08)
+      (name "10" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "10" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -25.40 0)
+      (length 5.08)
+      (name "11" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "11" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -27.94 0)
+      (length 5.08)
+      (name "12" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "12" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -30.48 0)
+      (length 5.08)
+      (name "13" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "13" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -33.02 0)
+      (length 5.08)
+      (name "14" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "14" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -35.56 0)
+      (length 5.08)
+      (name "15" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "15" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -38.10 0)
+      (length 5.08)
+      (name "16" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "16" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -40.64 0)
+      (length 5.08)
+      (name "17" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "17" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -43.18 0)
+      (length 5.08)
+      (name "18" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "18" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -45.72 0)
+      (length 5.08)
+      (name "19" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "19" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -48.26 0)
+      (length 5.08)
+      (name "20" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "20" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -50.80 0)
+      (length 5.08)
+      (name "21" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "21" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -53.34 0)
+      (length 5.08)
+      (name "22" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "22" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -55.88 0)
+      (length 5.08)
+      (name "23" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "23" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -58.42 0)
+      (length 5.08)
+      (name "24" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "24" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -60.96 0)
+      (length 5.08)
+      (name "25" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "25" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -63.50 0)
+      (length 5.08)
+      (name "26" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "26" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -66.04 0)
+      (length 5.08)
+      (name "27" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "27" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -68.58 0)
+      (length 5.08)
+      (name "28" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "28" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -73.66 0)
+      (length 5.08)
+      (name "30" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "30" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -71.12 0)
+      (length 5.08)
+      (name "29" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "29" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -76.20 0)
+      (length 5.08)
+      (name "31" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "31" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -78.74 0)
+      (length 5.08)
+      (name "32" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "32" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -81.28 0)
+      (length 5.08)
+      (name "33" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "33" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -83.82 0)
+      (length 5.08)
+      (name "34" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "34" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -86.36 0)
+      (length 5.08)
+      (name "35" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "35" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -88.90 0)
+      (length 5.08)
+      (name "36" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "36" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -91.44 0)
+      (length 5.08)
+      (name "37" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "37" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -93.98 0)
+      (length 5.08)
+      (name "38" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "38" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -96.52 0)
+      (length 5.08)
+      (name "39" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "39" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -99.06 0)
+      (length 5.08)
+      (name "40" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "40" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 7.62 270)
+      (length 2.54)
+      (name "41" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "41" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 -106.68 90)
+      (length 2.54)
+      (name "42" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "42" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+  )
+  (symbol "AFC07-S40ECA-00"
+    (in_bom yes)
+    (on_board yes)
+    (property
+      "Reference"
+      "FPC"
+      (id 0)
+      (at 6.35 10.16 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Value"
+      "AFC07-S40ECA-00"
+      (id 1)
+      (at 6.35 -109.22 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Footprint"
+      "easyeda_convertlib:FPC-SMD_P0.50-40P_LCS-SJ-H2.0"
+      (id 2)
+      (at 6.35 -111.76 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Datasheet"
+      "https://lcsc.com/product-detail/Others_JUSHUO-AFC07-S40ECA-00_C262648.html"
+      (id 3)
+      (at 6.35 -114.30 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Manufacturer"
+      "JS(钜硕电子)"
+      (id 4)
+      (at 6.35 -116.84 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "LCSC Part"
+      "C262648"
+      (id 5)
+      (at 6.35 -119.38 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "ki_description"
+      "AFC07-S40ECA-00"
+      (id 6)
+      (at 6.35 -121.92 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (rectangle
+      (start 2.54 2.54)
+      (end 12.70 -101.60)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (circle
+      (center 3.81 1.27)
+      (radius 0.38)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (pin unspecified line
+      (at 0.00 0.00 0)
+      (length 2.54)
+      (name "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -2.54 0)
+      (length 2.54)
+      (name "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -5.08 0)
+      (length 2.54)
+      (name "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -7.62 0)
+      (length 2.54)
+      (name "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -10.16 0)
+      (length 2.54)
+      (name "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -12.70 0)
+      (length 2.54)
+      (name "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -15.24 0)
+      (length 2.54)
+      (name "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -17.78 0)
+      (length 2.54)
+      (name "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -20.32 0)
+      (length 2.54)
+      (name "9" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "9" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -22.86 0)
+      (length 2.54)
+      (name "10" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "10" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -25.40 0)
+      (length 2.54)
+      (name "11" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "11" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -27.94 0)
+      (length 2.54)
+      (name "12" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "12" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -30.48 0)
+      (length 2.54)
+      (name "13" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "13" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -33.02 0)
+      (length 2.54)
+      (name "14" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "14" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -35.56 0)
+      (length 2.54)
+      (name "15" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "15" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -38.10 0)
+      (length 2.54)
+      (name "16" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "16" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -40.64 0)
+      (length 2.54)
+      (name "17" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "17" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -43.18 0)
+      (length 2.54)
+      (name "18" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "18" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -45.72 0)
+      (length 2.54)
+      (name "19" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "19" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -48.26 0)
+      (length 2.54)
+      (name "20" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "20" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -50.80 0)
+      (length 2.54)
+      (name "21" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "21" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -53.34 0)
+      (length 2.54)
+      (name "22" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "22" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -55.88 0)
+      (length 2.54)
+      (name "23" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "23" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -58.42 0)
+      (length 2.54)
+      (name "24" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "24" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -60.96 0)
+      (length 2.54)
+      (name "25" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "25" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -63.50 0)
+      (length 2.54)
+      (name "26" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "26" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -66.04 0)
+      (length 2.54)
+      (name "27" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "27" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -68.58 0)
+      (length 2.54)
+      (name "28" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "28" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -71.12 0)
+      (length 2.54)
+      (name "29" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "29" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -73.66 0)
+      (length 2.54)
+      (name "30" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "30" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -76.20 0)
+      (length 2.54)
+      (name "31" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "31" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -78.74 0)
+      (length 2.54)
+      (name "32" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "32" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -81.28 0)
+      (length 2.54)
+      (name "33" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "33" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -83.82 0)
+      (length 2.54)
+      (name "34" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "34" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -86.36 0)
+      (length 2.54)
+      (name "35" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "35" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -88.90 0)
+      (length 2.54)
+      (name "36" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "36" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -91.44 0)
+      (length 2.54)
+      (name "37" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "37" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -93.98 0)
+      (length 2.54)
+      (name "38" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "38" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -96.52 0)
+      (length 2.54)
+      (name "39" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "39" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -99.06 0)
+      (length 2.54)
+      (name "40" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "40" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 -104.14 90)
+      (length 2.54)
+      (name "41" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "41" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 5.08 270)
+      (length 2.54)
+      (name "42" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "42" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+  )
+  (symbol "FPC-05F-6PH20"
+    (in_bom yes)
+    (on_board yes)
+    (property
+      "Reference"
+      "FPC"
+      (id 0)
+      (at 5.08 10.16 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Value"
+      "FPC-05F-6PH20"
+      (id 1)
+      (at 5.08 -22.86 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Footprint"
+      "easyeda_convertlib:FPC-SMD_6P-P0.50_XUNPU_FPC-05F-6PH20"
+      (id 2)
+      (at 5.08 -25.40 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Manufacturer"
+      "XUNPU(讯普)"
+      (id 4)
+      (at 5.08 -27.94 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "LCSC Part"
+      "C2856796"
+      (id 5)
+      (at 5.08 -30.48 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "ki_description"
+      "FPC-05F-6PH20"
+      (id 6)
+      (at 5.08 -33.02 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (rectangle
+      (start 2.54 2.54)
+      (end 10.16 -15.24)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (circle
+      (center 3.81 1.27)
+      (radius 0.38)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (pin unspecified line
+      (at 0.00 0.00 0)
+      (length 2.54)
+      (name "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -2.54 0)
+      (length 2.54)
+      (name "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -5.08 0)
+      (length 2.54)
+      (name "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -7.62 0)
+      (length 2.54)
+      (name "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -10.16 0)
+      (length 2.54)
+      (name "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -12.70 0)
+      (length 2.54)
+      (name "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 8.89 -17.78 90)
+      (length 2.54)
+      (name "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 8.89 5.08 270)
+      (length 2.54)
+      (name "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+  )
+  (symbol "AFC07-S06ECA-00"
+    (in_bom yes)
+    (on_board yes)
+    (property
+      "Reference"
+      "FPC"
+      (id 0)
+      (at 6.35 12.70 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Value"
+      "AFC07-S06ECA-00"
+      (id 1)
+      (at 6.35 -25.40 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) )
+    )
+    (property
+      "Footprint"
+      "easyeda_convertlib:FPC-SMD_P0.50-6P_LCS-SJ-H2.0"
+      (id 2)
+      (at 6.35 -27.94 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Datasheet"
+      "https://lcsc.com/product-detail/Others_JUSHUO-AFC07-S06ECA-00_C262579.html"
+      (id 3)
+      (at 6.35 -30.48 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "Manufacturer"
+      "JS(钜硕电子)"
+      (id 4)
+      (at 6.35 -33.02 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "LCSC Part"
+      "C262579"
+      (id 5)
+      (at 6.35 -35.56 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (property
+      "ki_description"
+      "AFC07-S06ECA-00"
+      (id 6)
+      (at 6.35 -38.10 0)
+      (effects (font (size 1.27 1.27) (thickness 0) ) hide)
+    )
+    (rectangle
+      (start 5.08 2.54)
+      (end 12.70 -15.24)
+      (stroke (width 0.254) (type default))
+      (fill (type none))
+    )
+    (pin unspecified line
+      (at 0.00 0.00 0)
+      (length 5.08)
+      (name "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "1" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -2.54 0)
+      (length 5.08)
+      (name "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "2" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -5.08 0)
+      (length 5.08)
+      (name "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "3" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -7.62 0)
+      (length 5.08)
+      (name "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "4" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -10.16 0)
+      (length 5.08)
+      (name "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "5" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 0.00 -12.70 0)
+      (length 5.08)
+      (name "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "6" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 -20.32 90)
+      (length 2.54)
+      (name "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "7" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+    (pin unspecified line
+      (at 11.43 7.62 270)
+      (length 2.54)
+      (name "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+      (number "8" (effects (font (size 1.27 1.27) (thickness 0) )))
+    )
+  )
+)
