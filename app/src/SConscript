@@ -1,12 +1,18 @@
+import os
+from building import *
+
 Import('RTT_ROOT')
 Import('rtconfig')
-from building import *
 
 cwd = GetCurrentDir()
 src = ['main.c']
 
-CPPPATH = [cwd, str(Dir('#'))]
+CPPPATH = [cwd, str(Dir('#')), os.path.join(cwd, 'ge_demo')]
 
-group = DefineGroup('App_utils', src, depend = [''], variant_dir="ble", CPPPATH = CPPPATH)
+group = DefineGroup('App_utils', src, depend = [''], CPPPATH = CPPPATH)
+
+build_dir = os.path.join(Dir('#').abspath, rtconfig.OUTPUT_DIR, 'src', 'ge_demo')
+group = group + SConscript(os.path.join(cwd, 'ge_demo', 'SConscript'),
+                           variant_dir = build_dir, duplicate = 0)
 
 Return('group')

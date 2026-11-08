@@ -1,0 +1,10 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('effects/*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('GE_Demo', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -30,8 +30,8 @@ SF32LB57-P045VR04-IPS/
 ├─ drivers/panel/p045vr04.c       # ST7701S RGB565 DPI 驱动（不做 SPI 初始化）
 ├─ drivers/touch/ft6236.c         # FT6236 / FT6x36 触摸驱动（12-bit X/Y）
 ├─ app/project/                   # SiFli/RT-Thread 工程（scons 构建入口）
-│  └─ proj.conf                   # RT-Thread + LVGL 选项
-├─ app/src/main.c                 # LVGL 8 演示（按钮 / 滑块 / 触摸板）
+│  └─ proj.conf                   # RT-Thread / GE demo 选项
+├─ app/src/main.c                 # GE demo 入口（51 特效 / 按键）
 ├─ py32f002/P045VR04_Init/        # 适配板上 PY32F002 的 3 线 SPI 初始化固件
 │  ├─ Src/ Inc/                   # ST7701S 初始化表 + 3 线 SPI + READY 握手
 │  └─ MDK-ARM/ EIDE/              # 两套工程（共用同一份 Src/Inc）
@@ -303,53 +303,41 @@ sftool -c SF32LB57 -m nor -p COM8 config sftool_param.json
 
 ```bat
 sftool -c SF32LB57 -m nor -p COM8 read_flash ftab_rb.bin@0x12000000:0x2C18
-sftool -c SF32LB57 -m nor -p COM8 read_flash main_rb.bin@0x12020000:287580
+sftool -c SF32LB57 -m nor -p COM8 read_flash main_rb.bin@0x12020000:377388
 fc /b ftab_rb.bin ftab\ftab.bin
 fc /b main_rb.bin main.bin
 ```
 
-## 5. 演示现象（LVGL 8）
+## 5. 演示（GE demo 移植版）
 
-`app/src/main.c` 是一个最小 LVGL 8 应用（**不**依赖 SDK 的
-`GUI_APP_FRAMEWORK`）：
+`app/src/main.c` 现在运行 ArtInChip GE demo 的 SF32LB57 移植版（51 个
+过程化特效，源自公开的 ArtInChip GE demo / ESP32-S31 移植，Unlicense），
+不再使用 LVGL。
+`app/src/ge_demo/` 的结构（特效代码的许可文本见 `app/src/ge_demo/LICENSE`）：
 
-- 顶部标题 + 参数行；
-- `COUNT n` 按钮：点击计数（验证触摸点按）；
-- 滑块 + 进度条联动（验证连续拖动）；
-- `TOUCH PAD` 区域：红点跟随手指，右上角显示 `x=N y=N`；
-- 串口同步打印 `[app] touch down at (x,y)` / `[app] button clicked: n`。
-
-上电日志顺序：`drv.lcd ... open done` → `drv_lcd_fb_init` →
-`TOUCH ... found driver ft6236` → `[littlevgl2rtt] Welcome` →
-`[app] ui ready: 480x854` → `set brightness 100` → `display on`。
-
-### 5.1 显示 / 触摸通路
-
-| 环节 | 实现 |
+| 文件 | 作用 |
 |---|---|
-| LVGL 库 | `PKG_USING_LITTLEVGL2RTT` + `LVGL_V8`，`LV_COLOR_DEPTH=16` |
-| 显示 | SDK `middleware/lvgl/lv_drivers/lv_lcd.c` 操作 `lcd` 设备；`LCD_FB_USING_AUTO` 在 ramless DPI 上选 `TWO_UNCOMPRESSED`，两块整屏 PSRAM 缓冲（各 819,840 B，位于 0x60000000 的 `.l2_non_ret_bss_frambuf`） |
-| 渲染加速 | `LV_USE_GPU_SIFLI_EPIC` 由 `lv_conf_sifli.h` 强制打开（前提 `BSP_USING_EPIC=y`） |
-| 触摸 | SDK `drv_touch` + 本工程 `drivers/touch/ft6236.c`（12 bit 坐标、480×854、无镜像） |
-| LVGL 输入设备 | SDK `lv_touch.c`，从名为 `touch` 的设备读 `struct touch_message` |
+| `ge_compat.c` | ArtInChip `mpp_ge` API → SiFli EPIC：fill / bitblt（缩放、镜像、alpha）/ rotate（任意角）；ADD/XOR/色键在 CPU 端回退；505 px 分块 |
+| `demo_entry.c` | 480×854 RGB565 双 PSRAM 缓冲、10 s 自动切换、PA34 按键、shell 命令、LCDC `draw_rect` 呈现 |
+| `effects/*.c` | 51 个特效，`effect_registry.c` 显式注册（不依赖 linker section） |
 
-### 5.2 LVGL 配置里的必选项（都踩过）
+显示通路：CPU 生成 240×427 RGB565/YUV400 纹理 → EPIC 缩放到 480×854 →
+双缓冲；LCDC PTC 连续扫描，`draw_rect` 切换缓冲。纹理 arena 为 4 MB
+PSRAM（`ge_compat.c` 的 `s_ge_heap_mem`），framebuffer 为两块 819,840 B
++ 2 KB guard 的 PSRAM。LVGL 已从 `proj.conf` 移除，省下 1.64 MB
+framebuf 和 128 KB 内存池。
 
-`app/project/proj.conf` 中以下几项不是可选的：
+控制：
 
-| 选项 | 原因 |
+| 输入 | 动作 |
 |---|---|
-| `CONFIG_RT_USING_MEMHEAP=y` | `middleware/lvgl/app_mem.c` 用到 `rt_memheap_*` |
-| `# CONFIG_LV_USING_EXT_RESOURCE_MANAGER is not set` | 打开会编译 `lv_ext_resouce`，它要求 `lang_pack.h`（属于 app 框架） |
-| v8 下 LVSF 强制启用 | `lv_conf_sifli.h` 里 `DISABLE_LVGL_V9` ⇒ `LV_USE_LVSF`，所以必须选上主题字体 16/20/24/28/36（`LV_HOR_RES_MAX>350` 分支） |
-| 必须调用 `lv_ex_data_pool_init()` | `lv_refr.c` 每次刷新都会调 `lv_ex_process_data()`；`data_sema` 未初始化时第一次刷新就断言在 `rt_sem_take` |
+| PA34 按键（上升沿） | 下一个特效 |
+| `demo_next` / `demo_prev` | 下一个 / 上一个 |
+| `demo_jump <n>` | 跳到第 n 个（0 起） |
+| `demo_list` | 列出全部特效 |
 
-触摸注意：SDK 自带的 `customer/peripherals/touch_panel/ft6336/ft6336.c`
-把量程写死成 240×240、只读低字节（`FT_P1_XL`/`FT_P1_YL`），在 480×854 上不可用。
-本工程用自己的 `drivers/touch/ft6236.c`：`TOUCH_DEVICE_NAME="i2c1"`，
-`BSP_USING_TOUCHD=y` 时编入，通过 `INIT_COMPONENT_EXPORT` 注册进 `drv_touch`
-的驱动表，因此 LVGL 侧无需任何改动。若实测坐标方向不符，改
-`ft6236_correct_pos()` 里的镜像/交换即可。
+每 10 s 自动切换。EPIC 没有 DE 的 CCM/GAMMA/HSBC，`mpp_fb_ioctl` 为空实现，
+依赖这些色彩矩阵的特效只保留几何/混合部分；ADD、XOR、色键由 CPU 完成。
 
 ## 6. 与 H743 工程的差异
 
@@ -389,13 +377,13 @@ fc /b main_rb.bin main.bin
 
 | 项目 | 结果 |
 |---|---|
-| 镜像 | `main.bin` 554,364 B（含 LVGL 8 + LVSF + 主题字体），`ftab` base 0x12000000，应用 0x12020000 |
+| 镜像 | `main.bin` 377,388 B（GE demo + EPIC + 51 特效），`ftab` base 0x12000000，应用 0x12020000 |
 | 烧录 | `sftool -c SF32LB57 -m nor -p COM8 write_flash --verify`，三块镜像逐字节读回一致 |
 | 显示 | DPI RGB565，480×854；`Found lcd p045vr04 id:4585h` → `display on` |
 | DPI 颜色 | 16 位输出为低位对齐，pad 上的功能左移 3/2/3 后才与适配器的高 16 位对齐（见 3.2） |
 | 背光 | PA_11 只能当 GPIO（无 GPTIM 功能），`BSP_LCD_Backlight()` 拉高升压 EN |
-| LVGL | 两块整屏 PSRAM 缓冲 @0x60000000（各 819,840 B）、EPIC 加速、`[app] ui ready: 480x854` |
+| 面板/LCDC | 上一版 LVGL 固件实测正常；本版 `drv_lcd` / `p045vr04` 未改 |
+| GE demo | 已实测（COM8）：51 个特效正常显示并 10 s 自动切换；XOR/色键/旋转 ADD 软件回退正常；OSD 已关闭 |
 | 触摸 | `ft6236` 被探测到并注册为 `touch` 设备；点按/拖动均有串口日志，坐标落在手指位置 |
 
-已知待做（非阻塞）：若要更顺滑的拖动，可把 `LV_INDEV_DEF_READ_PERIOD` 从
-16 ms 调到 10 ms；需要 FPS 叠加显示时把 `CONFIG_LV_USE_PERF_MONITOR` 打开即可。
+GE demo 已关闭 OSD（不再显示 CPU/FPS/RAM）；触摸驱动仍保留，但当前演示不读取触摸。
