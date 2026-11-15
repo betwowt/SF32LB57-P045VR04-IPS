@@ -1,5 +1,26 @@
 #APP specific configuration.
 config CUSTOM_MEM_MAP
-    bool 
-	select custom_mem_map
-	default y    
+    bool
+    select custom_mem_map
+    default y
+
+# ---- xiaozhi ----
+config XZ_WIFI_SSID
+    string "Wi-Fi SSID for xiaozhi"
+    default ""
+
+config XZ_WIFI_PASSWORD
+    string "Wi-Fi password for xiaozhi"
+    default ""
+
+config XIAOZHI_USING_MQTT
+    bool "use MQTT+UDP transport instead of WebSocket"
+    default n
+
+config KWS_ENABLE_DEFAULT
+    bool "enable offline wake word by default"
+    default n
+
+config BLUETOOTH_NAME
+    string "Bluetooth device name"
+    default "sifli-pan"

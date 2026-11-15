@@ -1,0 +1,354 @@
+--- a/app/src/xiaozhi/xiaozhi_ui.c
++++ b/app/src/xiaozhi/xiaozhi_ui.c
+@@ -21,6 +21,8 @@
+ #include "lvgl.h"
+ #include "ulog.h"
+ #include "rtdevice.h"
++#include "mem_section.h"
++#include "bf0_hal.h"
+ 
+ #include "xiaozhi_ui.h"
+ #include "xiaozhi_client_public.h"
+@@ -40,6 +42,13 @@
+ #define EYE_WIDE_W      60
+ #define EYE_WIDE_H      74
+ #define EYE_CLOSED_H    8
++
++/* Stretch a true circle, rather than rounding a rectangular object's corners.
++ * Speaking stays 84 px wide and 48..64 px high, centred below the cheeks. */
++#define MOUTH_DIAM      56
++#define MOUTH_CX        190
++#define MOUTH_CY        296
++static const int16_t mouth_wave[] = {48, 56, 64, 56, 50, 48};
+ 
+ #define COL_FACE        0xFFC94A
+ #define COL_INK         0x2B2118
+@@ -48,6 +57,36 @@
+ #define COL_RING_THINK  0xFFB020
+ #define COL_TEXT        0xE8E8E8
+ #define COL_DIM         0x8A8A8A
++
++#define GLOW_PAD        36
++#define BACKDROP_SZ     (FACE_SZ + 2 * GLOW_PAD)
++#define DISC_TEX_SZ     56
++/* One immutable RGB565 source, rendered once by the UI thread. No LVGL heap
++ * allocation and no rounded-fill/mask operations during screen refresh. */
++L2_RET_BSS_SECT_BEGIN(xz_face_pixels)
++static uint16_t face_pixels[BACKDROP_SZ * BACKDROP_SZ]
++    L2_RET_BSS_SECT(xz_face_pixels) ALIGN(64);
++static uint8_t ink_pixels[DISC_TEX_SZ * DISC_TEX_SZ * 2]
++    L2_RET_BSS_SECT(xz_face_pixels) ALIGN(64);
++static uint8_t blush_pixels[DISC_TEX_SZ * DISC_TEX_SZ * 2]
++    L2_RET_BSS_SECT(xz_face_pixels) ALIGN(64);
++L2_RET_BSS_SECT_END
++static const lv_image_dsc_t face_image = {
++    .header = {.magic = LV_IMAGE_HEADER_MAGIC, .cf = LV_COLOR_FORMAT_RGB565,
++               .w = BACKDROP_SZ, .h = BACKDROP_SZ, .stride = BACKDROP_SZ * 2},
++    .data_size = sizeof(face_pixels),
++    .data = (const uint8_t *)face_pixels,
++};
++static const lv_image_dsc_t ink_image = {
++    .header = {.magic = LV_IMAGE_HEADER_MAGIC, .cf = LV_COLOR_FORMAT_RGB565,
++               .w = DISC_TEX_SZ, .h = DISC_TEX_SZ, .stride = DISC_TEX_SZ * 2},
++    .data_size = sizeof(ink_pixels), .data = ink_pixels,
++};
++static const lv_image_dsc_t blush_image = {
++    .header = {.magic = LV_IMAGE_HEADER_MAGIC, .cf = LV_COLOR_FORMAT_RGB565,
++               .w = DISC_TEX_SZ, .h = DISC_TEX_SZ, .stride = DISC_TEX_SZ * 2},
++    .data_size = sizeof(blush_pixels), .data = blush_pixels,
++};
+ 
+ /* --------------------------------------------------------------- events */
+ enum {
+@@ -62,12 +101,21 @@
+     EV_SLEEP,
+     EV_WAKE,
+     EV_CONFIG,
++    EV_UI_CALL,
++    EV_VERIFY, /* temporary hardware verification; removed from release */
+ };
++
++typedef struct {
++    void (*fn)(void *);
++    void *ctx;
++    rt_sem_t done;
++} ui_call_t;
+ 
+ typedef struct {
+     uint8_t type;
+     uint8_t val;
+     char text[96];
++    ui_call_t *call;
+ } ui_evt_t;
+ 
+ typedef enum {
+@@ -96,6 +144,8 @@
+ static bool g_net, g_charge = true, g_dimmed;
+ static uint32_t g_blink_wait, g_speak_phase;
+ static uint16_t g_ring_ang;
++static bool g_verify;
++static int g_verify_height;
+ 
+ static lv_obj_t *scr;
+ static lv_obj_t *face, *eye_l, *eye_r, *blush_l, *blush_r;
+@@ -119,6 +169,86 @@
+     return o;
+ }
+ 
++/* Bake edge alpha and cheek opacity against the fixed face colour. Plain
++ * RGB565 blits also bypass EPIC's faulty mask path on the small features. */
++static void make_disc_texture(uint8_t *pixels, uint32_t color, unsigned opacity)
++{
++    for (int y = 0; y < DISC_TEX_SZ; y++)
++        for (int x = 0; x < DISC_TEX_SZ; x++)
++        {
++            int dx = 8 * x - 4 * (DISC_TEX_SZ - 1);
++            int dy = 8 * y - 4 * (DISC_TEX_SZ - 1);
++            unsigned coverage = 0;
++            for (int sy = -3; sy <= 3; sy += 2)
++                for (int sx = -3; sx <= 3; sx += 2)
++                    if ((dx + sx) * (dx + sx) + (dy + sy) * (dy + sy) <
++                        (DISC_TEX_SZ * 4) * (DISC_TEX_SZ * 4)) coverage++;
++            int index = y * DISC_TEX_SZ + x;
++            unsigned alpha = (coverage * opacity + 8) / 16;
++            unsigned r = (((color >> 16) & 255) * alpha + ((COL_FACE >> 16) & 255) * (255-alpha) + 127) / 255;
++            unsigned g = (((color >> 8) & 255) * alpha + ((COL_FACE >> 8) & 255) * (255-alpha) + 127) / 255;
++            unsigned b = ((color & 255) * alpha + (COL_FACE & 255) * (255-alpha) + 127) / 255;
++            uint16_t packed = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
++            pixels[index * 2] = packed & 255;
++            pixels[index * 2 + 1] = packed >> 8;
++        }
++    SCB_CleanDCache_by_Addr((uint32_t *)pixels, DISC_TEX_SZ * DISC_TEX_SZ * 2);
++}
++
++static lv_obj_t *mk_ellipse(lv_obj_t *parent, int x, int y, int w, int h,
++                            const lv_image_dsc_t *source)
++{
++    lv_obj_t *o = lv_image_create(parent);
++    lv_obj_remove_style_all(o);
++    lv_image_set_src(o, source);
++    lv_obj_set_pos(o, x, y);
++    lv_obj_set_size(o, w, h);
++    lv_image_set_inner_align(o, LV_IMAGE_ALIGN_STRETCH);
++    lv_obj_clear_flag(o, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
++    return o;
++}
++
++/* Rasterize the four concentric discs directly, including 4x4 edge coverage.
++ * Coordinates use eighth-pixels so even-sized discs share the same centre.
++ * This avoids the EPIC rounded-fill AND arc/border mask blend paths. */
++static void make_face_backdrop(void)
++{
++    static const uint32_t colors[] = {0x120F06, 0x1E1809, 0x2C230E, COL_FACE};
++    for (int y = 0; y < BACKDROP_SZ; y++)
++    {
++        int dy = 8 * y - 4 * (BACKDROP_SZ - 1);
++        for (int x = 0; x < BACKDROP_SZ; x++)
++        {
++            int dx = 8 * x - 4 * (BACKDROP_SZ - 1);
++            int d2 = dx * dx + dy * dy;
++            unsigned r = 0, g = 0, b = 0;
++            for (int i = 0; i < 4; i++)
++            {
++                int radius = (BACKDROP_SZ / 2 - i * 12) * 8;
++                if (d2 >= (radius + 6) * (radius + 6)) continue;
++                unsigned coverage = 16;
++                if (d2 > (radius - 6) * (radius - 6))
++                {
++                    coverage = 0;
++                    for (int sy = -3; sy <= 3; sy += 2)
++                        for (int sx = -3; sx <= 3; sx += 2)
++                            if ((dx + sx) * (dx + sx) + (dy + sy) * (dy + sy) < radius * radius)
++                                coverage++;
++                }
++                r = (r * (16 - coverage) + (colors[i] >> 16) * coverage + 8) / 16;
++                g = (g * (16 - coverage) + ((colors[i] >> 8) & 255) * coverage + 8) / 16;
++                b = (b * (16 - coverage) + (colors[i] & 255) * coverage + 8) / 16;
++            }
++            face_pixels[y * BACKDROP_SZ + x] = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
++        }
++    }
++    SCB_CleanDCache_by_Addr((uint32_t *)face_pixels, sizeof(face_pixels));
++    lv_obj_t *image = lv_image_create(scr);
++    lv_image_set_src(image, &face_image);
++    lv_obj_set_pos(image, FACE_X - GLOW_PAD, FACE_Y - GLOW_PAD);
++    lv_obj_clear_flag(image, LV_OBJ_FLAG_CLICKABLE);
++}
++
+ static bool ascii_only(const char *s)
+ {
+     if (!s || !*s) return false;
+@@ -150,9 +280,14 @@
+ }
+ 
+ /* ------------------------------------------------------------ face draw */
+-static const lv_point_precise_t pts_smile[] = {{0, 0}, {30, 17}, {60, 22}, {90, 17}, {120, 0}};
+-static const lv_point_precise_t pts_flat[]  = {{0, 6}, {60, 6}, {120, 6}};
+-static const lv_point_precise_t pts_frown[] = {{0, 22}, {30, 5}, {60, 0}, {90, 5}, {120, 22}};
++static const lv_point_precise_t pts_smile[] = {{0, 0}, {22, 13}, {44, 18}, {66, 13}, {88, 0}};
++static const lv_point_precise_t pts_flat[]  = {{0, 9}, {44, 9}, {88, 9}};
++static const lv_point_precise_t pts_frown[] = {{0, 18}, {22, 5}, {44, 0}, {66, 5}, {88, 18}};
++
++static void mouth_set_height(int height)
++{
++    lv_obj_set_style_transform_scale_y(mouth_open, height * 256 / MOUTH_DIAM, 0);
++}
+ 
+ static void mouth_line_points(const lv_point_precise_t *p, uint32_t n)
+ {
+@@ -241,8 +376,7 @@
+     {
+         lv_obj_add_flag(mouth_line, LV_OBJ_FLAG_HIDDEN);
+         lv_obj_clear_flag(mouth_open, LV_OBJ_FLAG_HIDDEN);
+-        lv_obj_set_size(mouth_open, 96, 40);
+-        lv_obj_set_pos(mouth_open, 142, 258);
++        mouth_set_height(MOUTH_DIAM);
+     }
+     else
+     {
+@@ -313,9 +447,8 @@
+ 
+     if (g_state == FS_SPEAK && !lv_obj_has_flag(mouth_open, LV_OBJ_FLAG_HIDDEN))
+     {
+-        static const int16_t wave[] = {22, 40, 56, 40, 24, 18};
+         g_speak_phase++;
+-        lv_obj_set_height(mouth_open, wave[(g_speak_phase / 3) % 6]);
++        mouth_set_height(g_verify_height ? g_verify_height : mouth_wave[(g_speak_phase / 3) % 6]);
+     }
+ 
+     if (g_state == FS_IDLE || g_state == FS_CONNECT)
+@@ -392,18 +525,10 @@
+     lv_label_set_text(lbl_clock, "--:--");
+     lv_obj_align(lbl_clock, LV_ALIGN_TOP_MID, 0, 10);
+ 
+-    /* --- face glow: concentric discs, not a shadow (LVGL 9.4 shadow+radius
+-     *        renders the fill with holes, see xz_shot bisect) --- */
+-    {
+-        static const uint32_t glow_col[3] = {0x120F06, 0x1E1809, 0x2C230E};
+-        for (int i = 0; i < 3; i++)
+-        {
+-            int pad = 12 * (3 - i);
+-            lv_obj_t *g = mk_shape(scr, FACE_X - pad, FACE_Y - pad,
+-                                   FACE_SZ + pad * 2, FACE_SZ + pad * 2, glow_col[i]);
+-            lv_obj_clear_flag(g, LV_OBJ_FLAG_CLICKABLE);
+-        }
+-    }
++    /* --- face + three glow discs: one pre-rendered image blit --- */
++    make_face_backdrop();
++    make_disc_texture(ink_pixels, COL_INK, LV_OPA_COVER);
++    make_disc_texture(blush_pixels, COL_BLUSH, LV_OPA_60);
+ 
+     /* --- listening ring behind the face --- */
+     ring = lv_arc_create(scr);
+@@ -421,26 +546,32 @@
+     lv_arc_set_bg_angles(ring, 0, 70);
+ 
+     /* --- face --- */
+-    face = mk_shape(scr, FACE_X, FACE_Y, FACE_SZ, FACE_SZ, COL_FACE);
+-
+-    blush_l = mk_shape(face, 66, 244, 58, 32, COL_BLUSH);
+-    lv_obj_set_style_bg_opa(blush_l, LV_OPA_60, 0);
+-    blush_r = mk_shape(face, 256, 244, 58, 32, COL_BLUSH);
+-    lv_obj_set_style_bg_opa(blush_r, LV_OPA_60, 0);
+-
+-    eye_l = mk_shape(face, 94, 150, EYE_W, EYE_H, COL_INK);
+-    eye_r = mk_shape(face, 230, 150, EYE_W, EYE_H, COL_INK);
++    face = lv_obj_create(scr);
++    lv_obj_remove_style_all(face);
++    lv_obj_set_pos(face, FACE_X, FACE_Y);
++    lv_obj_set_size(face, FACE_SZ, FACE_SZ);
++    lv_obj_clear_flag(face, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
++
++    blush_l = mk_ellipse(face, 66, 234, 58, 28, &blush_image);
++    blush_r = mk_ellipse(face, 256, 234, 58, 28, &blush_image);
++
++    eye_l = mk_ellipse(face, 94, 150, EYE_W, EYE_H, &ink_image);
++    eye_r = mk_ellipse(face, 230, 150, EYE_W, EYE_H, &ink_image);
+ 
+     mouth_line = lv_line_create(face);
+     lv_obj_remove_style_all(mouth_line);
+-    lv_obj_set_pos(mouth_line, 130, 262);
+-    lv_obj_set_size(mouth_line, 120, 30);
+-    lv_obj_set_style_line_width(mouth_line, 10, 0);
++    lv_obj_set_pos(mouth_line, 146, 284);
++    lv_obj_set_size(mouth_line, 88, 24);
++    lv_obj_set_style_line_width(mouth_line, 8, 0);
+     lv_obj_set_style_line_rounded(mouth_line, true, 0);
+     lv_obj_set_style_line_color(mouth_line, lv_color_hex(COL_INK), 0);
+     mouth_line_points(pts_smile, 5);
+ 
+-    mouth_open = mk_shape(face, 142, 258, 96, 40, COL_INK);
++    mouth_open = mk_ellipse(face, MOUTH_CX - MOUTH_DIAM / 2,
++                            MOUTH_CY - MOUTH_DIAM / 2, MOUTH_DIAM, MOUTH_DIAM, &ink_image);
++    lv_obj_set_style_transform_pivot_x(mouth_open, MOUTH_DIAM / 2, 0);
++    lv_obj_set_style_transform_pivot_y(mouth_open, MOUTH_DIAM / 2, 0);
++    lv_obj_set_style_transform_scale_x(mouth_open, 384, 0); /* 1.5x => ellipse */
+     lv_obj_add_flag(mouth_open, LV_OBJ_FLAG_HIDDEN);
+ 
+     /* --- texts --- */
+@@ -480,8 +611,25 @@
+ /* ---------------------------------------------------------------- events */
+ static void ui_dispatch(const ui_evt_t *ev)
+ {
++    if (g_verify && ev->type != EV_VERIFY && ev->type != EV_UI_CALL) return;
+     switch (ev->type)
+     {
++    case EV_UI_CALL:
++        ev->call->fn(ev->call->ctx);
++        rt_sem_release(ev->call->done);
++        break;
++
++    case EV_VERIFY:
++        g_verify = true;
++        g_verify_height = ev->val >= 8 ? mouth_wave[ev->val - 8] : 0;
++        g_state = ev->val >= 8 ? FS_SPEAK : (face_state_t)ev->val;
++        rt_snprintf(g_emoji, sizeof(g_emoji), "%s", ev->text);
++        g_text[0] = 0;
++        apply_visual();
++        if (g_verify_height) mouth_set_height(g_verify_height);
++        rt_kprintf("FACE_VERIFY state=%s emoji=%s height=%d\n", state_label(g_state), g_emoji, g_verify_height);
++        break;
++
+     case EV_STATUS:
+         ui_activity();
+         if (strstr(ev->text, "聆听")) g_state = FS_LISTEN;
+@@ -582,6 +730,39 @@
+ }
+ 
+ /* ------------------------------------------------------------ public API */
++/* Run a diagnostic LVGL operation on its owner thread. The caller keeps ctx
++ * alive until completion; no LVGL access is made from the requesting thread. */
++int xiaozhi_ui_call_sync(void (*fn)(void *), void *ctx)
++{
++    if (!ui_mq || !fn) return -RT_ERROR;
++    ui_call_t call = {fn, ctx, rt_sem_create("ui_call", 0, RT_IPC_FLAG_FIFO)};
++    if (!call.done) return -RT_ENOMEM;
++    ui_evt_t ev = {0};
++    ev.type = EV_UI_CALL;
++    ev.call = &call;
++    rt_err_t err = rt_mq_send(ui_mq, &ev, sizeof(ev));
++    if (err == RT_EOK) err = rt_sem_take(call.done, RT_WAITING_FOREVER);
++    rt_sem_delete(call.done);
++    return err;
++}
++
++static int xz_face(int argc, char **argv)
++{
++    static const char *names[] = {"connect", "idle", "listen", "speak", "think", "error", "sleep", "config",
++                                  "speak0", "speak1", "speak2", "speak3", "speak4", "speak5"};
++    for (unsigned i = 0; argc > 1 && i < sizeof(names) / sizeof(names[0]); i++)
++    {
++        if (!strcmp(argv[1], names[i]))
++        {
++            ui_post(EV_VERIFY, i, argc > 2 ? argv[2] : "neutral");
++            return 0;
++        }
++    }
++    rt_kprintf("xz_face connect|idle|listen|speak|think|error|sleep|config|speak0..5 [emoji]\n");
++    return -1;
++}
++MSH_CMD_EXPORT(xz_face, TEMPORARY face verification);
++
+ void xiaozhi_ui_chat_status(char *string) { ui_post(EV_STATUS, 0, string); }
+ void xiaozhi_ui_chat_output(char *string) { ui_post(EV_TEXT, 0, string); }
+ void xiaozhi_ui_standby_chat_output(char *string) { ui_post(EV_TEXT, 0, string); }

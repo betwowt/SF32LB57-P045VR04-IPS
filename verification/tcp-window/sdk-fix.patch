@@ -1,0 +1,21 @@
+--- a/customer/peripherals/wifi/aic8800d40-n/platform/hal/sdio_port.c
++++ b/customer/peripherals/wifi/aic8800d40-n/platform/hal/sdio_port.c
+@@ -960,7 +960,18 @@
+ static void aicwf_host_sdio_interrupt(struct sdio_func *func)
+ {
+     if (host_sdio_irq_cb)
++    {
++        /* RT-Thread calls function IRQ handlers while holding the MMC host
++         * lock. AIC's synchronous RX callback takes bus_txrx, then its CMD52/
++         * CMD53 wrappers take the host lock. TX uses that same order. Keeping
++         * the outer host lock here inverts the order and deadlocks RX against
++         * TX. The wrappers lock each transfer; restore the caller's lock on
++         * return so the RT-Thread IRQ dispatcher retains its usual contract. */
++        struct rt_mmcsd_host *host = func->card->host;
++        mmcsd_host_unlock(host);
+         host_sdio_irq_cb();
++        mmcsd_host_lock(host);
++    }
+ }
+ 
+ /**

@@ -1,0 +1,222 @@
+--- a/app/src/xiaozhi/xiaozhi_audio.c
++++ b/app/src/xiaozhi/xiaozhi_audio.c
+@@ -39,6 +39,12 @@
+ #include "app_recorder_process.h"
+ #include "xiaozhi_audio.h"
+ #define XZ_TX_STRESS 0
++#if XZ_TX_STRESS
++/* Voiced PCM keeps the service's 60-second silence timeout from ending the
++ * transport test. The fixture and all injection code are absent in release. */
++#include "../../../verification/tcp-window/stress_pcm.h"
++#endif
++
+ #include "log.h"
+ 
+ #undef LOG_TAG
+@@ -77,7 +83,23 @@
+ extern lv_obj_t *standby_screen;
+ 
+ struct udp_pcb *udp_pcb;
+-xz_audio_t xz_audio;
++/* Software codec state: audio_write() copies PCM into the audio server ring.
++ * Keep the DMA buffers in the audio driver in internal SRAM. */
++xz_audio_t xz_audio L2_RET_BSS_SECT(xz_audio_state);
++/* L2 retained BSS survives a UART/software reset. Keep the boot guard in
++ * normal SRAM BSS so stale inited/RTOS pointers are never reused after reboot. */
++static bool xz_audio_boot_initialized;
++static uint8_t xz_encode_rb_pool[XZ_MIC_FRAME_LEN * 2
++#if PKG_XIAOZHI_USING_AEC
++                                 + 320 * VOICE_START_TIMES
++#endif
++                                 ] L2_RET_BSS_SECT(xz_encode_rb);
++static struct rt_ringbuffer xz_encode_rb;
++#if PKG_XIAOZHI_USING_AEC
++static uint8_t xz_vad_rb_pool[320 * VOICE_START_TIMES]
++    L2_RET_BSS_SECT(xz_vad_rb);
++static struct rt_ringbuffer xz_vad_rb;
++#endif
+ bool g_ota_verified = true;
+ /* 最近一次收到服务端数据（文本或音频）的时刻，用于 speaking 状态看门狗。 */
+ volatile rt_tick_t g_xz_rx_tick;
+@@ -353,6 +375,10 @@
+          * 语音帧丢掉，服务端永远收不到声音。 */
+         if (g_xz_ws.is_connected == 1)
+         {
++#if XZ_TX_STRESS
++            /* The timed fixture is the only encoder input in a bench build. */
++            return 0;
++#endif
+             /* 只上行检测到人声的帧。lwIP 只有 6 个 pbuf，播报下行和麦克风
+              * 同时占用就会让 altcp_write() 失败、websocket 被关掉。 */
+             pass_cnt++;
+@@ -702,29 +728,49 @@
+     opus_encoder_ctl(thiz->encoder, OPUS_SET_BANDWIDTH(OPUS_AUTO));
+     
+     opus_encoder_ctl(thiz->encoder, OPUS_SET_FORCE_MODE(MODE_SILK_ONLY));
++#if XZ_TX_STRESS
++    rt_tick_t last_stress = rt_tick_get();
++    const rt_tick_t stress_period = rt_tick_from_millisecond(60);
++    size_t stress_sample = 0;
++#endif
+     while (!thiz->is_exit)
+     {
+         rt_uint32_t evt = 0;
++#if XZ_TX_STRESS
++        rt_tick_t stress_wait = stress_period;
++        if (g_xz_ws.is_connected && thiz->is_rx_enable)
++        {
++            rt_tick_t elapsed = rt_tick_get() - last_stress;
++            stress_wait = elapsed < stress_period ? stress_period - elapsed : 0;
++        }
++#endif
+         rt_event_recv(thiz->event, XZ_EVENT_ALL,
+                       RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
++#if XZ_TX_STRESS
++                      stress_wait, &evt);
++#else
+                       RT_WAITING_FOREVER, &evt);
++#endif
+         if (evt & XZ_EVENT_EXIT)
+         {
+             break;
+         }
+ #if XZ_TX_STRESS
+-        /* 压力测试：按 60 ms 实时节奏灌静音，且只在环形缓冲将空时补，
+-         * 模拟真实说话的上行速率（不会灌爆环形缓冲）。 */
++        /* Feed one voiced 60 ms frame at real-time speed, without a speaker
++         * or a person. Silence-only input makes the server close after 60 s. */
+         if (thiz->is_rx_enable &&
+             rt_ringbuffer_data_len(thiz->rb_opus_encode_input) < XZ_MIC_FRAME_LEN)
+         {
+-            static rt_tick_t last_stress;
+-            static int16_t silence[XZ_MIC_FRAME_LEN / 2];
+-            if (rt_tick_get() - last_stress >= 60)
++            if (g_xz_ws.is_connected &&
++                rt_tick_get() - last_stress >= stress_period)
+             {
+                 last_stress = rt_tick_get();
+                 rt_ringbuffer_put(thiz->rb_opus_encode_input,
+-                                  (uint8_t *)silence, XZ_MIC_FRAME_LEN);
++                                  (const uint8_t *)&xz_stress_pcm[stress_sample],
++                                  XZ_MIC_FRAME_LEN);
++                stress_sample += XZ_MIC_FRAME_LEN / sizeof(int16_t);
++                if (stress_sample >= sizeof(xz_stress_pcm) / sizeof(int16_t))
++                    stress_sample = 0;
+                 evt |= XZ_EVENT_MIC_RX;
+             }
+         }
+@@ -1020,6 +1066,11 @@
+     xz_audio_t *thiz = &xz_audio;
+ 
+     LOG_I("%s", XZ_AUDIO_VERSION);
++    if (!xz_audio_boot_initialized)
++    {
++        memset(thiz, 0, sizeof(*thiz));
++        xz_audio_boot_initialized = true;
++    }
+     // 检查模块是否已经初始化，避免重复初始化
+     if (!thiz->inited)
+     {
+@@ -1083,15 +1134,12 @@
+         }
+ 
+ #if PKG_XIAOZHI_USING_AEC
+-        thiz->rb_vad_cache = rt_ringbuffer_create(320 * VOICE_START_TIMES);
+-        thiz->rb_opus_encode_input  = rt_ringbuffer_create(XZ_MIC_FRAME_LEN * 2 + 320 * VOICE_START_TIMES);
+-        RT_ASSERT(thiz->rb_opus_encode_input);
+-#else
+-        // 创建用于编码输入的环形缓冲区
+-        thiz->rb_opus_encode_input =
+-            rt_ringbuffer_create(XZ_MIC_FRAME_LEN * 2); // two frame
+-        RT_ASSERT(thiz->rb_opus_encode_input);
+-#endif
++        rt_ringbuffer_init(&xz_vad_rb, xz_vad_rb_pool, sizeof(xz_vad_rb_pool));
++        thiz->rb_vad_cache = &xz_vad_rb;
++#endif
++        rt_ringbuffer_init(&xz_encode_rb, xz_encode_rb_pool,
++                           sizeof(xz_encode_rb_pool));
++        thiz->rb_opus_encode_input = &xz_encode_rb;
+         // 初始化音频处理线程
+         rt_err_t err;
+         err = rt_thread_init(&thiz->thread, XZ_THREAD_NAME,
+@@ -1129,7 +1177,7 @@
+         os_delay(100);
+     }
+ 
+-    rt_ringbuffer_destroy(thiz->rb_opus_encode_input);
++    rt_ringbuffer_reset(thiz->rb_opus_encode_input);
+     rt_event_delete(thiz->event);
+ 
+     for (int i = 0; i < XZ_DOWNLINK_QUEUE_NUM; i++)
+@@ -1141,7 +1189,7 @@
+         }
+     }
+ #if PKG_XIAOZHI_USING_AEC
+-    rt_ringbuffer_destroy(thiz->rb_vad_cache);
++    rt_ringbuffer_reset(thiz->rb_vad_cache);
+     sifli_resample_close(thiz->resample);
+     audio_close(thiz->mic);
+     thiz->mic = NULL;
+--- a/app/src/xiaozhi/xiaozhi_websocket.c
++++ b/app/src/xiaozhi/xiaozhi_websocket.c
+@@ -255,6 +255,10 @@
+  * wsock_write() 会和 lwIP 线程的收包处理打架，结果是 altcp_write() 失败、
+  * 整条连接被关闭。上行音频改成投递到环形队列，由专属线程统一写 socket。 */
+ #define XZ_TX_RB_SIZE 8192
++static uint8_t xz_tx_rb_pool[XZ_TX_RB_SIZE] L2_RET_BSS_SECT(xz_tx_rb);
++static struct rt_ringbuffer xz_tx_rb_state;
++static uint8_t xz_tx_stack[3072] L2_RET_BSS_SECT(xz_tx_stack);
++static struct rt_thread xz_tx_thread;
+ static struct rt_ringbuffer *xz_tx_rb = NULL;
+ static struct rt_event *xz_tx_evt = NULL;
+ 
+@@ -302,6 +306,12 @@
+                                            len, op);
+                     spins++;
+                 }
++                if (e == ERR_OK)
++                {
++                    static uint32_t sent;
++                    if ((++sent % 50) == 0)
++                        rt_kprintf("ws tx sent %u frames\n", (unsigned)sent);
++                }
+                 if (e == ERR_MEM)
+                 {
+                     static rt_uint32_t drop_cnt;
+@@ -322,18 +332,28 @@
+     {
+         return;
+     }
+-    xz_tx_rb = rt_ringbuffer_create(XZ_TX_RB_SIZE);
++    rt_ringbuffer_init(&xz_tx_rb_state, xz_tx_rb_pool, sizeof(xz_tx_rb_pool));
++    xz_tx_rb = &xz_tx_rb_state;
+     xz_tx_evt = rt_event_create("xz_tx", RT_IPC_FLAG_FIFO);
+-    if (xz_tx_rb == NULL || xz_tx_evt == NULL)
+-    {
++    if (xz_tx_evt == NULL)
++    {
++        xz_tx_rb = NULL;
+         rt_kprintf("xz tx queue alloc failed\n");
+         return;
+     }
+-    rt_thread_t t = rt_thread_create("xz_ws_tx", xz_ws_tx_entry, RT_NULL,
+-                                     3072, 20, 10);
+-    if (t)
+-    {
+-        rt_thread_startup(t);
++    rt_err_t err = rt_thread_init(&xz_tx_thread, "xz_ws_tx", xz_ws_tx_entry,
++                                  RT_NULL, xz_tx_stack, sizeof(xz_tx_stack),
++                                  20, 10);
++    if (err == RT_EOK)
++    {
++        rt_thread_startup(&xz_tx_thread);
++    }
++    else
++    {
++        rt_event_delete(xz_tx_evt);
++        xz_tx_evt = NULL;
++        xz_tx_rb = NULL;
++        rt_kprintf("xz tx thread init failed: %d\n", err);
+     }
+ }
+ 

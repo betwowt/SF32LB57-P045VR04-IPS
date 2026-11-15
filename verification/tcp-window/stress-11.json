@@ -1,0 +1,211 @@
+{
+  "duration_seconds": 140.076,
+  "startup_wait_seconds": 22.931,
+  "bytes": 73654,
+  "counts": {
+    "sdio buf alloc fail": 0,
+    "[rtos]malloc fail": 0,
+    "node->buf is null": 0,
+    "WS_TX_STALL": 0,
+    "ws lost": 0,
+    "ws on_connect": 1,
+    "listen start": 1,
+    "ws tx backpressure": 0,
+    "ws tx sent": 46,
+    "fatal error": 0,
+    "Assertion failed": 0,
+    "received CLOSE": 0,
+    "node is null": 0
+  },
+  "successful_tx_progress": [
+    {
+      "seconds": 2.642,
+      "sent": 50
+    },
+    {
+      "seconds": 5.507,
+      "sent": 100
+    },
+    {
+      "seconds": 8.468,
+      "sent": 150
+    },
+    {
+      "seconds": 11.594,
+      "sent": 200
+    },
+    {
+      "seconds": 14.581,
+      "sent": 250
+    },
+    {
+      "seconds": 17.573,
+      "sent": 300
+    },
+    {
+      "seconds": 20.698,
+      "sent": 350
+    },
+    {
+      "seconds": 23.56,
+      "sent": 400
+    },
+    {
+      "seconds": 26.512,
+      "sent": 450
+    },
+    {
+      "seconds": 29.692,
+      "sent": 500
+    },
+    {
+      "seconds": 32.629,
+      "sent": 550
+    },
+    {
+      "seconds": 35.672,
+      "sent": 600
+    },
+    {
+      "seconds": 38.634,
+      "sent": 650
+    },
+    {
+      "seconds": 41.517,
+      "sent": 700
+    },
+    {
+      "seconds": 44.497,
+      "sent": 750
+    },
+    {
+      "seconds": 47.545,
+      "sent": 800
+    },
+    {
+      "seconds": 50.643,
+      "sent": 850
+    },
+    {
+      "seconds": 53.707,
+      "sent": 900
+    },
+    {
+      "seconds": 56.61,
+      "sent": 950
+    },
+    {
+      "seconds": 59.636,
+      "sent": 1000
+    },
+    {
+      "seconds": 62.562,
+      "sent": 1050
+    },
+    {
+      "seconds": 65.418,
+      "sent": 1100
+    },
+    {
+      "seconds": 68.577,
+      "sent": 1150
+    },
+    {
+      "seconds": 71.722,
+      "sent": 1200
+    },
+    {
+      "seconds": 74.692,
+      "sent": 1250
+    },
+    {
+      "seconds": 77.682,
+      "sent": 1300
+    },
+    {
+      "seconds": 80.613,
+      "sent": 1350
+    },
+    {
+      "seconds": 83.732,
+      "sent": 1400
+    },
+    {
+      "seconds": 86.736,
+      "sent": 1450
+    },
+    {
+      "seconds": 89.596,
+      "sent": 1500
+    },
+    {
+      "seconds": 92.366,
+      "sent": 1550
+    },
+    {
+      "seconds": 95.608,
+      "sent": 1600
+    },
+    {
+      "seconds": 98.626,
+      "sent": 1650
+    },
+    {
+      "seconds": 101.625,
+      "sent": 1700
+    },
+    {
+      "seconds": 104.683,
+      "sent": 1750
+    },
+    {
+      "seconds": 107.675,
+      "sent": 1800
+    },
+    {
+      "seconds": 110.635,
+      "sent": 1850
+    },
+    {
+      "seconds": 113.758,
+      "sent": 1900
+    },
+    {
+      "seconds": 116.688,
+      "sent": 1950
+    },
+    {
+      "seconds": 119.717,
+      "sent": 2000
+    },
+    {
+      "seconds": 122.65,
+      "sent": 2050
+    },
+    {
+      "seconds": 125.712,
+      "sent": 2100
+    },
+    {
+      "seconds": 128.65,
+      "sent": 2150
+    },
+    {
+      "seconds": 131.759,
+      "sent": 2200
+    },
+    {
+      "seconds": 134.665,
+      "sent": 2250
+    },
+    {
+      "seconds": 137.705,
+      "sent": 2300
+    }
+  ],
+  "heap": [
+    "total memory: 262812 used memory : 222712 maximum allocated memory: 231896\r",
+    "total memory: 262812 used memory : 222704 maximum allocated memory: 231896\r",
+    "total memory: 262812 used memory : 224240 maximum allocated memory: 231896\r"
+  ]
+}

@@ -1,0 +1,532 @@
+
+app/project/build_sf32lb57-p045vr04_hcpu/main.elf:     file format elf32-littlearm
+
+
+Disassembly of section .retm_data:
+
+Disassembly of section .text:
+
+120f77e8 <aicwf_sdio_rx_task>:
+120f77e8:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+120f77ec:	4ba8      	ldr	r3, [pc, #672]	@ (120f7a90 <aicwf_sdio_rx_task+0x2a8>)
+120f77ee:	f8df 92e4 	ldr.w	r9, [pc, #740]	@ 120f7ad4 <aicwf_sdio_rx_task+0x2ec>
+120f77f2:	681b      	ldr	r3, [r3, #0]
+120f77f4:	b087      	sub	sp, #28
+120f77f6:	9302      	str	r3, [sp, #8]
+120f77f8:	f899 3000 	ldrb.w	r3, [r9]
+120f77fc:	b94b      	cbnz	r3, 120f7812 <aicwf_sdio_rx_task+0x2a>
+120f77fe:	4ba5      	ldr	r3, [pc, #660]	@ (120f7a94 <aicwf_sdio_rx_task+0x2ac>)
+120f7800:	781b      	ldrb	r3, [r3, #0]
+120f7802:	2b00      	cmp	r3, #0
+120f7804:	f000 8083 	beq.w	120f790e <aicwf_sdio_rx_task+0x126>
+120f7808:	230a      	movs	r3, #10
+120f780a:	f04f 0b01 	mov.w	fp, #1
+120f780e:	9301      	str	r3, [sp, #4]
+120f7810:	e001      	b.n	120f7816 <aicwf_sdio_rx_task+0x2e>
+120f7812:	f04f 0b00 	mov.w	fp, #0
+120f7816:	f04f 0800 	mov.w	r8, #0
+120f781a:	f8df a284 	ldr.w	sl, [pc, #644]	@ 120f7aa0 <aicwf_sdio_rx_task+0x2b8>
+120f781e:	f899 3000 	ldrb.w	r3, [r9]
+120f7822:	2b00      	cmp	r3, #0
+120f7824:	d076      	beq.n	120f7914 <aicwf_sdio_rx_task+0x12c>
+120f7826:	f04f 0800 	mov.w	r8, #0
+120f782a:	2101      	movs	r1, #1
+120f782c:	2041      	movs	r0, #65	@ 0x41
+120f782e:	f730 f9d5 	bl	12027bdc <aicwf_plat_gpio_trigger>
+120f7832:	4b99      	ldr	r3, [pc, #612]	@ (120f7a98 <aicwf_sdio_rx_task+0x2b0>)
+120f7834:	681d      	ldr	r5, [r3, #0]
+120f7836:	2d00      	cmp	r5, #0
+120f7838:	f040 8102 	bne.w	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f783c:	4b97      	ldr	r3, [pc, #604]	@ (120f7a9c <aicwf_sdio_rx_task+0x2b4>)
+120f783e:	f88d 5016 	strb.w	r5, [sp, #22]
+120f7842:	881b      	ldrh	r3, [r3, #0]
+120f7844:	2b00      	cmp	r3, #0
+120f7846:	d17d      	bne.n	120f7944 <aicwf_sdio_rx_task+0x15c>
+120f7848:	4c95      	ldr	r4, [pc, #596]	@ (120f7aa0 <aicwf_sdio_rx_task+0x2b8>)
+120f784a:	f10d 0116 	add.w	r1, sp, #22
+120f784e:	7b20      	ldrb	r0, [r4, #12]
+120f7850:	f72f ff56 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f7854:	4606      	mov	r6, r0
+120f7856:	b11e      	cbz	r6, 120f7860 <aicwf_sdio_rx_task+0x78>
+120f7858:	f99d 3016 	ldrsb.w	r3, [sp, #22]
+120f785c:	2b00      	cmp	r3, #0
+120f785e:	da13      	bge.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7860:	2104      	movs	r1, #4
+120f7862:	4608      	mov	r0, r1
+120f7864:	f730 f9d6 	bl	12027c14 <platform_test_module_severity>
+120f7868:	b128      	cbz	r0, 120f7876 <aicwf_sdio_rx_task+0x8e>
+120f786a:	4631      	mov	r1, r6
+120f786c:	f89d 2016 	ldrb.w	r2, [sp, #22]
+120f7870:	488c      	ldr	r0, [pc, #560]	@ (120f7aa4 <aicwf_sdio_rx_task+0x2bc>)
+120f7872:	f730 f9b5 	bl	12027be0 <aicwf_log_printf>
+120f7876:	7b20      	ldrb	r0, [r4, #12]
+120f7878:	f10d 0116 	add.w	r1, sp, #22
+120f787c:	f72f ff40 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f7880:	3501      	adds	r5, #1
+120f7882:	2d08      	cmp	r5, #8
+120f7884:	4606      	mov	r6, r0
+120f7886:	d1e6      	bne.n	120f7856 <aicwf_sdio_rx_task+0x6e>
+120f7888:	f89d 4016 	ldrb.w	r4, [sp, #22]
+120f788c:	2c00      	cmp	r4, #0
+120f788e:	f000 8240 	beq.w	120f7d12 <aicwf_sdio_rx_task+0x52a>
+120f7892:	2d08      	cmp	r5, #8
+120f7894:	f000 823d 	beq.w	120f7d12 <aicwf_sdio_rx_task+0x52a>
+120f7898:	4b80      	ldr	r3, [pc, #512]	@ (120f7a9c <aicwf_sdio_rx_task+0x2b4>)
+120f789a:	881b      	ldrh	r3, [r3, #0]
+120f789c:	3b03      	subs	r3, #3
+120f789e:	b29b      	uxth	r3, r3
+120f78a0:	2b02      	cmp	r3, #2
+120f78a2:	f200 8119 	bhi.w	120f7ad8 <aicwf_sdio_rx_task+0x2f0>
+120f78a6:	2300      	movs	r3, #0
+120f78a8:	f044 0508 	orr.w	r5, r4, #8
+120f78ac:	2d78      	cmp	r5, #120	@ 0x78
+120f78ae:	f88d 3017 	strb.w	r3, [sp, #23]
+120f78b2:	f240 80e0 	bls.w	120f7a76 <aicwf_sdio_rx_task+0x28e>
+120f78b6:	2d7f      	cmp	r5, #127	@ 0x7f
+120f78b8:	f040 80bd 	bne.w	120f7a36 <aicwf_sdio_rx_task+0x24e>
+120f78bc:	2104      	movs	r1, #4
+120f78be:	4608      	mov	r0, r1
+120f78c0:	f730 f9a8 	bl	12027c14 <platform_test_module_severity>
+120f78c4:	b120      	cbz	r0, 120f78d0 <aicwf_sdio_rx_task+0xe8>
+120f78c6:	462a      	mov	r2, r5
+120f78c8:	4977      	ldr	r1, [pc, #476]	@ (120f7aa8 <aicwf_sdio_rx_task+0x2c0>)
+120f78ca:	4878      	ldr	r0, [pc, #480]	@ (120f7aac <aicwf_sdio_rx_task+0x2c4>)
+120f78cc:	f730 f988 	bl	12027be0 <aicwf_log_printf>
+120f78d0:	4b73      	ldr	r3, [pc, #460]	@ (120f7aa0 <aicwf_sdio_rx_task+0x2b8>)
+120f78d2:	f10d 0117 	add.w	r1, sp, #23
+120f78d6:	7918      	ldrb	r0, [r3, #4]
+120f78d8:	f72f ff17 	bl	1202770a <aicwf_sdio_readb_cmd52_func2>
+120f78dc:	4604      	mov	r4, r0
+120f78de:	b940      	cbnz	r0, 120f78f2 <aicwf_sdio_rx_task+0x10a>
+120f78e0:	2102      	movs	r1, #2
+120f78e2:	2004      	movs	r0, #4
+120f78e4:	f730 f996 	bl	12027c14 <platform_test_module_severity>
+120f78e8:	b118      	cbz	r0, 120f78f2 <aicwf_sdio_rx_task+0x10a>
+120f78ea:	4621      	mov	r1, r4
+120f78ec:	4870      	ldr	r0, [pc, #448]	@ (120f7ab0 <aicwf_sdio_rx_task+0x2c8>)
+120f78ee:	f730 f977 	bl	12027be0 <aicwf_log_printf>
+120f78f2:	2104      	movs	r1, #4
+120f78f4:	4608      	mov	r0, r1
+120f78f6:	f730 f98d 	bl	12027c14 <platform_test_module_severity>
+120f78fa:	b120      	cbz	r0, 120f7906 <aicwf_sdio_rx_task+0x11e>
+120f78fc:	f89d 1017 	ldrb.w	r1, [sp, #23]
+120f7900:	486c      	ldr	r0, [pc, #432]	@ (120f7ab4 <aicwf_sdio_rx_task+0x2cc>)
+120f7902:	f730 f96d 	bl	12027be0 <aicwf_log_printf>
+120f7906:	f89d 4017 	ldrb.w	r4, [sp, #23]
+120f790a:	00a4      	lsls	r4, r4, #2
+120f790c:	e096      	b.n	120f7a3c <aicwf_sdio_rx_task+0x254>
+120f790e:	f04f 33ff 	mov.w	r3, #4294967295
+120f7912:	e77a      	b.n	120f780a <aicwf_sdio_rx_task+0x22>
+120f7914:	9901      	ldr	r1, [sp, #4]
+120f7916:	f8da 0044 	ldr.w	r0, [sl, #68]	@ 0x44
+120f791a:	f731 fcf7 	bl	1202930c <aicwf_rtos_semaphore_wait>
+120f791e:	4604      	mov	r4, r0
+120f7920:	2800      	cmp	r0, #0
+120f7922:	d080      	beq.n	120f7826 <aicwf_sdio_rx_task+0x3e>
+120f7924:	2801      	cmp	r0, #1
+120f7926:	d00b      	beq.n	120f7940 <aicwf_sdio_rx_task+0x158>
+120f7928:	2102      	movs	r1, #2
+120f792a:	2004      	movs	r0, #4
+120f792c:	f730 f972 	bl	12027c14 <platform_test_module_severity>
+120f7930:	2800      	cmp	r0, #0
+120f7932:	f43f af7a 	beq.w	120f782a <aicwf_sdio_rx_task+0x42>
+120f7936:	4621      	mov	r1, r4
+120f7938:	485f      	ldr	r0, [pc, #380]	@ (120f7ab8 <aicwf_sdio_rx_task+0x2d0>)
+120f793a:	f730 f951 	bl	12027be0 <aicwf_log_printf>
+120f793e:	e774      	b.n	120f782a <aicwf_sdio_rx_task+0x42>
+120f7940:	4680      	mov	r8, r0
+120f7942:	e772      	b.n	120f782a <aicwf_sdio_rx_task+0x42>
+120f7944:	1e5a      	subs	r2, r3, #1
+120f7946:	2a01      	cmp	r2, #1
+120f7948:	d82c      	bhi.n	120f79a4 <aicwf_sdio_rx_task+0x1bc>
+120f794a:	4c5c      	ldr	r4, [pc, #368]	@ (120f7abc <aicwf_sdio_rx_task+0x2d4>)
+120f794c:	f89a 000c 	ldrb.w	r0, [sl, #12]
+120f7950:	7823      	ldrb	r3, [r4, #0]
+120f7952:	f10d 0116 	add.w	r1, sp, #22
+120f7956:	b1fb      	cbz	r3, 120f7998 <aicwf_sdio_rx_task+0x1b0>
+120f7958:	f72f fed7 	bl	1202770a <aicwf_sdio_readb_cmd52_func2>
+120f795c:	4606      	mov	r6, r0
+120f795e:	b11e      	cbz	r6, 120f7968 <aicwf_sdio_rx_task+0x180>
+120f7960:	f99d 3016 	ldrsb.w	r3, [sp, #22]
+120f7964:	2b00      	cmp	r3, #0
+120f7966:	da8f      	bge.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7968:	2104      	movs	r1, #4
+120f796a:	4608      	mov	r0, r1
+120f796c:	f730 f952 	bl	12027c14 <platform_test_module_severity>
+120f7970:	b128      	cbz	r0, 120f797e <aicwf_sdio_rx_task+0x196>
+120f7972:	4631      	mov	r1, r6
+120f7974:	f89d 2016 	ldrb.w	r2, [sp, #22]
+120f7978:	484a      	ldr	r0, [pc, #296]	@ (120f7aa4 <aicwf_sdio_rx_task+0x2bc>)
+120f797a:	f730 f931 	bl	12027be0 <aicwf_log_printf>
+120f797e:	7823      	ldrb	r3, [r4, #0]
+120f7980:	f89a 000c 	ldrb.w	r0, [sl, #12]
+120f7984:	f10d 0116 	add.w	r1, sp, #22
+120f7988:	b14b      	cbz	r3, 120f799e <aicwf_sdio_rx_task+0x1b6>
+120f798a:	f72f febe 	bl	1202770a <aicwf_sdio_readb_cmd52_func2>
+120f798e:	3501      	adds	r5, #1
+120f7990:	2d08      	cmp	r5, #8
+120f7992:	4606      	mov	r6, r0
+120f7994:	d1e3      	bne.n	120f795e <aicwf_sdio_rx_task+0x176>
+120f7996:	e777      	b.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7998:	f72f feb2 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f799c:	e7de      	b.n	120f795c <aicwf_sdio_rx_task+0x174>
+120f799e:	f72f feaf 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f79a2:	e7f4      	b.n	120f798e <aicwf_sdio_rx_task+0x1a6>
+120f79a4:	3b03      	subs	r3, #3
+120f79a6:	2b02      	cmp	r3, #2
+120f79a8:	d841      	bhi.n	120f7a2e <aicwf_sdio_rx_task+0x246>
+120f79aa:	4c3d      	ldr	r4, [pc, #244]	@ (120f7aa0 <aicwf_sdio_rx_task+0x2b8>)
+120f79ac:	7b60      	ldrb	r0, [r4, #13]
+120f79ae:	f10d 0116 	add.w	r1, sp, #22
+120f79b2:	f72f fea5 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f79b6:	4606      	mov	r6, r0
+120f79b8:	b968      	cbnz	r0, 120f79d6 <aicwf_sdio_rx_task+0x1ee>
+120f79ba:	2104      	movs	r1, #4
+120f79bc:	4608      	mov	r0, r1
+120f79be:	f730 f929 	bl	12027c14 <platform_test_module_severity>
+120f79c2:	2800      	cmp	r0, #0
+120f79c4:	d0f2      	beq.n	120f79ac <aicwf_sdio_rx_task+0x1c4>
+120f79c6:	4632      	mov	r2, r6
+120f79c8:	f89d 3016 	ldrb.w	r3, [sp, #22]
+120f79cc:	4936      	ldr	r1, [pc, #216]	@ (120f7aa8 <aicwf_sdio_rx_task+0x2c0>)
+120f79ce:	483c      	ldr	r0, [pc, #240]	@ (120f7ac0 <aicwf_sdio_rx_task+0x2d8>)
+120f79d0:	f730 f906 	bl	12027be0 <aicwf_log_printf>
+120f79d4:	e7ea      	b.n	120f79ac <aicwf_sdio_rx_task+0x1c4>
+120f79d6:	f99d 3016 	ldrsb.w	r3, [sp, #22]
+120f79da:	2b00      	cmp	r3, #0
+120f79dc:	da29      	bge.n	120f7a32 <aicwf_sdio_rx_task+0x24a>
+120f79de:	79a0      	ldrb	r0, [r4, #6]
+120f79e0:	f10d 0117 	add.w	r1, sp, #23
+120f79e4:	f72f fe8c 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f79e8:	b940      	cbnz	r0, 120f79fc <aicwf_sdio_rx_task+0x214>
+120f79ea:	2102      	movs	r1, #2
+120f79ec:	2004      	movs	r0, #4
+120f79ee:	f730 f911 	bl	12027c14 <platform_test_module_severity>
+120f79f2:	b118      	cbz	r0, 120f79fc <aicwf_sdio_rx_task+0x214>
+120f79f4:	79a1      	ldrb	r1, [r4, #6]
+120f79f6:	4833      	ldr	r0, [pc, #204]	@ (120f7ac4 <aicwf_sdio_rx_task+0x2dc>)
+120f79f8:	f730 f8f2 	bl	12027be0 <aicwf_log_printf>
+120f79fc:	f89d 1017 	ldrb.w	r1, [sp, #23]
+120f7a00:	79a0      	ldrb	r0, [r4, #6]
+120f7a02:	f001 01fe 	and.w	r1, r1, #254	@ 0xfe
+120f7a06:	f88d 1017 	strb.w	r1, [sp, #23]
+120f7a0a:	f72f fe83 	bl	12027714 <aicwf_sdio_writeb_cmd52>
+120f7a0e:	4606      	mov	r6, r0
+120f7a10:	2800      	cmp	r0, #0
+120f7a12:	f47f af39 	bne.w	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7a16:	2102      	movs	r1, #2
+120f7a18:	2004      	movs	r0, #4
+120f7a1a:	f730 f8fb 	bl	12027c14 <platform_test_module_severity>
+120f7a1e:	2800      	cmp	r0, #0
+120f7a20:	f43f af32 	beq.w	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7a24:	79a1      	ldrb	r1, [r4, #6]
+120f7a26:	4828      	ldr	r0, [pc, #160]	@ (120f7ac8 <aicwf_sdio_rx_task+0x2e0>)
+120f7a28:	f730 f8da 	bl	12027be0 <aicwf_log_printf>
+120f7a2c:	e72c      	b.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7a2e:	462e      	mov	r6, r5
+120f7a30:	e72a      	b.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7a32:	2601      	movs	r6, #1
+120f7a34:	e728      	b.n	120f7888 <aicwf_sdio_rx_task+0xa0>
+120f7a36:	f004 0407 	and.w	r4, r4, #7
+120f7a3a:	0264      	lsls	r4, r4, #9
+120f7a3c:	2c00      	cmp	r4, #0
+120f7a3e:	d14e      	bne.n	120f7ade <aicwf_sdio_rx_task+0x2f6>
+120f7a40:	4c22      	ldr	r4, [pc, #136]	@ (120f7acc <aicwf_sdio_rx_task+0x2e4>)
+120f7a42:	8ae0      	ldrh	r0, [r4, #22]
+120f7a44:	b118      	cbz	r0, 120f7a4e <aicwf_sdio_rx_task+0x266>
+120f7a46:	f730 f925 	bl	12027c94 <aicwf_driver_unexcepted>
+120f7a4a:	2300      	movs	r3, #0
+120f7a4c:	82e3      	strh	r3, [r4, #22]
+120f7a4e:	2100      	movs	r1, #0
+120f7a50:	2041      	movs	r0, #65	@ 0x41
+120f7a52:	f730 f8c3 	bl	12027bdc <aicwf_plat_gpio_trigger>
+120f7a56:	f899 3000 	ldrb.w	r3, [r9]
+120f7a5a:	b92b      	cbnz	r3, 120f7a68 <aicwf_sdio_rx_task+0x280>
+120f7a5c:	4b1c      	ldr	r3, [pc, #112]	@ (120f7ad0 <aicwf_sdio_rx_task+0x2e8>)
+120f7a5e:	781b      	ldrb	r3, [r3, #0]
+120f7a60:	b113      	cbz	r3, 120f7a68 <aicwf_sdio_rx_task+0x280>
+120f7a62:	2001      	movs	r0, #1
+120f7a64:	f72f fe66 	bl	12027734 <aicwf_sdio_isr>
+120f7a68:	f1bb 0f00 	cmp.w	fp, #0
+120f7a6c:	f47f aed7 	bne.w	120f781e <aicwf_sdio_rx_task+0x36>
+120f7a70:	b007      	add	sp, #28
+120f7a72:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
+120f7a76:	2c78      	cmp	r4, #120	@ 0x78
+120f7a78:	d106      	bne.n	120f7a88 <aicwf_sdio_rx_task+0x2a0>
+120f7a7a:	4b09      	ldr	r3, [pc, #36]	@ (120f7aa0 <aicwf_sdio_rx_task+0x2b8>)
+120f7a7c:	f10d 0117 	add.w	r1, sp, #23
+120f7a80:	7918      	ldrb	r0, [r3, #4]
+120f7a82:	f72f fe3d 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f7a86:	e729      	b.n	120f78dc <aicwf_sdio_rx_task+0xf4>
+120f7a88:	f004 047f 	and.w	r4, r4, #127	@ 0x7f
+120f7a8c:	e7d5      	b.n	120f7a3a <aicwf_sdio_rx_task+0x252>
+120f7a8e:	bf00      	nop
+120f7a90:	2002914c 	.word	0x2002914c
+120f7a94:	20010990 	.word	0x20010990
+120f7a98:	2000d1ac 	.word	0x2000d1ac
+120f7a9c:	2000e304 	.word	0x2000e304
+120f7aa0:	20010998 	.word	0x20010998
+120f7aa4:	12192694 	.word	0x12192694
+120f7aa8:	12250047 	.word	0x12250047
+120f7aac:	121926fb 	.word	0x121926fb
+120f7ab0:	12192719 	.word	0x12192719
+120f7ab4:	12192740 	.word	0x12192740
+120f7ab8:	12192669 	.word	0x12192669
+120f7abc:	2000e306 	.word	0x2000e306
+120f7ac0:	121926b5 	.word	0x121926b5
+120f7ac4:	121926db 	.word	0x121926db
+120f7ac8:	1217b710 	.word	0x1217b710
+120f7acc:	20023dfc 	.word	0x20023dfc
+120f7ad0:	20010991 	.word	0x20010991
+120f7ad4:	2000d1aa 	.word	0x2000d1aa
+120f7ad8:	2c3f      	cmp	r4, #63	@ 0x3f
+120f7ada:	d833      	bhi.n	120f7b44 <aicwf_sdio_rx_task+0x35c>
+120f7adc:	0264      	lsls	r4, r4, #9
+120f7ade:	4d96      	ldr	r5, [pc, #600]	@ (120f7d38 <aicwf_sdio_rx_task+0x550>)
+120f7ae0:	682b      	ldr	r3, [r5, #0]
+120f7ae2:	42a3      	cmp	r3, r4
+120f7ae4:	d209      	bcs.n	120f7afa <aicwf_sdio_rx_task+0x312>
+120f7ae6:	2104      	movs	r1, #4
+120f7ae8:	4608      	mov	r0, r1
+120f7aea:	602c      	str	r4, [r5, #0]
+120f7aec:	f730 f892 	bl	12027c14 <platform_test_module_severity>
+120f7af0:	b118      	cbz	r0, 120f7afa <aicwf_sdio_rx_task+0x312>
+120f7af2:	6829      	ldr	r1, [r5, #0]
+120f7af4:	4891      	ldr	r0, [pc, #580]	@ (120f7d3c <aicwf_sdio_rx_task+0x554>)
+120f7af6:	f730 f873 	bl	12027be0 <aicwf_log_printf>
+120f7afa:	4d91      	ldr	r5, [pc, #580]	@ (120f7d40 <aicwf_sdio_rx_task+0x558>)
+120f7afc:	2164      	movs	r1, #100	@ 0x64
+120f7afe:	68e8      	ldr	r0, [r5, #12]
+120f7b00:	f731 fc04 	bl	1202930c <aicwf_rtos_semaphore_wait>
+120f7b04:	4607      	mov	r7, r0
+120f7b06:	2800      	cmp	r0, #0
+120f7b08:	f040 80b3 	bne.w	120f7c72 <aicwf_sdio_rx_task+0x48a>
+120f7b0c:	f04f 31ff 	mov.w	r1, #4294967295
+120f7b10:	68a8      	ldr	r0, [r5, #8]
+120f7b12:	f731 fcf1 	bl	120294f8 <aicwf_rtos_mutex_lock>
+120f7b16:	682b      	ldr	r3, [r5, #0]
+120f7b18:	2b00      	cmp	r3, #0
+120f7b1a:	d13b      	bne.n	120f7b94 <aicwf_sdio_rx_task+0x3ac>
+120f7b1c:	68a8      	ldr	r0, [r5, #8]
+120f7b1e:	f731 fd07 	bl	12029530 <aicwf_rtos_mutex_unlock>
+120f7b22:	2104      	movs	r1, #4
+120f7b24:	4608      	mov	r0, r1
+120f7b26:	f730 f875 	bl	12027c14 <platform_test_module_severity>
+120f7b2a:	b110      	cbz	r0, 120f7b32 <aicwf_sdio_rx_task+0x34a>
+120f7b2c:	4885      	ldr	r0, [pc, #532]	@ (120f7d44 <aicwf_sdio_rx_task+0x55c>)
+120f7b2e:	f730 f857 	bl	12027be0 <aicwf_log_printf>
+120f7b32:	8aeb      	ldrh	r3, [r5, #22]
+120f7b34:	2b00      	cmp	r3, #0
+120f7b36:	d183      	bne.n	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7b38:	69ab      	ldr	r3, [r5, #24]
+120f7b3a:	2b00      	cmp	r3, #0
+120f7b3c:	f000 80b8 	beq.w	120f7cb0 <aicwf_sdio_rx_task+0x4c8>
+120f7b40:	2600      	movs	r6, #0
+120f7b42:	e058      	b.n	120f7bf6 <aicwf_sdio_rx_task+0x40e>
+120f7b44:	2300      	movs	r3, #0
+120f7b46:	f88d 3017 	strb.w	r3, [sp, #23]
+120f7b4a:	9b02      	ldr	r3, [sp, #8]
+120f7b4c:	f8b3 32fc 	ldrh.w	r3, [r3, #764]	@ 0x2fc
+120f7b50:	b933      	cbnz	r3, 120f7b60 <aicwf_sdio_rx_task+0x378>
+120f7b52:	4b7d      	ldr	r3, [pc, #500]	@ (120f7d48 <aicwf_sdio_rx_task+0x560>)
+120f7b54:	f10d 0117 	add.w	r1, sp, #23
+120f7b58:	7918      	ldrb	r0, [r3, #4]
+120f7b5a:	f72f fdd1 	bl	12027700 <aicwf_sdio_readb_cmd52>
+120f7b5e:	e00c      	b.n	120f7b7a <aicwf_sdio_rx_task+0x392>
+120f7b60:	3b01      	subs	r3, #1
+120f7b62:	2b01      	cmp	r3, #1
+120f7b64:	d80a      	bhi.n	120f7b7c <aicwf_sdio_rx_task+0x394>
+120f7b66:	4b78      	ldr	r3, [pc, #480]	@ (120f7d48 <aicwf_sdio_rx_task+0x560>)
+120f7b68:	f10d 0117 	add.w	r1, sp, #23
+120f7b6c:	7918      	ldrb	r0, [r3, #4]
+120f7b6e:	4b77      	ldr	r3, [pc, #476]	@ (120f7d4c <aicwf_sdio_rx_task+0x564>)
+120f7b70:	781b      	ldrb	r3, [r3, #0]
+120f7b72:	2b00      	cmp	r3, #0
+120f7b74:	d0f1      	beq.n	120f7b5a <aicwf_sdio_rx_task+0x372>
+120f7b76:	f72f fdc8 	bl	1202770a <aicwf_sdio_readb_cmd52_func2>
+120f7b7a:	4606      	mov	r6, r0
+120f7b7c:	2e00      	cmp	r6, #0
+120f7b7e:	f47f aeb8 	bne.w	120f78f2 <aicwf_sdio_rx_task+0x10a>
+120f7b82:	2102      	movs	r1, #2
+120f7b84:	2004      	movs	r0, #4
+120f7b86:	f730 f845 	bl	12027c14 <platform_test_module_severity>
+120f7b8a:	2800      	cmp	r0, #0
+120f7b8c:	f43f aeb1 	beq.w	120f78f2 <aicwf_sdio_rx_task+0x10a>
+120f7b90:	4631      	mov	r1, r6
+120f7b92:	e6ab      	b.n	120f78ec <aicwf_sdio_rx_task+0x104>
+120f7b94:	b2a3      	uxth	r3, r4
+120f7b96:	4628      	mov	r0, r5
+120f7b98:	9303      	str	r3, [sp, #12]
+120f7b9a:	f7fd fee5 	bl	120f5968 <co_list_pop_front>
+120f7b9e:	8a2b      	ldrh	r3, [r5, #16]
+120f7ba0:	f5b4 6f00 	cmp.w	r4, #2048	@ 0x800
+120f7ba4:	f103 33ff 	add.w	r3, r3, #4294967295
+120f7ba8:	822b      	strh	r3, [r5, #16]
+120f7baa:	f04f 0301 	mov.w	r3, #1
+120f7bae:	4606      	mov	r6, r0
+120f7bb0:	7403      	strb	r3, [r0, #16]
+120f7bb2:	d958      	bls.n	120f7c66 <aicwf_sdio_rx_task+0x47e>
+120f7bb4:	f104 0020 	add.w	r0, r4, #32
+120f7bb8:	f731 f938 	bl	12028e2c <aicwf_rtos_malloc>
+120f7bbc:	2800      	cmp	r0, #0
+120f7bbe:	d144      	bne.n	120f7c4a <aicwf_sdio_rx_task+0x462>
+120f7bc0:	2102      	movs	r1, #2
+120f7bc2:	2004      	movs	r0, #4
+120f7bc4:	f730 f826 	bl	12027c14 <platform_test_module_severity>
+120f7bc8:	b118      	cbz	r0, 120f7bd2 <aicwf_sdio_rx_task+0x3ea>
+120f7bca:	4621      	mov	r1, r4
+120f7bcc:	4860      	ldr	r0, [pc, #384]	@ (120f7d50 <aicwf_sdio_rx_task+0x568>)
+120f7bce:	f730 f807 	bl	12027be0 <aicwf_log_printf>
+120f7bd2:	2300      	movs	r3, #0
+120f7bd4:	e9c6 3302 	strd	r3, r3, [r6, #8]
+120f7bd8:	8a6b      	ldrh	r3, [r5, #18]
+120f7bda:	3301      	adds	r3, #1
+120f7bdc:	b29b      	uxth	r3, r3
+120f7bde:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+120f7be2:	826b      	strh	r3, [r5, #18]
+120f7be4:	d93c      	bls.n	120f7c60 <aicwf_sdio_rx_task+0x478>
+120f7be6:	2301      	movs	r3, #1
+120f7be8:	82eb      	strh	r3, [r5, #22]
+120f7bea:	68a8      	ldr	r0, [r5, #8]
+120f7bec:	f731 fca0 	bl	12029530 <aicwf_rtos_mutex_unlock>
+120f7bf0:	68b3      	ldr	r3, [r6, #8]
+120f7bf2:	2b00      	cmp	r3, #0
+120f7bf4:	d060      	beq.n	120f7cb8 <aicwf_sdio_rx_task+0x4d0>
+120f7bf6:	69af      	ldr	r7, [r5, #24]
+120f7bf8:	b907      	cbnz	r7, 120f7bfc <aicwf_sdio_rx_task+0x414>
+120f7bfa:	68b7      	ldr	r7, [r6, #8]
+120f7bfc:	4621      	mov	r1, r4
+120f7bfe:	2201      	movs	r2, #1
+120f7c00:	4638      	mov	r0, r7
+120f7c02:	f7ff f879 	bl	120f6cf8 <aicwf_sdio_recv_pkt>
+120f7c06:	4604      	mov	r4, r0
+120f7c08:	2800      	cmp	r0, #0
+120f7c0a:	d063      	beq.n	120f7cd4 <aicwf_sdio_rx_task+0x4ec>
+120f7c0c:	2102      	movs	r1, #2
+120f7c0e:	2004      	movs	r0, #4
+120f7c10:	f730 f800 	bl	12027c14 <platform_test_module_severity>
+120f7c14:	b118      	cbz	r0, 120f7c1e <aicwf_sdio_rx_task+0x436>
+120f7c16:	4621      	mov	r1, r4
+120f7c18:	484e      	ldr	r0, [pc, #312]	@ (120f7d54 <aicwf_sdio_rx_task+0x56c>)
+120f7c1a:	f72f ffe1 	bl	12027be0 <aicwf_log_printf>
+120f7c1e:	b116      	cbz	r6, 120f7c26 <aicwf_sdio_rx_task+0x43e>
+120f7c20:	4630      	mov	r0, r6
+120f7c22:	f7ff f9b5 	bl	120f6f90 <aicwf_sdio_buf_free>
+120f7c26:	69ab      	ldr	r3, [r5, #24]
+120f7c28:	2b00      	cmp	r3, #0
+120f7c2a:	f43f af09 	beq.w	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7c2e:	f04f 31ff 	mov.w	r1, #4294967295
+120f7c32:	68a8      	ldr	r0, [r5, #8]
+120f7c34:	f731 fc60 	bl	120294f8 <aicwf_rtos_mutex_lock>
+120f7c38:	2300      	movs	r3, #0
+120f7c3a:	4638      	mov	r0, r7
+120f7c3c:	61ab      	str	r3, [r5, #24]
+120f7c3e:	f731 f953 	bl	12028ee8 <aicwf_rtos_free>
+120f7c42:	68a8      	ldr	r0, [r5, #8]
+120f7c44:	f731 fc74 	bl	12029530 <aicwf_rtos_mutex_unlock>
+120f7c48:	e6fa      	b.n	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7c4a:	f100 031f 	add.w	r3, r0, #31
+120f7c4e:	f023 031f 	bic.w	r3, r3, #31
+120f7c52:	60b3      	str	r3, [r6, #8]
+120f7c54:	b2a2      	uxth	r2, r4
+120f7c56:	1a1b      	subs	r3, r3, r0
+120f7c58:	81b2      	strh	r2, [r6, #12]
+120f7c5a:	81f3      	strh	r3, [r6, #14]
+120f7c5c:	826f      	strh	r7, [r5, #18]
+120f7c5e:	61af      	str	r7, [r5, #24]
+120f7c60:	2300      	movs	r3, #0
+120f7c62:	82ab      	strh	r3, [r5, #20]
+120f7c64:	e7c1      	b.n	120f7bea <aicwf_sdio_rx_task+0x402>
+120f7c66:	6843      	ldr	r3, [r0, #4]
+120f7c68:	81c7      	strh	r7, [r0, #14]
+120f7c6a:	6083      	str	r3, [r0, #8]
+120f7c6c:	b2a3      	uxth	r3, r4
+120f7c6e:	8183      	strh	r3, [r0, #12]
+120f7c70:	e7f6      	b.n	120f7c60 <aicwf_sdio_rx_task+0x478>
+120f7c72:	8aab      	ldrh	r3, [r5, #20]
+120f7c74:	3301      	adds	r3, #1
+120f7c76:	b29b      	uxth	r3, r3
+120f7c78:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+120f7c7c:	82ab      	strh	r3, [r5, #20]
+120f7c7e:	d903      	bls.n	120f7c88 <aicwf_sdio_rx_task+0x4a0>
+120f7c80:	f44f 1300 	mov.w	r3, #2097152	@ 0x200000
+120f7c84:	616b      	str	r3, [r5, #20]
+120f7c86:	e74c      	b.n	120f7b22 <aicwf_sdio_rx_task+0x33a>
+120f7c88:	2b64      	cmp	r3, #100	@ 0x64
+120f7c8a:	f67f af4a 	bls.w	120f7b22 <aicwf_sdio_rx_task+0x33a>
+120f7c8e:	f104 0020 	add.w	r0, r4, #32
+120f7c92:	f731 f8cb 	bl	12028e2c <aicwf_rtos_malloc>
+120f7c96:	2104      	movs	r1, #4
+120f7c98:	61a8      	str	r0, [r5, #24]
+120f7c9a:	4608      	mov	r0, r1
+120f7c9c:	f72f ffba 	bl	12027c14 <platform_test_module_severity>
+120f7ca0:	2800      	cmp	r0, #0
+120f7ca2:	f43f af3e 	beq.w	120f7b22 <aicwf_sdio_rx_task+0x33a>
+120f7ca6:	4621      	mov	r1, r4
+120f7ca8:	482b      	ldr	r0, [pc, #172]	@ (120f7d58 <aicwf_sdio_rx_task+0x570>)
+120f7caa:	f72f ff99 	bl	12027be0 <aicwf_log_printf>
+120f7cae:	e738      	b.n	120f7b22 <aicwf_sdio_rx_task+0x33a>
+120f7cb0:	2003      	movs	r0, #3
+120f7cb2:	f731 f8b3 	bl	12028e1c <aicwf_rtos_msleep>
+120f7cb6:	e721      	b.n	120f7afc <aicwf_sdio_rx_task+0x314>
+120f7cb8:	2104      	movs	r1, #4
+120f7cba:	4608      	mov	r0, r1
+120f7cbc:	f72f ffaa 	bl	12027c14 <platform_test_module_severity>
+120f7cc0:	b120      	cbz	r0, 120f7ccc <aicwf_sdio_rx_task+0x4e4>
+120f7cc2:	4622      	mov	r2, r4
+120f7cc4:	4631      	mov	r1, r6
+120f7cc6:	4825      	ldr	r0, [pc, #148]	@ (120f7d5c <aicwf_sdio_rx_task+0x574>)
+120f7cc8:	f72f ff8a 	bl	12027be0 <aicwf_log_printf>
+120f7ccc:	4630      	mov	r0, r6
+120f7cce:	f7ff f95f 	bl	120f6f90 <aicwf_sdio_buf_free>
+120f7cd2:	e72e      	b.n	120f7b32 <aicwf_sdio_rx_task+0x34a>
+120f7cd4:	69ac      	ldr	r4, [r5, #24]
+120f7cd6:	b18c      	cbz	r4, 120f7cfc <aicwf_sdio_rx_task+0x514>
+120f7cd8:	2104      	movs	r1, #4
+120f7cda:	4608      	mov	r0, r1
+120f7cdc:	f72f ff9a 	bl	12027c14 <platform_test_module_severity>
+120f7ce0:	b110      	cbz	r0, 120f7ce8 <aicwf_sdio_rx_task+0x500>
+120f7ce2:	481f      	ldr	r0, [pc, #124]	@ (120f7d60 <aicwf_sdio_rx_task+0x578>)
+120f7ce4:	f72f ff7c 	bl	12027be0 <aicwf_log_printf>
+120f7ce8:	b116      	cbz	r6, 120f7cf0 <aicwf_sdio_rx_task+0x508>
+120f7cea:	4630      	mov	r0, r6
+120f7cec:	f7ff f950 	bl	120f6f90 <aicwf_sdio_buf_free>
+120f7cf0:	4638      	mov	r0, r7
+120f7cf2:	f731 f8f9 	bl	12028ee8 <aicwf_rtos_free>
+120f7cf6:	2300      	movs	r3, #0
+120f7cf8:	61ab      	str	r3, [r5, #24]
+120f7cfa:	e6a1      	b.n	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7cfc:	f7ff fd62 	bl	120f77c4 <aicwf_sdio_rxcnt_increase>
+120f7d00:	4630      	mov	r0, r6
+120f7d02:	f004 fe13 	bl	120fc92c <fhost_rxframe_enqueue>
+120f7d06:	4b17      	ldr	r3, [pc, #92]	@ (120f7d64 <aicwf_sdio_rx_task+0x57c>)
+120f7d08:	4621      	mov	r1, r4
+120f7d0a:	6b58      	ldr	r0, [r3, #52]	@ 0x34
+120f7d0c:	f731 fb1c 	bl	12029348 <aicwf_rtos_semaphore_signal>
+120f7d10:	e696      	b.n	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7d12:	f1b8 0f00 	cmp.w	r8, #0
+120f7d16:	f47f ae93 	bne.w	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7d1a:	2102      	movs	r1, #2
+120f7d1c:	2004      	movs	r0, #4
+120f7d1e:	f72f ff79 	bl	12027c14 <platform_test_module_severity>
+120f7d22:	2800      	cmp	r0, #0
+120f7d24:	f43f ae8c 	beq.w	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7d28:	462a      	mov	r2, r5
+120f7d2a:	f89d 1016 	ldrb.w	r1, [sp, #22]
+120f7d2e:	480e      	ldr	r0, [pc, #56]	@ (120f7d68 <aicwf_sdio_rx_task+0x580>)
+120f7d30:	f72f ff56 	bl	12027be0 <aicwf_log_printf>
+120f7d34:	e684      	b.n	120f7a40 <aicwf_sdio_rx_task+0x258>
+120f7d36:	bf00      	nop
+120f7d38:	20023de8 	.word	0x20023de8
+120f7d3c:	1219275e 	.word	0x1219275e
+120f7d40:	20023dfc 	.word	0x20023dfc
+120f7d44:	121927ce 	.word	0x121927ce
+120f7d48:	20010998 	.word	0x20010998
+120f7d4c:	2000e306 	.word	0x2000e306
+120f7d50:	1219277a 	.word	0x1219277a
+120f7d54:	12192816 	.word	0x12192816
+120f7d58:	121927a5 	.word	0x121927a5
+120f7d5c:	121927e7 	.word	0x121927e7
+120f7d60:	12192832 	.word	0x12192832
+120f7d64:	20025554 	.word	0x20025554
+120f7d68:	1219284b 	.word	0x1219284b

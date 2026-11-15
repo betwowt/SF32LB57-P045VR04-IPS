@@ -59,7 +59,8 @@ void BSP_PIN_Init(void)
     HAL_PIN_Set(PAD_PA00, SD2_DIO2, PIN_PULLUP, 1);
     HAL_PIN_Set(PAD_PA01, SD2_DIO3, PIN_PULLUP, 1);
 
-#ifdef RT_USING_WIFI
+    /* Drive strength matters for SDIO2; the base board applies it under
+     * RT_USING_WIFI, this port runs the driver in route 1 so drop that guard. */
     HAL_PIN_Set_DS0(PAD_PA00, 1, 1);
     HAL_PIN_Set_DS1(PAD_PA00, 1, 0);
 
@@ -77,7 +78,6 @@ void BSP_PIN_Init(void)
 
     HAL_PIN_Set_DS0(PAD_PA05, 1, 1);
     HAL_PIN_Set_DS1(PAD_PA05, 1, 0);
-#endif
 
 #endif /* BSP_USING_SDMMC2 */
 

@@ -1,0 +1,42 @@
+{
+  "test": "stress-11",
+  "XZ_TX_STRESS": 1,
+  "files": {
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\project\\build_sf32lb57-p045vr04_hcpu\\bootloader\\bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM1.bin": {
+      "bytes": 2593908,
+      "sha256": "d1bc90954cc5f26ee346889c1cc02e5c9a75030591071ed0737064e2851df8bd"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "434f6696588123329adc8518709f798d0f67bf1eeba6a12541060f9782ec8a23"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM3.bin": {
+      "bytes": 43,
+      "sha256": "5a1a7821164840826eef3c128f695a21b4fb0c58772ad28ef16d96b46b9ce289"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\project\\build_sf32lb57-p045vr04_hcpu\\ftab\\ftab.bin": {
+      "bytes": 11288,
+      "sha256": "d5ac98b0371b4d41fb5bbff5b78585a48e2e538e8342192ce5d63b86e5fcf305"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\src\\xiaozhi\\xiaozhi_audio.c": {
+      "bytes": 42122,
+      "sha256": "79d20143736898508296c04d3087a7009e6d8da278bec9c93a0b31d9696b68fb"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SF32LB57-P045VR04-IPS\\app\\src\\xiaozhi\\xiaozhi_websocket.c": {
+      "bytes": 33068,
+      "sha256": "744c3917d3eba5d96d14228e4ad5c1ea74fbe66db14d97ea8cf247d3b1493ecf"
+    },
+    "C:\\Users\\betwowt\\Documents\\project\\SiFli-SDK\\customer\\peripherals\\wifi\\aic8800d40-n\\platform\\hal\\sdio_port.c": {
+      "bytes": 58480,
+      "sha256": "8a5ddb3ffccdc1daea14dafd2b4ed1a6aefbe93b9609a880809705865ec6df3f"
+    },
+    "verification\\tcp-window\\stress_pcm.h": {
+      "bytes": 466757,
+      "sha256": "843f4ee377dfc363aa48c7033f331b8eab4e0199cbce35d4d2fc5c729b9e8441"
+    }
+  }
+}

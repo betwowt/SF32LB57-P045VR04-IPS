@@ -1,0 +1,27 @@
+{
+  "XZ_TX_STRESS": 0,
+  "PYTHONHASHSEED": "0",
+  "files": {
+    "app\\project\\build_sf32lb57-p045vr04_hcpu\\bootloader\\bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM1.bin": {
+      "bytes": 2405812,
+      "sha256": "4719ed072b6c04a50899417063131ac7873fa7eff078e51bf27ae4da678d0391"
+    },
+    "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "434f6696588123329adc8518709f798d0f67bf1eeba6a12541060f9782ec8a23"
+    },
+    "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM3.bin": {
+      "bytes": 43,
+      "sha256": "5a1a7821164840826eef3c128f695a21b4fb0c58772ad28ef16d96b46b9ce289"
+    },
+    "app\\project\\build_sf32lb57-p045vr04_hcpu\\ftab\\ftab.bin": {
+      "bytes": 11288,
+      "sha256": "5649a41264ec919c2ba3d2563ea4c768385337c124c19ecf003a40fc15ac887f"
+    }
+  },
+  "noop_build_identical": true
+}

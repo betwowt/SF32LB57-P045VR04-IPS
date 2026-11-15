@@ -1,0 +1,12 @@
+{
+  "stress_test_passed": true,
+  "stress_seconds": 140.076,
+  "stress_frames_at_least": 2300,
+  "XZ_TX_STRESS": 0,
+  "production_flashed": true,
+  "all_5_images_independently_readback_identical": true,
+  "production_boot_seconds": 60.228,
+  "production_connected": true,
+  "production_audio_initialized": true,
+  "serial_capture_finished": true
+}

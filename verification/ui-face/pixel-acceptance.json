@@ -1,0 +1,545 @@
+{
+  "face_color": [
+    255,
+    201,
+    74
+  ],
+  "interior_centre": [
+    240,
+    320
+  ],
+  "interior_radius": 170,
+  "excluded_boxes": [
+    [
+      140,
+      276,
+      208,
+      358
+    ],
+    [
+      276,
+      276,
+      344,
+      358
+    ],
+    [
+      112,
+      360,
+      178,
+      410
+    ],
+    [
+      302,
+      360,
+      368,
+      410
+    ],
+    [
+      186,
+      380,
+      294,
+      464
+    ]
+  ],
+  "channel_tolerance": 24,
+  "results": [
+    {
+      "name": "fb-before",
+      "tested_pixels": 63961,
+      "bad_pixels": 26311,
+      "centre": [
+        0,
+        0,
+        0
+      ],
+      "centre_pass": false,
+      "edge_samples": [
+        {
+          "degrees": 0,
+          "radius": 189.975,
+          "error": 0.025
+        },
+        {
+          "degrees": 10,
+          "radius": 184.275,
+          "error": 5.725
+        },
+        {
+          "degrees": 20,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 30,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 40,
+          "radius": 189.275,
+          "error": 0.725
+        },
+        {
+          "degrees": 50,
+          "radius": 189.275,
+          "error": 0.725
+        },
+        {
+          "degrees": 60,
+          "radius": 185.925,
+          "error": 4.075
+        },
+        {
+          "degrees": 70,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 80,
+          "radius": 187.875,
+          "error": 2.125
+        },
+        {
+          "degrees": 90,
+          "radius": 185.975,
+          "error": 4.025
+        },
+        {
+          "degrees": 100,
+          "radius": 187.875,
+          "error": 2.125
+        },
+        {
+          "degrees": 110,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 120,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 130,
+          "radius": 189.275,
+          "error": 0.725
+        },
+        {
+          "degrees": 140,
+          "radius": 186.675,
+          "error": 3.325
+        },
+        {
+          "degrees": 150,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 160,
+          "radius": 187.275,
+          "error": 2.725
+        },
+        {
+          "degrees": 170,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 180,
+          "radius": null,
+          "error": null
+        },
+        {
+          "degrees": 190,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 200,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 210,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 220,
+          "radius": 188.225,
+          "error": 1.775
+        },
+        {
+          "degrees": 230,
+          "radius": 187.975,
+          "error": 2.025
+        },
+        {
+          "degrees": 240,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 250,
+          "radius": 187.275,
+          "error": 2.725
+        },
+        {
+          "degrees": 260,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 270,
+          "radius": 186.975,
+          "error": 3.025
+        },
+        {
+          "degrees": 280,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 290,
+          "radius": 188.375,
+          "error": 1.625
+        },
+        {
+          "degrees": 300,
+          "radius": 188.225,
+          "error": 1.775
+        },
+        {
+          "degrees": 310,
+          "radius": 189.275,
+          "error": 0.725
+        },
+        {
+          "degrees": 320,
+          "radius": 189.275,
+          "error": 0.725
+        },
+        {
+          "degrees": 330,
+          "radius": 185.975,
+          "error": 4.025
+        },
+        {
+          "degrees": 340,
+          "radius": 187.275,
+          "error": 2.725
+        },
+        {
+          "degrees": 350,
+          "radius": 189.875,
+          "error": 0.125
+        }
+      ],
+      "edge_pass": false,
+      "max_radius_error": 5.725,
+      "glow": [
+        {
+          "radius": 196,
+          "tested": 7388,
+          "bad_pixels": 1917
+        },
+        {
+          "radius": 208,
+          "tested": 7896,
+          "bad_pixels": 1581
+        },
+        {
+          "radius": 220,
+          "tested": 8316,
+          "bad_pixels": 1305
+        }
+      ],
+      "feature_cores": [
+        {
+          "name": "left_eye",
+          "tested": 1048,
+          "bad_pixels": 645
+        },
+        {
+          "name": "right_eye",
+          "tested": 1048,
+          "bad_pixels": 788
+        },
+        {
+          "name": "left_cheek",
+          "tested": 456,
+          "bad_pixels": 406
+        },
+        {
+          "name": "right_cheek",
+          "tested": 456,
+          "bad_pixels": 375
+        }
+      ],
+      "mouth": {
+        "bbox": [
+          192,
+          388,
+          287,
+          427
+        ],
+        "width": 96,
+        "height": 40,
+        "fill_ratio": 0.5193,
+        "top_tenth_width": 24,
+        "centre_y": 407.31,
+        "ellipse_pass": false
+      },
+      "face_pass": false
+    },
+    {
+      "name": "fb-after",
+      "tested_pixels": 63961,
+      "bad_pixels": 0,
+      "centre": [
+        255,
+        203,
+        74
+      ],
+      "centre_pass": true,
+      "edge_samples": [
+        {
+          "degrees": 0,
+          "radius": 189.975,
+          "error": 0.025
+        },
+        {
+          "degrees": 10,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 20,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 30,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 40,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 50,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 60,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 70,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 80,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 90,
+          "radius": 189.975,
+          "error": 0.025
+        },
+        {
+          "degrees": 100,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 110,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 120,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 130,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 140,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 150,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 160,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 170,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 180,
+          "radius": 189.975,
+          "error": 0.025
+        },
+        {
+          "degrees": 190,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 200,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 210,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 220,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 230,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 240,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 250,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 260,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 270,
+          "radius": 189.975,
+          "error": 0.025
+        },
+        {
+          "degrees": 280,
+          "radius": 189.875,
+          "error": 0.125
+        },
+        {
+          "degrees": 290,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 300,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 310,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 320,
+          "radius": 189.775,
+          "error": 0.225
+        },
+        {
+          "degrees": 330,
+          "radius": 189.375,
+          "error": 0.625
+        },
+        {
+          "degrees": 340,
+          "radius": 189.425,
+          "error": 0.575
+        },
+        {
+          "degrees": 350,
+          "radius": 189.875,
+          "error": 0.125
+        }
+      ],
+      "edge_pass": true,
+      "max_radius_error": 0.625,
+      "glow": [
+        {
+          "radius": 196,
+          "tested": 7388,
+          "bad_pixels": 0
+        },
+        {
+          "radius": 208,
+          "tested": 7896,
+          "bad_pixels": 0
+        },
+        {
+          "radius": 220,
+          "tested": 8316,
+          "bad_pixels": 0
+        }
+      ],
+      "feature_cores": [
+        {
+          "name": "left_eye",
+          "tested": 1048,
+          "bad_pixels": 0
+        },
+        {
+          "name": "right_eye",
+          "tested": 1048,
+          "bad_pixels": 0
+        },
+        {
+          "name": "left_cheek",
+          "tested": 456,
+          "bad_pixels": 0
+        },
+        {
+          "name": "right_cheek",
+          "tested": 456,
+          "bad_pixels": 0
+        }
+      ],
+      "mouth": {
+        "bbox": [
+          198,
+          398,
+          280,
+          453
+        ],
+        "width": 83,
+        "height": 56,
+        "fill_ratio": 0.7629,
+        "top_tenth_width": 47,
+        "centre_y": 425.5,
+        "ellipse_pass": true
+      },
+      "face_pass": true
+    }
+  ]
+}

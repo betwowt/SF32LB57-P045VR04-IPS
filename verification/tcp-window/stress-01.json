@@ -1,0 +1,140 @@
+{
+  "duration_seconds": 140.384,
+  "bytes": 44239,
+  "counts": {
+    "sdio buf alloc fail": 0,
+    "[rtos]malloc fail": 0,
+    "node->buf is null": 0,
+    "WS_TX_STALL": 26,
+    "ws lost": 1,
+    "ws on_connect": 2,
+    "listen start": 2,
+    "ws tx backpressure": 1,
+    "ws tx sent": 29,
+    "fatal error": 0,
+    "Assertion failed": 0
+  },
+  "successful_tx_progress": [
+    {
+      "seconds": 19.026,
+      "sent": 50
+    },
+    {
+      "seconds": 22.515,
+      "sent": 100
+    },
+    {
+      "seconds": 25.712,
+      "sent": 150
+    },
+    {
+      "seconds": 28.903,
+      "sent": 200
+    },
+    {
+      "seconds": 32.229,
+      "sent": 250
+    },
+    {
+      "seconds": 35.701,
+      "sent": 300
+    },
+    {
+      "seconds": 38.809,
+      "sent": 350
+    },
+    {
+      "seconds": 42.127,
+      "sent": 400
+    },
+    {
+      "seconds": 45.356,
+      "sent": 450
+    },
+    {
+      "seconds": 48.58,
+      "sent": 500
+    },
+    {
+      "seconds": 51.732,
+      "sent": 550
+    },
+    {
+      "seconds": 55.151,
+      "sent": 600
+    },
+    {
+      "seconds": 58.49,
+      "sent": 650
+    },
+    {
+      "seconds": 61.692,
+      "sent": 700
+    },
+    {
+      "seconds": 65.002,
+      "sent": 750
+    },
+    {
+      "seconds": 68.44,
+      "sent": 800
+    },
+    {
+      "seconds": 71.642,
+      "sent": 850
+    },
+    {
+      "seconds": 74.883,
+      "sent": 900
+    },
+    {
+      "seconds": 78.092,
+      "sent": 950
+    },
+    {
+      "seconds": 81.146,
+      "sent": 1000
+    },
+    {
+      "seconds": 84.014,
+      "sent": 1050
+    },
+    {
+      "seconds": 86.167,
+      "sent": 1100
+    },
+    {
+      "seconds": 91.798,
+      "sent": 1150
+    },
+    {
+      "seconds": 95.077,
+      "sent": 1200
+    },
+    {
+      "seconds": 98.399,
+      "sent": 1250
+    },
+    {
+      "seconds": 101.8,
+      "sent": 1300
+    },
+    {
+      "seconds": 105.079,
+      "sent": 1350
+    },
+    {
+      "seconds": 108.517,
+      "sent": 1400
+    },
+    {
+      "seconds": 111.68,
+      "sent": 1450
+    }
+  ],
+  "heap": [
+    "total memory: 262780 used memory : 220244 maximum allocated memory: 226236\r",
+    "total memory: 262780 used memory : 220056 maximum allocated memory: 226236\r",
+    "total memory: 262780 used memory : 231492 maximum allocated memory: 231992\r"
+  ]
+}

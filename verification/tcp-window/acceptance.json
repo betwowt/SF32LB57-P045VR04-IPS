@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "duration_seconds": 140.076,
+  "connections": 1,
+  "successful_frames_at_least": 2300,
+  "successful_progress_span_seconds": 135.063,
+  "stt_messages": 22,
+  "tts_messages": 66,
+  "counts": {
+    "sdio buf alloc fail": 0,
+    "[rtos]malloc fail": 0,
+    "node->buf is null": 0,
+    "WS_TX_STALL": 0,
+    "ws lost": 0,
+    "ws on_connect": 1,
+    "listen start": 1,
+    "ws tx backpressure": 0,
+    "ws tx sent": 46,
+    "fatal error": 0,
+    "Assertion failed": 0,
+    "received CLOSE": 0,
+    "node is null": 0
+  }
+}

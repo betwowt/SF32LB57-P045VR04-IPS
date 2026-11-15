@@ -1,0 +1,36 @@
+import os
+from building import *
+
+Import('SIFLI_SDK')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd, os.path.join(cwd, 'kws')]
+
+# AIC8800 port-internal headers (SoftAP control used by xz_provision.c)
+aic = os.path.join(SIFLI_SDK, 'customer', 'peripherals', 'wifi', 'aic8800d40-n')
+if os.path.isdir(aic):
+    CPPPATH += [
+        os.path.join(aic, 'platform', 'wifi'),
+        os.path.join(aic, 'platform', 'uapapi', 'inc'),
+        os.path.join(aic, 'platform', 'rtos'),
+        os.path.join(aic, 'platform', 'netif'),
+        os.path.join(aic, 'port', 'inc'),
+        os.path.join(aic, 'include', 'drv_api', 'inc'),
+        os.path.join(aic, 'lib', 'include', 'drv_api', 'inc'),
+    ]
+libpath = [os.path.join(cwd, 'kws')]
+
+CPPDEFINES = ['_LIBCPP_HAS_THREAD_API_EXTERNAL', 'MBEDTLS_PLATFORM_MEMORY']
+CPPDEFINES += ['PKG_XIAOZHI_USING_AEC', 'ALLOW_VAD_WHEN_SPEAKING']
+
+src = Glob('*.c')
+src += Glob('./mcp/*.cc')
+src += Glob('./iot/*.cc')
+src += Glob('./kws/*.c')
+src += Glob('./weather/*.c')
+
+group = DefineGroup('Applications', src, depend=[''],
+                    CPPDEFINES=CPPDEFINES, CPPPATH=CPPPATH,
+                    LIBS=['libetasr_watch_sifli567'], LIBPATH=libpath)
+
+Return('group')

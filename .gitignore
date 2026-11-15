@@ -33,3 +33,11 @@ PY32F0xx_Firmware_V1.5.0/
 *.uvguix.*
 .DS_Store
 Thumbs.db
+
+# ---------- local debug captures / scratch prompts ----------
+/*.log
+/*.txt
+/*.png
+/*.pdf
+/.codex-*.md
+verification/**/*.log

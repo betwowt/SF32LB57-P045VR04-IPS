@@ -1,0 +1,24 @@
+{
+  "duration_seconds": 60.228,
+  "startup_wait_seconds": 21.92,
+  "bytes": 39277,
+  "counts": {
+    "sdio buf alloc fail": 0,
+    "[rtos]malloc fail": 0,
+    "node->buf is null": 0,
+    "WS_TX_STALL": 0,
+    "ws lost": 0,
+    "ws on_connect": 1,
+    "listen start": 1,
+    "ws tx backpressure": 0,
+    "ws tx sent": 0,
+    "fatal error": 0,
+    "Assertion failed": 0,
+    "received CLOSE": 0,
+    "node is null": 0
+  },
+  "successful_tx_progress": [],
+  "heap": [
+    "total memory: 262780 used memory : 219988 maximum allocated memory: 226556\r"
+  ]
+}

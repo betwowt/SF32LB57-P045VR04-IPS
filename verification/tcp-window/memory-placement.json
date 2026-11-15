@@ -1,0 +1,26 @@
+{
+  "psram_bytes": 31244,
+  "sections": {
+    "xz_vad_rb": {
+      "address": "0x6010a800",
+      "bytes": 3840
+    },
+    "xz_encode_rb": {
+      "address": "0x6010b700",
+      "bytes": 7680
+    },
+    "xz_audio_state": {
+      "address": "0x6010d500",
+      "bytes": 8460
+    },
+    "xz_tx_stack": {
+      "address": "0x6010f60c",
+      "bytes": 3072
+    },
+    "xz_tx_rb": {
+      "address": "0x6011020c",
+      "bytes": 8192
+    }
+  },
+  "boot_guard_sram_address": "0x20019f2c"
+}

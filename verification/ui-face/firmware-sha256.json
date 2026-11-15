@@ -1,0 +1,9 @@
+{
+  "app/src/xiaozhi/xiaozhi_ui.c": "05fd860f01c5aeefe41454ec9553bd607d8f0d1f73de50a874225dd9ca5af19d",
+  "app/src/main.c": "1b754bb93f8abd4310aff801ee1cc16b5e256955374f69896ea9a85d465e75e1",
+  "app/src/xiaozhi/xiaozhi_audio.c": "c9b92d65790a8dfaa8761c633a0627225e588b6ba6de3b1e8ccf1e4247dfbefd",
+  "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": "3fc7e7c72df4116865f5ba65e14a28936124cd30e26812511ae0348d3a7fdeaa",
+  "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM1.bin": "13365c9c18562b24406cf7be0d88232dbc4dffe014cf58c1cad1cebc424192da",
+  "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM2.bin": "434f6696588123329adc8518709f798d0f67bf1eeba6a12541060f9782ec8a23",
+  "app\\project\\build_sf32lb57-p045vr04_hcpu\\main.bin\\ER_IROM3.bin": "5a1a7821164840826eef3c128f695a21b4fb0c58772ad28ef16d96b46b9ce289"
+}

@@ -24,6 +24,15 @@ TARGET = rtconfig.OUTPUT_DIR + rtconfig.TARGET_NAME + '.' + rtconfig.TARGET_EXT
 # Prepare building environment
 objs = PrepareBuilding(None)
 env = GetCurrentEnv()
+
+# The xiaozhi UI draws vector/text only. Dropping the EPIC JPEG decoder also
+# drops the ~31 KB internal-SRAM work buffer drv_gpu_open() reserves for it,
+# which this board's internal heap cannot spare.
+#
+# FRAME_BUFFER_IN_PSRAM moves the LVGL draw buffer (LV_FB_LINE_NUM rows) out of
+# internal SRAM as well: the AIC8800 SDIO driver and the DPI line buffers both
+# need that SRAM, and PSRAM is fine for a CPU-rendered strip.
+env.Append(CPPDEFINES=['HAL_JPEGD_MODULE_DISABLE', 'FRAME_BUFFER_IN_PSRAM'])
 # Build application.
 DoBuilding(TARGET, objs)
 

@@ -9,7 +9,33 @@ list = os.listdir(cwd)
 Import('SIFLI_SDK')
 objs.extend(SConscript(os.path.join(SIFLI_SDK, 'SConscript'), variant_dir="sifli_sdk", duplicate=0))
 
-# Add application source code
+# Add application source code, LVGL font and ezip assets
 objs.extend(SConscript(cwd+'/../src/SConscript', variant_dir="src", duplicate=0))
+objs.extend(SConscript(cwd+'/../font/SConscript', variant_dir="font", duplicate=0))
+
+# Keep the SDK untouched. Only the software MP3 controller, decoder buffers,
+# and resampler use the dedicated static PSRAM heap (never DMA buffers).
+import building
+music_audio_sources = []
+music_server_sources = []
+music_controller_sources = []
+for group in building.Projects:
+    selected = [s for s in group['src'] if os.path.basename(str(s)) in
+                ('buffers.c', 'sifli_resample.c')]
+    music_audio_sources.extend(selected)
+    controller_selected = [s for s in group['src'] if os.path.basename(str(s)) == 'audio_mp3ctrl.c']
+    music_controller_sources.extend(controller_selected)
+    server_selected = [s for s in group['src'] if os.path.basename(str(s)) == 'audio_server.c']
+    music_server_sources.extend(server_selected)
+    group['src'] = [s for s in group['src'] if s not in selected + server_selected + controller_selected]
+allocator_header = os.path.join(cwd, '../src/xiaozhi/xiaozhi_music_alloc.h').replace('\\', '/')
+DefineGroup('Music_psram_audio', music_audio_sources, depend=[''],
+            LOCAL_CCFLAGS=' -DARM -include "' + allocator_header + '"')
+controller_header = os.path.join(cwd, '../src/xiaozhi/xiaozhi_music_mp3_port.h').replace('\\', '/')
+DefineGroup('Music_mp3_port', music_controller_sources, depend=[''],
+            LOCAL_CCFLAGS=' -DARM -include "' + controller_header + '"')
+server_header = os.path.join(cwd, '../src/xiaozhi/xiaozhi_music_server_alloc.h').replace('\\', '/')
+DefineGroup('Music_psram_server', music_server_sources, depend=[''],
+            LOCAL_CCFLAGS=' -include "' + server_header + '"')
 
 Return('objs')

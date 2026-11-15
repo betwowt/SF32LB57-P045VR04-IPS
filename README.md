@@ -30,8 +30,9 @@ SF32LB57-P045VR04-IPS/
 ├─ drivers/panel/p045vr04.c       # ST7701S RGB565 DPI 驱动（不做 SPI 初始化）
 ├─ drivers/touch/ft6236.c         # FT6236 / FT6x36 触摸驱动（12-bit X/Y）
 ├─ app/project/                   # SiFli/RT-Thread 工程（scons 构建入口）
-│  └─ proj.conf                   # RT-Thread / GE demo 选项
-├─ app/src/main.c                 # GE demo 入口（51 特效 / 按键）
+│  └─ proj.conf                   # RT-Thread / Wi-Fi / Opus / LVGL 选项
+├─ app/src/main.c                 # xiaozhi 入口（Wi-Fi 联网 + UI/音频线程）
+├─ app/src/xiaozhi/               # xiaozhi 应用层（WebSocket/MQTT、Opus+3A、LVGL UI）
 ├─ py32f002/P045VR04_Init/        # 适配板上 PY32F002 的 3 线 SPI 初始化固件
 │  ├─ Src/ Inc/                   # ST7701S 初始化表 + 3 线 SPI + READY 握手
 │  └─ MDK-ARM/ EIDE/              # 两套工程（共用同一份 Src/Inc）
@@ -40,6 +41,7 @@ SF32LB57-P045VR04-IPS/
 │  └─ Adapter.* easyeda_convertlib.* docs/ scripts/
 ├─ patches/0001-add-p045vr04-panel.patch
 ├─ patches/0002-lcdc-dpi-linebuf-height.patch
+├─ patches/0003-link-lds-ezip-font-sections.patch
 └─ README.md
 ```
 
@@ -206,6 +208,17 @@ git apply ../SF32LB57-P045VR04-IPS/patches/0001-add-p045vr04-panel.patch
 当前工作区的 `SiFli-SDK` 已经应用该补丁。板级文件和驱动不在 SDK 内，
 构建时通过 `--board_search_path` 引用，升级 SDK 不会覆盖它们。
 
+小智的资源（emoji/天气 ezip 动画约 4.2 MB、DroidSansFallback TTF 约 3.9 MB）
+放不进 7 MB 的应用分区，因此把二者分别链接到 `ROM2`/`ROM3`，再由
+`ptab.json` 烧到独立地址。这需要给 LB57 的链接模板补两行 section 采集规则：
+
+```bash
+cd ../SiFli-SDK
+git apply ../SF32LB57-P045VR04-IPS/patches/0003-link-lds-ezip-font-sections.patch
+```
+
+不打这个补丁时链接会报 `section .ROM3_IMG_EZIP.xxx will not fit in region ROM`。
+
 ### 4.2 激活 SiFli 编译环境
 
 使用 SDK 自带的环境管理器（`uv`）激活 gcc 工具链和 scons：
@@ -255,10 +268,12 @@ Git Bash 中使用（WSL 的 bash 看不到 Windows 的 `.sifli` 环境）。
 
 | 文件 | 说明 |
 |---|---|
-| `main.bin` | 应用镜像（烧到 0x12020000） |
+| `main.bin/ER_IROM1.bin` | 应用镜像（烧到 0x12020000，≤ 0x300000） |
+| `main.bin/ER_IROM2.bin` | emoji/天气 ezip 资源（烧到 0x12320000，≤ 0x440000） |
+| `main.bin/ER_IROM3.bin` | DroidSansFallback TTF（烧到 0x12760000，2 MB 扇区对齐到 0x400000） |
 | `bootloader/bootloader.bin` | bootloader 镜像（烧到 0x12010000） |
 | `ftab/ftab.bin` | 分区表，内含 bootloader/app 的地址与长度（烧到 0x12000000） |
-| `sftool_param.json` | sftool UART 下载参数（地址已按 N16R16 生成） |
+| `sftool_param.json` | sftool UART 下载参数（5 个镜像，地址已按 N16R16 生成） |
 
 编译后的关键配置可在 `build_sf32lb57-p045vr04_hcpu/rtconfig.h` 中确认：
 
@@ -282,7 +297,9 @@ Git Bash 中使用（WSL 的 bash 看不到 Windows 的 `.sifli` 环境）。
 ```bat
 sftool -c SF32LB57 -m nor -p COM8 write_flash --verify ^
     bootloader\bootloader.bin@0x12010000 ^
-    main.bin@0x12020000 ^
+    main.bin\ER_IROM1.bin@0x12020000 ^
+    main.bin\ER_IROM2.bin@0x12320000 ^
+    main.bin\ER_IROM3.bin@0x12760000 ^
     ftab\ftab.bin@0x12000000
 ```
 
@@ -296,7 +313,7 @@ sftool -c SF32LB57 -m nor -p COM8 config sftool_param.json
    控制台在 **UART1 / 1000000 8N1**，即同一个 CH343 口。
 
 > 若 `write_flash` 打印 "verify failed"：先确认 `sftool_param.json` 里的
-> 三个地址是 0x1200_0000 段（N16R16/MPI2），而不是 0x1400_0000（N16R8/MPI3）。
+> 五个地址都在 0x1200_0000 段（N16R16/MPI2），而不是 0x1400_0000（N16R8/MPI3）。
 > 地址错了写入会被静默丢弃，读回全是 0xCC。
 
 独立校验（不经 sftool 的 CRC 逻辑）：
@@ -366,7 +383,7 @@ framebuf 和 128 KB 内存池。
    `board.conf` 的 `CONFIG_LCD_USING_P045VR04_IPS_DPI=y` 换成对应面板
    选项即可；本工程的 `p045vr04` 驱动只适用于 480×854 ST7701S。
 
-## 8. 已验证
+## 8. 已验证（GE demo / 面板链路）
 
 工具链：SiFli SDK `504eb222`、arm-none-eabi-gcc 14.2.1、scons 4.10.1，
 `build.ps1` 在 PowerShell 下端到端通过。
@@ -387,3 +404,104 @@ framebuf 和 128 KB 内存池。
 | 触摸 | `ft6236` 被探测到并注册为 `touch` 设备；点按/拖动均有串口日志，坐标落在手指位置 |
 
 GE demo 已关闭 OSD（不再显示 CPU/FPS/RAM）；触摸驱动仍保留，但当前演示不读取触摸。
+
+## 9. 小智 AI（xiaozhi）移植
+
+协议与业务层来自 [78/xiaozhi-esp32](https://github.com/78/xiaozhi-esp32)，
+网络传输改为 **Wi-Fi**（板载 AIC8800D40LS-N，SDIO2），不再使用上游 LB52 的
+BLE PAN 方案。
+
+### 9.1 外设清单
+
+| 功能 | 本板实现 |
+|---|---|
+| 显示 | DPI RGB565 480×854，P045VR04-IPS（ST7701S），PY32F002 完成 SPI 初始化 |
+| 触摸 | FT6236，I2C1（PA22/PA23，INT PA20） |
+| 音频 | 片内 AUDCODEC + AUDPRC（`CONFIG_BSP_ENABLE_AUD_CODEC/AUD_PRC`），Opus 编解码 + WebRTC 3A |
+| 按键 | PA34 单键，普通 GPIO 上拉有效（对话/唤醒） |
+| 网络 | AIC8800D40N Wi-Fi（`CONFIG_AIC_WLAN_AIC8800D40N`），SDIO2 |
+| IO 扩展 | AW9523B：LCD_RST、CTP_RST、PA_EN、Wi-Fi 电源/唤醒 |
+| 电源 | USB 供电，无充电器；充电检测回调改为固定“在充电”状态 |
+
+无蓝牙协议栈：`bts2_*`/`bt_env.h`/`dfu_pan_ota` 依赖已全部移除，
+`g_pan_connected` 仅作为“网络就绪”标志使用。
+
+### 9.2 代码结构
+
+```
+app/src/main.c                  # 启动 UI 线程 + Wi-Fi 线程；网就绪后注册设备、启动按键
+app/src/xiaozhi/
+├─ xiaozhi_websocket.c/.h       # WebSocket 会话、Opus 收发、重连
+├─ xiaozhi_mqtt.c               # MQTT+UDP 传输（CONFIG_XIAOZHI_USING_MQTT）
+├─ xiaozhi_audio.c              # 采集/播放、AEC/VAD 接入
+├─ xiaozhi_ui.c / _screen.c     # LVGL v9 对话界面、TinyTTF 中文
+├─ xiaozhi_client_public.c      # 设备 ID/激活/OTA 上报
+├─ iot/ mcp/ kws/ weather/      # IoT 描述、MCP、离线唤醒、天气/时间
+└─ board/                       # 板级适配（按键、亮度、功放）
+```
+
+Wi-Fi 凭据在 `app/project/Kconfig.proj` 的 `XZ_WIFI_SSID` / `XZ_WIFI_PASSWORD`
+配置，也可运行时执行 `xz_wifi_join <ssid> [password]`。
+
+### 9.3 构建结果
+
+`build.ps1` 端到端通过（arm-none-eabi-gcc 14.2.1），生成 5 个镜像：
+
+| 镜像 | 大小 | 烧录地址 |
+|---|---|---|
+| `main.bin/ER_IROM1.bin` | 2,287,344 B | 0x12020000 |
+| `main.bin/ER_IROM2.bin`（emoji/天气 ezip） | 4,190,922 B | 0x12320000 |
+| `main.bin/ER_IROM3.bin`（中文 TTF） | 3,939,852 B | 0x12760000 |
+| `bootloader/bootloader.bin` | 40,252 B | 0x12010000 |
+| `ftab/ftab.bin` | 11,288 B | 0x12000000 |
+
+资源与字体的符号地址已用 `nm main.elf` 核对落在各自区间
+（`crying_5_map`→0x12419EC4，`xiaozhi_font`→0x12760000）。
+
+### 9.4 当前状态
+
+- 构建：通过（含 LVGL v9、TinyTTF、mbedTLS、Opus/WebRTC、AIC8800 驱动）。
+- 硬件：屏幕/触摸链路由第 8 节 GE demo 实测过；小智固件的 Wi-Fi 关联、
+  WebSocket 会话与音频回声尚未在本轮实测，烧录后需按串口日志确认
+  `xz: app_wlan_sta_start ret=...`、`session ready` 与麦克风/扬声器电平。
+
+### 9.5 圆脸 UI 的绘制约定
+
+EPIC 的圆角填充与圆角粗线路径在这块屏上会画出缺口、虚线和撕裂边缘，小尺寸
+图形尤其明显。所以 `xiaozhi_ui.c` 把眼睛、腮红、嘴和状态栏图标全部改成
+**CPU 光栅化 → RGB565 纹理 → `lv_image` 平铺**：
+
+| 元素 | 纹理 | 说明 |
+|---|---|---|
+| 背景大圆 + 辉光 | (380+2×36)² | 4 个同心圆一次烘焙 |
+| 眼睛 / 腮红 / 开口嘴 | 56×56 | 同一张 disc 纹理，靠 `LV_IMAGE_ALIGN_STRETCH` 变形 |
+| 闭嘴 smile/frown/flat | 100×40 ×3 | `tex_polyline()`：圆头粗线，4×4 超采样 |
+| 信号 / 电池壳 / 电池填充 | 44×22、60×28、48×20 | `tex_rrect()`：4×4 超采样圆角矩形 |
+
+约束与坑：
+
+- 每种视觉变体各占一张**不可变**纹理，运行时只切 `lv_image_set_src`。
+  LVGL 按 src 指针缓存解码结果，原地改写缓冲区会读到旧像素。
+- `seg_dist2()` 的距离公式里 `t*t` 在 1/8 像素坐标下可达 1e10，**必须用
+  `int64_t`**。用 `long`（Cortex-M33 上是 32 位）会溢出，表现为嘴中间被挖掉
+  十几像素的缺口；长直段（flat）必定出现，弯曲的 smile/frown 反而看不出来。
+- 纹理缓冲区放在 `xz_ui_tex` 段（PSRAM），写完调用 `SCB_CleanDCache_by_Addr`。
+- 验证：串口执行 `xz_face idle|error|listen|speak|...` 固定状态，再用
+  `xz_shot` 导出 LCD 扫描缓冲（480×854 RGB565 hex）或 `xz_snap` 导出 LVGL
+  截图，主机侧按 `偏移:hex XOR` 行格式重建 PNG 比对。
+
+### 9.6 Listening/Thinking 圆环
+
+`lv_arc` 的 EPIC 实现会画成一段段阶梯状虚线，而且每帧 `lv_malloc` 一块掩码
+缓冲（426 px 宽时约 3.4 KB，30 Hz）——在本机只剩约 40 KB 的堆上会加速碎片化。
+所以圆环同样改成软件绘制：
+
+- `backdrop_rgb8()` 把"同心辉光盘"抽成按像素求值的函数，背景大图与圆环共用，
+  保证颜色逐像素一致。
+- `ring_blit()` 直接在 `face_pixels` 里混合/还原 70° 环带（只碰环带约 2.5k 个
+  像素），`ring_update()` 先擦掉上一帧角度再画新角度，`ring_clear()` 在离开
+  Listening/Thinking 时擦净；随后只 `lv_obj_invalidate(backdrop_obj)`。
+- 颜色 `COL_RING` / `COL_RING_THINK` 直接混入，不再依赖 recolor 或 arc 样式。
+
+实测：圆弧平滑、按角度旋转（质心随帧移动）、切走后无残留，动画期间堆不增长、
+无 `malloc fail`。

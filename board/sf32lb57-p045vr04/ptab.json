@@ -6,22 +6,41 @@
         "regions": [
             {
                 "offset": "0x00020000", 
-                "max_size": "0x00700000",
+                "max_size": "0x00300000",
                 "tags": [
                     "HCPU_FLASH_CODE"
                 ], 
-                "name": "main",
+                "name": "main:1",
+                "img": "main:ER_IROM1.bin",
                 "type": ["app_img", "app_exec"]
             },
             {
-                "offset": "0x00720000", 
+                "offset": "0x00320000",
+                "max_size": "0x00440000",
+                "tags": [
+                    "HCPU_FLASH2_IMG"
+                ],
+                "name": "main:2",
+                "img": "main:ER_IROM2.bin"
+            },
+            {
+                "offset": "0x00760000",
+                "max_size": "0x00400000",
+                "tags": [
+                    "HCPU_FLASH2_FONT"
+                ],
+                "name": "main:3",
+                "img": "main:ER_IROM3.bin"
+            },
+            {
+                "offset": "0x00B60000", 
                 "max_size": "0x00040000",
                 "name": "acpu",
                 "core": "acpu",
                 "type": ["app_img", "app_exec"]
             },
             {
-                "offset": "0x00760000",
+                "offset": "0x00BA0000",
                 "max_size": "0x00060000",
                 "name": "dfu",
                 "type": ["app_img", "app_exec"],
@@ -30,29 +49,29 @@
                 ]
             },
             {
-                "offset": "0x007C0000",
+                "offset": "0x00C00000",
                 "max_size": "0x00120000",
                 "tags": [
                     "DFU_DOWNLOAD_REGION"
                 ]
             },
             {
-                "offset": "0x008E0000",
-                "max_size": "0x00400000",
+                "offset": "0x00D20000",
+                "max_size": "0x00240000",
                 "name": "fs_root", 
                 "tags": [
                     "FS_REGION"
                 ]
             }, 
             {
-                "offset": "0x00CE0000", 
+                "offset": "0x00F60000", 
                 "max_size": "0x00004000", 
                 "tags": [
                     "KVDB_DFU_REGION"
                 ]
             }, 
             {
-                "offset": "0x00CE4000", 
+                "offset": "0x00F64000", 
                 "max_size": "0x00004000", 
                 "tags": [
                     "KVDB_BLE_REGION"

@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = []
+if GetDepend(['BSP_USING_BOARD_SF32LB57_P045VR04']):
+    src += Glob('sf32lb57-p045vr04.c')
+
+group = DefineGroup('board', src, depend=[], CPPPATH=[cwd])
+
+Return('group')

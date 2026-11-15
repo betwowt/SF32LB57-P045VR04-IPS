@@ -1,0 +1,20 @@
+diff --git a/drivers/cmsis/sf32lb57x/Templates/gcc/hcpu/link.lds b/drivers/cmsis/sf32lb57x/Templates/gcc/hcpu/link.lds
+--- a/drivers/cmsis/sf32lb57x/Templates/gcc/hcpu/link.lds
++++ b/drivers/cmsis/sf32lb57x/Templates/gcc/hcpu/link.lds
+@@ -614,14 +614,16 @@
+   /* Check if data + heap + stack exceeds RAM limit */
+   /* ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack") */
+ 
+   .rom2 :
+   {
+     *(.ROM1_IMG)
+     *(.ROM3_IMG)
++    *(.ROM3_IMG_EZIP*)
+   } > ROM2
+ 
+   .rom3 :
+   {
++    *(.font_data)
+   } > ROM3
+ #endif
+ }

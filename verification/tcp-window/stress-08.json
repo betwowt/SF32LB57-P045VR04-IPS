@@ -1,0 +1,118 @@
+{
+  "duration_seconds": 140.38,
+  "bytes": 74583,
+  "counts": {
+    "sdio buf alloc fail": 0,
+    "[rtos]malloc fail": 0,
+    "node->buf is null": 0,
+    "WS_TX_STALL": 0,
+    "ws lost": 1,
+    "ws on_connect": 2,
+    "listen start": 2,
+    "ws tx backpressure": 0,
+    "ws tx sent": 23,
+    "fatal error": 0,
+    "Assertion failed": 0,
+    "received CLOSE": 1,
+    "node is null": 2
+  },
+  "successful_tx_progress": [
+    {
+      "seconds": 65.448,
+      "sent": 50
+    },
+    {
+      "seconds": 68.501,
+      "sent": 100
+    },
+    {
+      "seconds": 71.798,
+      "sent": 150
+    },
+    {
+      "seconds": 75.25,
+      "sent": 200
+    },
+    {
+      "seconds": 78.306,
+      "sent": 250
+    },
+    {
+      "seconds": 81.64,
+      "sent": 300
+    },
+    {
+      "seconds": 84.918,
+      "sent": 350
+    },
+    {
+      "seconds": 88.14,
+      "sent": 400
+    },
+    {
+      "seconds": 91.353,
+      "sent": 450
+    },
+    {
+      "seconds": 94.739,
+      "sent": 500
+    },
+    {
+      "seconds": 98.223,
+      "sent": 550
+    },
+    {
+      "seconds": 101.689,
+      "sent": 600
+    },
+    {
+      "seconds": 104.622,
+      "sent": 650
+    },
+    {
+      "seconds": 107.974,
+      "sent": 700
+    },
+    {
+      "seconds": 111.568,
+      "sent": 750
+    },
+    {
+      "seconds": 114.861,
+      "sent": 800
+    },
+    {
+      "seconds": 118.15,
+      "sent": 850
+    },
+    {
+      "seconds": 120.992,
+      "sent": 900
+    },
+    {
+      "seconds": 127.174,
+      "sent": 950
+    },
+    {
+      "seconds": 130.261,
+      "sent": 1000
+    },
+    {
+      "seconds": 133.563,
+      "sent": 1050
+    },
+    {
+      "seconds": 136.791,
+      "sent": 1100
+    },
+    {
+      "seconds": 139.88,
+      "sent": 1150
+    }
+  ],
+  "heap": [
+    "total memory: 262780 used memory : 196696 maximum allocated memory: 216748\r",
+    "total memory: 262780 used memory : 221604 maximum allocated memory: 226272\r",
+    "total memory: 262780 used memory : 220188 maximum allocated memory: 228588\r"
+  ]
+}

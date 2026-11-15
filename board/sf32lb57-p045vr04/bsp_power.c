@@ -5,10 +5,38 @@
  */
 
 #include "bsp_board.h"
+#include <stdlib.h>
 #include "aw9523.h"
 
 #ifdef BSP_USING_RTTHREAD
     #include <rtthread.h>
+void xz_pa_set(int level)
+{
+    aw9523_ensure_init();
+    aw9523_set_pin(AW9523_PIN_AU_PA_EN, level ? 1 : 0);
+}
+
+static int xz_pa(int argc, char **argv)
+{
+    int v = (argc > 1) ? atoi(argv[1]) : 1;
+    xz_pa_set(v);
+    rt_kprintf("AU_PA_EN(P0_5) written=%d readback=%d\n",
+               v, aw9523_get_pin(AW9523_PIN_AU_PA_EN));
+    return 0;
+}
+MSH_CMD_EXPORT(xz_pa, drive PA enable directly: xz_pa 0|1);
+
+static int xz_pwrstat(int argc, char **argv)
+{
+    aw9523_ensure_init();
+    rt_kprintf("AW9523 P0_4/PDM_PWREN=%d  P0_5/AU_PA_EN=%d  P1_7/LCD_RST=%d\n",
+               aw9523_get_pin(AW9523_PIN_PDM_PWREN),
+               aw9523_get_pin(AW9523_PIN_AU_PA_EN),
+               aw9523_get_pin(AW9523_PIN_LCD_RST));
+    return 0;
+}
+MSH_CMD_EXPORT(xz_pwrstat, read AW9523 mic power / PA enable);
+
 #endif /* BSP_USING_RTTHREAD */
 
 #define PDM_MIC_PWR_SETTLE_MS   5
