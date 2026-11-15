@@ -42,6 +42,7 @@ SF32LB57-P045VR04-IPS/
 ├─ patches/0001-add-p045vr04-panel.patch
 ├─ patches/0002-lcdc-dpi-linebuf-height.patch
 ├─ patches/0003-link-lds-ezip-font-sections.patch
+├─ patches/0004-sdk-wifi-lwip-tls-tweaks.patch
 └─ README.md
 ```
 
@@ -218,6 +219,24 @@ git apply ../SF32LB57-P045VR04-IPS/patches/0003-link-lds-ezip-font-sections.patc
 ```
 
 不打这个补丁时链接会报 `section .ROM3_IMG_EZIP.xxx will not fit in region ROM`。
+
+最后是网络/音频的端口参数补丁（不碰 SDK 的库和断言，只调端口常量与两个
+健壮性点）：
+
+```bash
+cd ../SiFli-SDK
+git apply ../SF32LB57-P045VR04-IPS/patches/0004-sdk-wifi-lwip-tls-tweaks.patch
+```
+
+| 文件 | 改动 |
+|---|---|
+| `aic8800d40-n/platform/hal/sdio_port.c` | SDIO RX 缓冲 40 → 6 个 2 KB 块（40 × 2 KB ≈ 80 KB 内部堆放不下，会和 DPI 行缓冲抢内存）；SDIO 中断回调里先释放 MMC host 锁，避免 RX 回调取 `bus_txrx` 与 CMD52/CMD53 抢 host 锁形成 ABBA 死锁 |
+| `aic8800d40-n/platform/netif/netif_port.c` | nocopy 模式 `NET_TXBUF_CNT` 10 → 28 槽：Opus 上行与 TTS 下行叠加时 10 槽会耗尽，随后 `altcp_write()` 失败直接关掉整条连接 |
+| `drivers/Include/bf0_hal_conf_hcpu.h`、`bf0_hal_epic.h` | 允许用 `HAL_JPEGD_MODULE_DISABLE` 整体关闭 JPEG 解码器（`drv_gpu_open()` 无论是否解码都会预留约 31 KB 内部 SRAM），`EPIC_SUPPORT_JPEGD` 跟随该开关 |
+| `rtos/rtthread/bsp/sifli/drivers/drv_sdio.h` | `SDIO_BUFF_SIZE` 65024 → 8 KB：bounce 池与 `max_seg_size` 一起收缩，段大小与池一致所以不会越界；需要时可外部覆盖 |
+| `lwip .../apps/websocket/websocket_client.c` | `altcp_write()` 返回 `ERR_MEM` 时归还 pbuf 交给调用者重试，不再一遇拥塞就断连接；每秒最多打印一次 `WS_TX_STALL` 现场 |
+| `lwip .../core/tcp.c` | 新增 `tcp_dbg_dump()`，打印所有 active pcb 的窗口、重传、队列状态，用于定位上行停滞 |
+| `external/mbedtls_228/ports/src/tls_certificate.c` | 追加 16 张根证书（COMODO/Sectigo 等），`wss://api.tenclass.net` 的握手才能通过校验 |
 
 ### 4.2 激活 SiFli 编译环境
 
