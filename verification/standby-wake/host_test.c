@@ -7,7 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
+#include <stdarg.h>
 #include "cJSON.h"
+#include "xiaozhi_mic_dsp.h"
+#include "xiaozhi_barge_ref.h"
+#include "config-under-test.h"
 
 #define CONFIG_IOT_PROTOCOL_MCP 1
 #define RT_EOK 0
@@ -67,6 +71,16 @@ static int ws_beep_result;
 static rt_tick_t ws_hello_tick, last_listen_tick, g_xz_rx_tick;
 static rt_tick_t g_speaking_start_tick, g_total_speaking_time;
 static bool g_is_speaking;
+static bool ws_mute_reply, ws_tts_stop_pending;
+static uint32_t ws_speaking_generation;
+static rt_tick_t ws_barge_start_tick;
+static struct {uint32_t generation, ref_age_ms; uint16_t rms, floor, pre, ref, gain, ref_hold; uint8_t frames;
+    bool pending, wake_word, dtd, clipped;} ws_barge_request;
+static xz_barge_detector_t xz_barge_detector;
+static struct {uint16_t rms, peak[2]; uint8_t ready;} xz_mic_pre;
+static xz_barge_ref_t xz_mic_ref;
+void xz_barge_ref_reset(void) {}
+static uint8_t Initiate_disconnection_flag;
 static int ws_connecting, ws_ever_connected;
 static const char *mode_str[] = {"auto", "manual", "realtime"};
 static const char *hello_message = "{\"type\":\"hello\"}";
@@ -89,10 +103,34 @@ static bool close_during_listen, goodbye_on_delay;
 static face_state_t face;
 static jmp_buf tx_exit;
 static bool run_tx;
+static unsigned simulated_presses, music_stops, music_pauses, music_resumes;
+static bool mock_drained = true, mock_music_playing;
+static char last_abort[256];
+static char last_barge[256];
+static unsigned train_starts, train_skips;
+static char last_train[256];
+static bool xz_audio_tts_drained(void) {return mock_drained;}
+static bool xz_audio_wake_beep_active(void) {return xz_wake_beep_busy;}
+static void simulate_button_pressed(void) {simulated_presses++;}
 static void parse_helLo(const u8_t *, u16_t); /* adjusted below by generated declaration */
 static void ws_enter_standby(const char *);
 
-static int rt_kprintf(const char *fmt, ...) {(void)fmt; return 0;}
+static int rt_kprintf(const char *fmt, ...) {
+    if (strstr(fmt, "BARGE_TRAIN")) {
+        va_list args; va_start(args, fmt);
+        vsnprintf(last_train, sizeof(last_train), fmt, args); va_end(args);
+        if (strstr(last_train, "phase=start")) train_starts++;
+        if (strstr(last_train, "phase=skip")) {
+            assert(strstr(last_train, "reason=no_convergence"));
+            train_skips++;
+        }
+    }
+    if (strstr(fmt, "BARGE_IN gen=")) {
+        va_list args; va_start(args, fmt);
+        vsnprintf(last_barge, sizeof(last_barge), fmt, args); va_end(args);
+    }
+    return 0;
+}
 static void rt_enter_critical(void) {}
 static void rt_exit_critical(void) {}
 static void rt_mutex_take(struct rt_mutex *m, int timeout) {m->depth++;}
@@ -132,8 +170,10 @@ static void xiaozhi_ui_wake(void) {}
 static void xiaozhi_ui_reinit_audio(void) {}
 static void ui_switch_to_xiaozhi_screen(void) {}
 static void xz_speaker(int on) {xz_audio.is_tx_enable = on;}
-static void xz_music_tts(bool active) {}
-static void xz_music_handle_text(char *text) {}
+static void xz_music_tts(bool active) {if (active) music_pauses++; else music_resumes++;}
+static bool xz_music_handle_text(char *text) {return false;}
+static bool xz_music_is_playing(void) {return mock_music_playing;}
+static void xz_music_stop(void) {music_stops++;}
 static void xiaozhi2(int argc, char **argv) {}
 static void McpServer_ParseMessage(char *json) {free(json);}
 static void xz_audio_downlink(char *buf, size_t len, void *aes, int need_aes) {downlink_calls++;}
@@ -153,7 +193,10 @@ static err_t wsock_write(wsock_state_t *st, const char *data, u16_t len, uint8_t
     if (op == OPCODE_BINARY) {binary_writes++; return 0;}
     if (strstr(data, "\"type\":\"hello\"")) hello_writes++;
     if (strstr(data, "\"type\":\"goodbye\"")) goodbye_writes++;
-    if (strstr(data, "\"type\":\"abort\"")) abort_writes++;
+    if (strstr(data, "\"type\":\"abort\"")) {
+        abort_writes++;
+        snprintf(last_abort, sizeof(last_abort), "%.*s", len, data);
+    }
     if (strstr(data, "\"state\":\"start\"")) {
         listen_writes++;
         if (close_during_listen) {close_during_listen = false; ws_enter_standby("test_close_in_write");}
@@ -215,11 +258,99 @@ int main(void) {
     assert(web_g_state == kDeviceStateThinking && !xz_ws_uplink_allowed());
     json("{\"type\":\"tts\",\"state\":\"start\"}");
     assert(web_g_state == kDeviceStateSpeaking && xz_ws_uplink_allowed());
+    assert(train_starts == 1 && strstr(last_train, "arm_ms=250 arm_ratio=250/1000 arm_min_pre=120"));
+    assert(xz_barge_detector.phase == XZ_BARGE_IDLE); /* zero callbacks */
     json("{\"type\":\"tts\",\"state\":\"stop\"}");
     assert(web_g_state == kDeviceStateListening && ws_session_active);
+    assert(train_skips == 1); /* even a complete capture outage logs skip */
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    xz_barge_detector = (xz_barge_detector_t){.generation=ws_speaking_generation,
+        .echo_floor=60, .phase=XZ_BARGE_ARMED};
+    json("{\"type\":\"tts\",\"state\":\"stop\"}");
+    assert(train_skips == 1 && web_g_state == kDeviceStateListening && ws_session_active);
     ws_set_state(kDeviceStateSpeaking); ws_end_speaking();
     assert(web_g_state == kDeviceStateListening);
     puts("PASS: normal reply / speaking watchdog -> Listening, session retained");
+
+    /* Exercise production interrupt publication/consumption with real JSON
+     * parsing and all state gates. No socket reconnect is permitted. */
+    unsigned old_aborts = abort_writes, old_hellos = hello_writes, old_listens = listen_writes;
+    uint32_t turn; rt_tick_t started;
+    assert(!xz_ws_barge_in_context(&turn, &started));
+    assert(!xz_ws_request_barge_in(turn, 1000, 100, 4000, 6, false));
+    ws_set_state(kDeviceStateThinking);
+    assert(!xz_ws_request_barge_in(turn, 1000, 100, 4000, 6, false));
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    assert(xz_ws_barge_in_context(&turn, &started));
+    xz_barge_detector_t speech = {.generation=turn, .rms=1200, .echo_floor=100,
+        .pre_rms=4000, .ref_rms=0, .ref_hold=1000, .ref_age_ms=60,
+        .echo_gain_milli=500, .dtd=1, .frames=6};
+    assert(xz_ws_request_speech_barge_in(&speech));
+    speech.ref_rms = 123; /* pending request owns its trigger-time snapshot */
+    speech.ref_hold = 456; speech.ref_age_ms = 789;
+    assert(!xz_ws_request_speech_barge_in(&speech));
+    xz_ws_process_barge_in();
+    assert(abort_writes == ++old_aborts && !xz_audio.is_tx_enable && !g_is_speaking);
+    assert(web_g_state == kDeviceStateListening && ws_session_active);
+    assert(strstr(last_abort, "\"reason\":\"wake_word_detected\""));
+    assert(strstr(last_barge, "BARGE_IN gen="));
+    assert(strstr(last_barge, "source=speech pre=4000 post=1200 ref=0 g=500 dtd=1 rms=1200 floor=100 frames=6 refh=1000 ref_age=60ms"));
+    assert(xz_barge_detector.phase == XZ_BARGE_IDLE && xz_barge_detector.echo_floor == 0);
+    assert(hello_writes == old_hellos && listen_writes == old_listens && music_stops == 0);
+    /* A late stop from this aborted response cannot escape Thinking. */
+    ws_set_state(kDeviceStateThinking);
+    json("{\"type\":\"tts\",\"state\":\"stop\"}");
+    assert(web_g_state == kDeviceStateThinking);
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    assert(!xz_ws_request_barge_in(turn, 1200, 100, 4000, 6, false)); /* stale generation */
+    xz_ws_wake_word_detected();
+    xz_ws_process_barge_in();
+    assert(abort_writes == ++old_aborts && web_g_state == kDeviceStateListening);
+    assert(strstr(last_abort, "wake_word_detected") && simulated_presses == 0);
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    xz_ws_barge_in_context(&turn, &started);
+    assert(xz_ws_request_barge_in(turn, 1200, 100, 4000, 6, false));
+    ws_set_state(kDeviceStateThinking);
+    xz_ws_process_barge_in(); assert(abort_writes == old_aborts);
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    xz_wake_beep_busy = true;
+    xz_ws_wake_word_detected();
+    xz_ws_process_barge_in(); assert(abort_writes == old_aborts);
+    xz_wake_beep_busy = false;
+    mock_drained = false;
+    unsigned skips_before = train_skips;
+    xz_ws_barge_in_context(&turn, &started);
+    assert(xz_ws_request_barge_in(turn, 1200, 100, 4000, 6, false));
+    xz_barge_detector = (xz_barge_detector_t){.generation=turn, .echo_floor=683,
+        .frames=5, .phase=XZ_BARGE_TRAIN};
+    xz_mic_pre.ready = 1;
+    json("{\"type\":\"tts\",\"state\":\"stop\"}");
+    assert(train_skips == skips_before + 1);
+    char expected_skip[128];
+    snprintf(expected_skip, sizeof(expected_skip), "BARGE_TRAIN generation=%u phase=skip reason=no_convergence",
+             (unsigned)turn);
+    assert(strstr(last_train, expected_skip));
+    assert(web_g_state == kDeviceStateSpeaking && ws_tts_stop_pending);
+    json("{\"type\":\"tts\",\"state\":\"stop\"}");
+    assert(train_skips == skips_before + 1); /* duplicate stop during drain */
+    assert(!xz_barge_detector.echo_floor && !xz_barge_detector.phase && !xz_mic_pre.ready);
+    assert(!ws_barge_request.pending && !xz_ws_barge_in_context(&turn, &started));
+    assert(!xz_ws_request_barge_in(turn, 1200, 100, 4000, 6, false));
+    xz_ws_process_barge_in();
+    assert(abort_writes == old_aborts && ws_session_active);
+    mock_drained = true; xz_ws_process_barge_in();
+    assert(web_g_state == kDeviceStateListening);
+    /* An explicit wake word keeps its abort semantics during PCM drain. */
+    json("{\"type\":\"tts\",\"state\":\"start\"}");
+    mock_drained = false;
+    json("{\"type\":\"tts\",\"state\":\"stop\"}");
+    xz_ws_wake_word_detected(); xz_ws_process_barge_in();
+    assert(abort_writes == ++old_aborts && ws_session_active);
+    assert(web_g_state == kDeviceStateListening && strstr(last_abort, "wake_word_detected"));
+    mock_drained = true;
+    puts("PASS: speech/KWS interrupt -> wake_word_detected abort, retained session, no music stop");
+    puts("PASS: stale turn / Thinking / beep guards, late stop ignored, natural PCM drain");
+    puts("PASS: TTS start config log; no-callback/unconverged stop skip once; armed stop never skips");
 
     xz_audio_send_using_websocket(frame_data, sizeof(frame_data));
     uint32_t old_generation = ws_audio_generation;

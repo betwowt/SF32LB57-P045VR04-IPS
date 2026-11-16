@@ -6,6 +6,7 @@
 #include "lib_et_asr.h"
 #include "xiaozhi_client_public.h"
 #include "app_recorder_process.h"
+#include "xiaozhi_mic_dsp.h"
 
 
 #define DBG_TAG           "kws"
@@ -148,7 +149,12 @@ static void kws_push_pcm(kws_data_t *thiz, const uint8_t *data, uint32_t len)
     {
         len = room;
     }
-    memcpy(queue->data + thiz->record_offset, data, len);
+    /* Shared PCM already has makeup from xz_mic_mono_frame(). Only
+     * standalone capture still needs gain in the private KWS queue. */
+    const int16_t *src = (const int16_t *)data;
+    int16_t *dst = (int16_t *)(queue->data + thiz->record_offset);
+    for (uint32_t i = 0; i < len / sizeof(int16_t); ++i)
+        dst[i] = thiz->shared_mic ? src[i] : xz_mic_makeup_sample(src[i]);
     thiz->record_offset += len;
     if (thiz->record_offset >= RECORD_DATA_MAX_SIZE)
     {
@@ -193,8 +199,10 @@ static void record_data_thread_callback(void *parameter)
 
     if (!thiz->shared_mic)
     {
+        xz_audio_apply_pdm_gain();
         thiz->client = audio_open(AUDIO_TYPE_LOCAL_RECORD, AUDIO_RX, &pa, app_audio_record_callback, thiz);
         RT_ASSERT(thiz->client);
+        xz_audio_apply_pdm_gain();
     }
 
     while (!thiz->is_exit)
@@ -234,8 +242,10 @@ static void record_data_thread_callback(void *parameter)
             LOG_I("kws evt start\n");
             if (!thiz->shared_mic)
             {
+                xz_audio_apply_pdm_gain();
                 thiz->client = audio_open(AUDIO_TYPE_LOCAL_RECORD, AUDIO_RX, &pa, app_audio_record_callback, thiz);
                 RT_ASSERT(thiz->client);
+                xz_audio_apply_pdm_gain();
             }
             continue;
         }
@@ -383,7 +393,7 @@ void kws_start_shared(void)
     kws_start(&instance);
 }
 
-/* 由已打开的麦克风回调喂 PCM: 16 kHz / 单声道 / 16 bit */
+/* 由已打开的麦克风回调喂 PCM: 16 kHz / 单声道 / 16 bit，已完成增益补偿 */
 void kws_feed_mic(const int16_t *data, uint32_t samples)
 {
     if (!g_kws_running || !instance.is_inited || instance.is_exit)

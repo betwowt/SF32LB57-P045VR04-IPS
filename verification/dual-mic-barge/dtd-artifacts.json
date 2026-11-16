@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "build_exit_code": 0,
+  "host_audio_tests_passed": true,
+  "host_state_tests_passed": true,
+  "host_music_tests_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "sdk_source_modified_this_turn": false,
+  "new_sdk_patch_required": false,
+  "config": {
+    "AUDIO_RX_USING_PDM": 1,
+    "XZ_BARGE_IN_RMS": 150,
+    "XZ_BARGE_IN_TRAIN_MS": 800,
+    "XZ_BARGE_ARM_RATIO": 250,
+    "XZ_BARGE_ARM_MS": 250,
+    "XZ_BARGE_ARM_MIN_PRE": 120,
+    "XZ_BARGE_IN_ECHO_MULT": 4,
+    "XZ_BARGE_IN_PRE_RATIO": 8,
+    "XZ_BARGE_DTD_MARGIN_PM": 2000,
+    "XZ_BARGE_IN_FRAMES": 6
+  },
+  "pdm_gain": 44,
+  "calibration": "25 consecutive converged/unclipped/synchronized frames; g=clamp(sum_pre*1000/sum_ref,50,4000), ref>=50 frames only",
+  "trigger": "ref>=50: pre*1000000 >= g*ref*2000. Fresh silent ref skips DTD; post>=max(150,4*floor), VAD=1, raw valid/nonzero, unclipped, six frames, once per generation",
+  "reference": "Actual post-volume 160-sample/10ms PCM via link wrapper; one-frame max envelope; age>30ms or relative sequence skew>3 breaks streak",
+  "link_wrapper_verified": true,
+  "per_frame_heap_allocations": 0,
+  "quiet_arming": false,
+  "protected_app_hashes_match_previous_delivery": {
+    "app/src/main.c": true,
+    "app/src/xiaozhi/xiaozhi_ui.c": true,
+    "app/src/xiaozhi/xiaozhi_music.c": true,
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": true,
+    "app/src/xiaozhi/xiaozhi_audio.h": true,
+    "build.ps1": true
+  },
+  "source_sha256": {
+    "app/project/SConstruct": "dc06200614d7a9b8c8513fcce6c38c7c0bf8e80a00dcda76551f055d70cd7546",
+    "app/project/Kconfig.proj": "056a5388a09df7ec28644554313a8e84d11ee9b4c4e450f695c5da756fa0ff56",
+    "app/project/proj.conf": "99e06896e495f61b39085b11a676a582301ba9fa087c43ec9bd4a8eccc630ae0",
+    "app/src/xiaozhi/xiaozhi_barge_ref.c": "8f7647a16412271c21384ca83078a9ca6fb5d1ea6f9453a446f408c0cc9d3809",
+    "app/src/xiaozhi/xiaozhi_barge_ref.h": "6b1b25ffa985e41d0c51c3534563e0862b343f6b49a08f759833402bd2d40555",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "9361a855f45e7ed6631f6c5d84e83ba73aa2186e91503222636a33bfae7617f4",
+    "app/src/xiaozhi/xiaozhi_audio.c": "da064ca325e0497ee6ab8b52bffb102d4703944490e1370bf198fa9c4d25290e",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "d2b1f5089636913e775108711e24726e341aff337c2bc9a3b271252154682217",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "69b543112820ec33d143c1c11e0ed9880a5a4180b505a4bf8974289ce42f5e49",
+    "verification/dual-mic-barge/audio_host.c": "e969db77756cb2ea695c9ebde757cafb92b07e1f3a79cac224b709bcc3510ef7",
+    "verification/dual-mic-barge/test_audio.py": "b7908554bd01bbe6722bf7f8905dcce5bb6934901f3f0fe4c02343dcbb3c1411",
+    "verification/standby-wake/host_test.c": "c83a064c477e2f45b9c41731d5de8eb0eb75e4838af28a28b92f91b52b5916fc",
+    "verification/standby-wake/test_state_machine.py": "4d0f15a8a9656e0a5a24135611e94d8481eda4e88418d96bbb3ef8ce18ad825a"
+  },
+  "sdk_audio_source_sha256": {
+    "middleware/audio/audio_manager/audio_server.c": "9ff08608e7993116aec1281be6b0d521021ebf2847b179630054c16e5182d704",
+    "middleware/audio/audio_voice_proc/audio_3a.c": "4e7f0e74e769cacdadd59cd3793b92f1f33eae52dab7991988b20239a707ae72",
+    "middleware/audio/include/audio_server.h": "b752b4d50919bcc632bc944945e19fd9cc47d0fd55aed1535c2c6dad0e3b47cf",
+    "rtos/rtthread/bsp/sifli/drivers/drv_audprc.c": "fa6084913de24418f8268a4343ca4a73a78482c3c5b5a87e2365cf07f5698f67"
+  },
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20767148,
+      "sha256": "e05c544ab2c8d7b2a60b3c71936ed03d0c0349fdfc1e8c87e388667aa39f8614",
+      "crc32": "faefa3a6"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a",
+      "crc32": "ecf301ca"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06",
+      "crc32": "aabc976f"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2452804,
+      "sha256": "ec80885034a2596bb1e366a0144bb0d94355d863216468c2adaaaf4bfc420ad0",
+      "crc32": "6b88dad5"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff",
+      "crc32": "83887150"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385",
+      "crc32": "de00906e"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "112f916912840861b5772cb9e0aa4283a3f478d737364f78abd9c388e54615bf",
+      "crc32": "de63a5d5"
+    }
+  },
+  "logs": [
+    "verification/dual-mic-barge/dtd-build.log",
+    "verification/dual-mic-barge/dtd-final-build.log",
+    "verification/dual-mic-barge/dtd-audio-tests.log",
+    "verification/dual-mic-barge/dtd-state-tests.log",
+    "verification/dual-mic-barge/dtd-music-tests.log"
+  ],
+  "hardware_acceptance": "Pending user: 3 reboot/story runs no false interrupts, sane gain, clip=0; 2-3m speech once; armed silent-reference speech; sync stability",
+  "build_warnings": "Existing SDK Opus/SDIO and toolchain/linker/ftab warnings remain; see full build log"
+}

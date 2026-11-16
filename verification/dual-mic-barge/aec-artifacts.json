@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "hardware_acceptance": "not run; user will flash and verify",
+  "build_log": "verification/dual-mic-barge/aec-build.log",
+  "test_log": "verification/dual-mic-barge/aec-tests.log",
+  "tests_passed": [
+    "dual-mic-barge/test_audio.py (logging on/off, average/max-abs)",
+    "standby-wake/test_state_machine.py",
+    "music-rx/test.ps1"
+  ],
+  "protected_checks": "verification/dual-mic-barge/aec-preserved.json",
+  "config": {
+    "CONFIG_XZ_BARGE_IN_RMS": 600,
+    "CONFIG_XZ_BARGE_IN_TRAIN_MS": 800,
+    "CONFIG_XZ_BARGE_IN_ECHO_MULT": 4,
+    "CONFIG_XZ_BARGE_IN_PRE_RATIO": 8,
+    "CONFIG_XZ_BARGE_IN_FRAMES": 6
+  },
+  "symbol_bytes": {
+    "xz_barge_detector": 16,
+    "ws_barge_request": 16,
+    "xz_mic_pre": 4
+  },
+  "added_static_state_bytes": 4,
+  "per_frame_heap_allocations": 0,
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20749152,
+      "sha256": "ab9df2003d974c0202784185c3a6834e7015de1cf1f062664ea7e5eb0956c280"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2450612,
+      "sha256": "49a2d89584f0d64d1edc756222930cd21630f031b9c6c6b6924e2eaf1ed78d1e"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "8b24cea9d430b877ee29dbfc7621ee9530756ee22fbb41a788573b9abceccdb1"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a"
+    }
+  },
+  "source_sha256": {
+    "app/project/Kconfig.proj": "07c058d3a074c9b5d2c4406b41844e6dfc96d1342fd3ab9124c08a141bc87720",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "2d6dff9b8d575f25fd231e72cd9e0752b2bdd1d9ba5341f0adde371adc01b89a",
+    "app/src/xiaozhi/xiaozhi_audio.c": "b6d714d0a92c9413d2af93addb0375f6e7e97ad40a9fc6b980765d5c71418e33",
+    "app/src/xiaozhi/xiaozhi_audio.h": "2adce9d30c8c24bebea8146166d808c1d9898f843e20aaeee6dbcd517db25407",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "356aba15c417165c8e496808192394446868d70a0b6095747d3c66f1e36555bc",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "87d07142e93af40795de1f7442b5cd2738a1825bf10c2c7bb2f12e221ec38676",
+    "verification/dual-mic-barge/audio_host.c": "afc3d1a082d434c91a8c2abd2e1076e7af7f79a54a6fa82d546770e23f5d350b",
+    "verification/dual-mic-barge/test_audio.py": "8506adc27046b93d7f29701ff955b0257336a42d2a308c79be93eb42f0f7908b",
+    "verification/standby-wake/host_test.c": "55eefe8f041218d404237ed60d907c6864da38afa2be354a911556ffb2570de4",
+    "verification/standby-wake/test_state_machine.py": "be8a54139ce5d0de8c5e42fd6b3e22c6c9f9c9e98fb379655f9e634af04675dd"
+  }
+}

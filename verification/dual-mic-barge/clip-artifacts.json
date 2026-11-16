@@ -1,0 +1,115 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "build_exit_code": 0,
+  "host_audio_tests_passed": true,
+  "host_state_tests_passed": true,
+  "host_music_tests_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "hardware_acceptance": "Pending user: three stories must arm with peaks <28000 and zero false interrupts; 2-3 m speech must interrupt once and retain session",
+  "config": {
+    "CONFIG_XZ_BARGE_IN_RMS": 600,
+    "CONFIG_XZ_BARGE_IN_TRAIN_MS": 800,
+    "CONFIG_XZ_BARGE_ARM_RATIO": 125,
+    "CONFIG_XZ_BARGE_ARM_MS": 250,
+    "CONFIG_XZ_BARGE_ARM_MIN_PRE": 800,
+    "CONFIG_XZ_BARGE_IN_ECHO_MULT": 4,
+    "CONFIG_XZ_BARGE_IN_PRE_RATIO": 8,
+    "CONFIG_XZ_BARGE_IN_FRAMES": 6
+  },
+  "clip_peak_inclusive": 32000,
+  "arming": "Paired raw reference, both peaks<32000, pre>=ARM_MIN_PRE, post*1000<=pre*ARM_RATIO for ceil(ARM_MS/10) consecutive frames; no quiet or time bypass",
+  "armed_detection": "Unclipped, paired nonzero pre, VAD==1, post>=max(600,ECHO_MULT*floor), post*PRE_RATIO>=pre, six consecutive frames, once per generation",
+  "headroom": {
+    "default_private_volume": 6,
+    "old_websocket_volume": 8,
+    "stock_table_delta_db": -4,
+    "microphone_gain_delta_db": 0,
+    "uplink_agc_disabled": true,
+    "tts_observed_clipped_peak": 32767,
+    "conditional_peak_estimate": 20674.57930658249,
+    "conditional_margin_to_28000_db": 2.634427004010406,
+    "old_unclipped_peak_must_be_below": 44377.009388911174,
+    "far_field_measured_peak": null,
+    "far_field_change": "Capture gain unchanged; no absolute measured peak data available",
+    "estimate_limit": "Old clipped signal has unknown upper bound; linear stock-table estimate is not a guaranteed hardware result"
+  },
+  "sdk_source_modified_this_turn": false,
+  "new_sdk_patch_required": false,
+  "protected_files_equal_previous_delivery_hashes": {
+    "app/src/main.c": true,
+    "app/src/xiaozhi/xiaozhi_ui.c": true,
+    "app/src/xiaozhi/xiaozhi_music.c": true,
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": true,
+    "app/src/xiaozhi/xiaozhi_websocket.h": true,
+    "app/src/xiaozhi/xiaozhi_audio.h": true,
+    "build.ps1": true
+  },
+  "per_frame_heap_allocations": 0,
+  "detector_bytes": 24,
+  "pre_reference_bytes": 8,
+  "logs": [
+    "verification/dual-mic-barge/clip-build.log",
+    "verification/dual-mic-barge/clip-audio-tests.log",
+    "verification/dual-mic-barge/clip-state-tests.log",
+    "verification/dual-mic-barge/clip-music-tests.log"
+  ],
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20757440,
+      "sha256": "4a590af34b727aeb2f16c8f5874c5cdef90fbbfada644141ce2ef238d3a55f8d"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2451588,
+      "sha256": "d8b1fcf3af05635ef3a76d7503313af1699073b2164b8ef81fb2677629ebaf4e"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "716b3139a4d6bed8ad62825eaff9ef7944eb8866247a7e2c5c46da6b6dd39574"
+    }
+  },
+  "source_sha256": {
+    "app/src/main.c": "e3c3cb961083d1ba45ddb37868b168732de06bde9c30933c93da4a24846b7a84",
+    "app/src/xiaozhi/xiaozhi_ui.c": "af38f696489eea8fc3564fdfa1019c788f214d9d27a26f27bb5004cf74fdd3ae",
+    "app/src/xiaozhi/xiaozhi_music.c": "bbbd70d7dd818fe7c8893fa8cc8c12ce763dadddc8cdf43089b371dfb4d5e39b",
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": "5975bf48a063cefa366a23ba6b56100dd3a112719cb0fe6cbeafdb2f406acb07",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "87d07142e93af40795de1f7442b5cd2738a1825bf10c2c7bb2f12e221ec38676",
+    "app/src/xiaozhi/xiaozhi_audio.h": "20f8d92fecf3bde9cce9d31107831216823f89097c6dfc2ea0cf96fdea6fb27e",
+    "build.ps1": "90355dcb1b8325c415c7b9c902a788465a46639158018bea8f232abf2cb10dc8",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "2cc694e46b5d59ab425449b37a4f05d50983852f82e38b4962c391ba10d6fe00",
+    "app/src/xiaozhi/xiaozhi_audio.c": "1d960c37edba90301ef78b6e77e5908c55a1f45bcf0bd02eb4ee23f92a5a7b81",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "e5d058de319405507b4b94d367ea8dea9d14ed00c8e86318f19020c64ff55064",
+    "app/src/xiaozhi/xiaozhi_client_public.h": "45011964f3e159e84dff5d64ef16305d88eb21932ba50389522b307e727bfcec",
+    "app/project/Kconfig.proj": "42eb21352ff65c823e2c96a38de7abeca6b75934a6ea2729a121f857286a3856",
+    "app/project/proj.conf": "7bedc18886ce9b581da5d636c74e8d63ac8eab6086cc4e8abb9ce781b2f48afc",
+    "verification/dual-mic-barge/audio_host.c": "902fe3644b9b837753170ba72c89fbdf4ab175aff9e8c09c3b960cc996ff9f66",
+    "verification/dual-mic-barge/test_audio.py": "6eaa62d586a52c25ca95bc7ed57461e319e27c47e3048e2779584c95a0d8e1be",
+    "verification/dual-mic-barge/clip-fix.md": "8e45aefd62a307e6d6806f6315eb0481101465498f6dcb3e97994f571ef13e08"
+  },
+  "sdk_source_sha256": {
+    "middleware/audio/audio_manager/audio_server.c": "9ff08608e7993116aec1281be6b0d521021ebf2847b179630054c16e5182d704",
+    "middleware/audio/audio_voice_proc/audio_3a.c": "4e7f0e74e769cacdadd59cd3793b92f1f33eae52dab7991988b20239a707ae72",
+    "middleware/audio/include/audio_server.h": "b752b4d50919bcc632bc944945e19fd9cc47d0fd55aed1535c2c6dad0e3b47cf",
+    "rtos/rtthread/bsp/sifli/drivers/drv_audprc.c": "fa6084913de24418f8268a4343ca4a73a78482c3c5b5a87e2365cf07f5698f67"
+  },
+  "build_warnings": "Vendor SDK/dependency warnings and linker/ftab warnings remain; see full build log"
+}

@@ -17,6 +17,7 @@
 #include "et_weights.h"
 #include "third_kws_event.h"
 #include "xiaozhi_client_public.h"
+#include "xiaozhi_websocket.h"
 extern void  simulate_button_pressed();
 
 #if 0
@@ -46,7 +47,11 @@ void et_func_kws_event(int event)
     #endif // 0
     #if 1//ET_LOG_OPEN
     printf("ctrl event:%d\n", event);
+#ifdef XIAOZHI_USING_MQTT
     simulate_button_pressed();
+#else
+    xz_ws_wake_word_detected();
+#endif
     #endif // ET_LOG_OPEN
 #if 0
     if(youjie_offline_using_type_get() == 2)

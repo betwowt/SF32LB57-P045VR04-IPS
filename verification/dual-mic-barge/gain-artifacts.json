@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "build_exit_code": 0,
+  "host_audio_tests_passed": true,
+  "host_state_tests_passed": true,
+  "host_music_tests_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "hardware_acceptance": "Pending user: three reboot/story runs armed, peak<28000, clip=0, no false interrupts; 2-3 m speech once, KWS wake, server ASR level",
+  "config": {
+    "XZ_BARGE_IN_RMS": 150,
+    "XZ_BARGE_ARM_RATIO": 250,
+    "XZ_BARGE_ARM_MIN_PRE": 120,
+    "XZ_BARGE_ARM_MS": 250,
+    "XZ_BARGE_IN_ECHO_MULT": 4,
+    "XZ_BARGE_IN_PRE_RATIO": 8,
+    "XZ_BARGE_IN_FRAMES": 6,
+    "AUDIO_RX_USING_PDM": 1
+  },
+  "pdm_gain": {
+    "absolute_half_db_units": 44,
+    "default_half_db_units": 56,
+    "delta_db": -6,
+    "apply": "Before/after all five microphone audio_open sites; absolute and repeatable",
+    "app_log": "PDM_GAIN set=44 once per boot"
+  },
+  "makeup": {
+    "factor": 2,
+    "db_approx": 6,
+    "saturate_int16": true,
+    "pdm_only": true,
+    "uplink": "Static 160-sample copy after post metrics, VAD/barge and uplink state gate",
+    "kws": "Copy into private 40 ms queue, shared and standalone",
+    "post_and_vad_unboosted": true,
+    "micstat": "Unboosted capture stats"
+  },
+  "armed_detection": "Unclipped, paired nonzero pre, VAD==1, post>=max(150,4*floor), post*8>=pre, six consecutive frames, once per generation",
+  "clip_peak_inclusive": 32000,
+  "quiet_arming": false,
+  "per_frame_heap_allocations": 0,
+  "extra_uplink_pcm_buffer_bytes": 320,
+  "sdk_source_modified_this_turn": false,
+  "new_sdk_patch_required": false,
+  "protected_app_hashes_match_previous_delivery": {
+    "app/src/main.c": true,
+    "app/src/xiaozhi/xiaozhi_ui.c": true,
+    "app/src/xiaozhi/xiaozhi_music.c": true,
+    "app/src/xiaozhi/xiaozhi_websocket.c": true,
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": true,
+    "app/src/xiaozhi/xiaozhi_audio.h": true,
+    "app/src/xiaozhi/xiaozhi_websocket.h": true,
+    "build.ps1": true
+  },
+  "sdk_audio_hashes_match_previous_delivery": {
+    "middleware/audio/audio_manager/audio_server.c": true,
+    "middleware/audio/audio_voice_proc/audio_3a.c": true,
+    "middleware/audio/include/audio_server.h": true,
+    "rtos/rtthread/bsp/sifli/drivers/drv_audprc.c": true
+  },
+  "source_sha256": {
+    "app/project/Kconfig.proj": "1a40ebe0e6f01443e027b01a0752cca79e5819305087b0a1620d42a87a27e801",
+    "app/project/proj.conf": "201f6a7faf721bd3435b517143ff255c9475093004bc792c9d1edd888eddfe68",
+    "app/src/xiaozhi/xiaozhi_audio.c": "7d91ae1be740a994eac89442cd9428195f7049605962d635a51575ae7fb5d38f",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "23de878418217cc89a7d7f02fca030230ba0145b599a07523add36734d976d32",
+    "app/src/xiaozhi/kws/app_recorder_process.c": "0a581ae608c58103b2dd0526ecce528abf6ec6777ffeef3d81aec99041efed8c",
+    "verification/dual-mic-barge/audio_host.c": "40ec5e3e727ac16cefedc41eea9ddfca5b245615c1a952a0404acd3b3d355bc8",
+    "verification/dual-mic-barge/gain_host.c": "03fe656df39d8ddcb5ef346ce218731b20764c5c3effd8f199b402348dda6e04",
+    "verification/dual-mic-barge/test_audio.py": "2083330b6730436e628bd21250ac9fb1328627fb8b50885b26e2ccb497098a12",
+    "verification/standby-wake/host_test.c": "9959d40ce51eeeae8d38cd567a069bae36607c70188232799502cf793fe8e9d2",
+    "verification/standby-wake/test_state_machine.py": "71c08adc3a215ee34e07634c9eb05c98bce7f0490cd39b81e23b59eb6783b70b",
+    "verification/dual-mic-barge/gain-fix.md": "8203dfcb537d7b86b2564cd891e8527df5908ce52a4b66aacf7e32019d4e8e95"
+  },
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20759772,
+      "sha256": "0a1c78d139cdf2e21ebaa67b8641de953d23b2fc93536a3d5c67f9d5a34c0e32"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2451884,
+      "sha256": "68a47fe427c3f9171d084f38c91066f50433c1ebcd64d341780a3a93447a846f"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "7a5e8dfe68842a59df4055e0757289ec2975ca340afe84c3d51c095dfe6273e9"
+    }
+  },
+  "logs": [
+    "verification/dual-mic-barge/gain-build.log",
+    "verification/dual-mic-barge/gain-audio-tests.log",
+    "verification/dual-mic-barge/gain-state-tests.log",
+    "verification/dual-mic-barge/gain-music-tests.log"
+  ],
+  "build_warnings": "SDK/dependency and linker/ftab warnings remain; see full build log"
+}

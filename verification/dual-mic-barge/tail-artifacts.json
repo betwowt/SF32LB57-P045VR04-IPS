@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "build_exit_code": 0,
+  "host_audio_tests_passed": true,
+  "host_state_tests_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "sdk_source_modified_this_turn": false,
+  "changed_app_files_this_turn": [
+    "app/src/xiaozhi/xiaozhi_audio.c",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h",
+    "app/src/xiaozhi/xiaozhi_websocket.c",
+    "app/project/Kconfig.proj"
+  ],
+  "config": {
+    "RT_TICK_PER_SECOND": 1000,
+    "AUDIO_RX_USING_PDM": 1,
+    "XZ_BARGE_IN_RMS": 150,
+    "XZ_BARGE_IN_TRAIN_MS": 800,
+    "XZ_BARGE_ARM_RATIO": 250,
+    "XZ_BARGE_ARM_MS": 250,
+    "XZ_BARGE_ARM_MIN_PRE": 120,
+    "XZ_BARGE_IN_ECHO_MULT": 4,
+    "XZ_BARGE_IN_PRE_RATIO": 8,
+    "XZ_BARGE_DTD_MARGIN_PM": 2000,
+    "XZ_BARGE_IN_FRAMES": 6
+  },
+  "reference_min_rms": 50,
+  "reference_hold_ms": 300,
+  "pdm_gain": 44,
+  "uplink_kws_makeup_db": 6,
+  "trigger": "ref_age<300: pre*1000000 >= g*ref_hold*2000; age>=300: original absolute/adaptive+VAD criteria. Sync failures break streaks without clearing ref_hold. Six frames, once per generation.",
+  "source_sha256": {
+    "app/project/SConstruct": "dc06200614d7a9b8c8513fcce6c38c7c0bf8e80a00dcda76551f055d70cd7546",
+    "app/project/Kconfig.proj": "3b018e41e025ada8922c17b0db02608953a306e23b07aae68cb03a11ba4b04d3",
+    "app/project/proj.conf": "99e06896e495f61b39085b11a676a582301ba9fa087c43ec9bd4a8eccc630ae0",
+    "app/src/xiaozhi/xiaozhi_barge_ref.c": "8f7647a16412271c21384ca83078a9ca6fb5d1ea6f9453a446f408c0cc9d3809",
+    "app/src/xiaozhi/xiaozhi_barge_ref.h": "6b1b25ffa985e41d0c51c3534563e0862b343f6b49a08f759833402bd2d40555",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "1819b8a80aa2d42d200e655feecbadad925e0a361ae6a79c7fe7f43d92ad2ca6",
+    "app/src/xiaozhi/xiaozhi_audio.c": "95fdc586dce85689838da4dd495b0254c768e4bdc2f092f102aa038c972cb367",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "25e32d72190d1d9e79c41a8c035401cf4afbfc260f0914c954a795604835d412",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "69b543112820ec33d143c1c11e0ed9880a5a4180b505a4bf8974289ce42f5e49",
+    "verification/dual-mic-barge/audio_host.c": "e8b0e5e37e6838f359acdf6533c9048ae4682a643c3deec00680a24b64b1f38e",
+    "verification/dual-mic-barge/test_audio.py": "b7908554bd01bbe6722bf7f8905dcce5bb6934901f3f0fe4c02343dcbb3c1411",
+    "verification/standby-wake/host_test.c": "9c2321c6bdc807ff5780a36df5ba70147b8fbf2c0e50b379fef7cf2f115d25ab",
+    "verification/standby-wake/test_state_machine.py": "4d0f15a8a9656e0a5a24135611e94d8481eda4e88418d96bbb3ef8ce18ad825a",
+    "verification/dual-mic-barge/tail-fix.md": "ab77d23f27d6fe07c1e9a229023eb2481d62870fa55b4679cb3f43a82683907f"
+  },
+  "sdk_audio_source_sha256": {
+    "middleware/audio/audio_manager/audio_server.c": "9ff08608e7993116aec1281be6b0d521021ebf2847b179630054c16e5182d704",
+    "middleware/audio/audio_voice_proc/audio_3a.c": "4e7f0e74e769cacdadd59cd3793b92f1f33eae52dab7991988b20239a707ae72",
+    "middleware/audio/include/audio_server.h": "b752b4d50919bcc632bc944945e19fd9cc47d0fd55aed1535c2c6dad0e3b47cf",
+    "rtos/rtthread/bsp/sifli/drivers/drv_audprc.c": "fa6084913de24418f8268a4343ca4a73a78482c3c5b5a87e2365cf07f5698f67"
+  },
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20767820,
+      "sha256": "f533ea0392019ba9c7d4f65e94c2172d13e541962f1c6855844e46ac51d54207",
+      "crc32": "b755827d"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a",
+      "crc32": "ecf301ca"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06",
+      "crc32": "aabc976f"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2453044,
+      "sha256": "94b36ab6e2a0cdaa4582f141ddf773bd5879cf5e0205ef1aed6b28e96168803a",
+      "crc32": "fd211870"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff",
+      "crc32": "83887150"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385",
+      "crc32": "de00906e"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "bccf1a8d77b53a22804e7c61fac5caa3535a41ef9466a606e7d6e5e7c98e6ea4",
+      "crc32": "910f9219"
+    }
+  },
+  "logs": [
+    "verification/dual-mic-barge/tail-build.log",
+    "verification/dual-mic-barge/tail-audio-tests.log",
+    "verification/dual-mic-barge/tail-state-tests.log"
+  ],
+  "hardware_acceptance": "Pending user: five reboot/story trials, zero false interrupts, all armed/clip=0; 2-3m speech once with dtd=1/ref_age<300ms; armed 1s silence then speech still triggers"
+}

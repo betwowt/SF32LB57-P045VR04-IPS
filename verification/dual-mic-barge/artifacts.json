@@ -1,0 +1,97 @@
+{
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "build_log": "verification/dual-mic-release-build.log",
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20744356,
+      "sha256": "2c12b5c2e9d0f6ff8d2a59225a4c35247e8d6ff03e8fb9f2a216e62d5623a076"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2449612,
+      "sha256": "1acf708173ba4eb2d52d6da7a1e73c82b1d940ae08609d006f233cc5cfe27027"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "b80f72304555ca2a65b46844e303318cf289e9420e651f65e5913cbda94728cc"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    }
+  },
+  "source_sha256": {
+    "app/project/Kconfig.proj": "edddd644356ce87b02cee6ffbc6b2a98a194aa4836f6a00acf740cef50454ade",
+    "app/src/main.c": "e3c3cb961083d1ba45ddb37868b168732de06bde9c30933c93da4a24846b7a84",
+    "app/src/xiaozhi/xiaozhi_audio.c": "b6cee006eb85537041c4efb47f725b66b883f64e0614134a22d3653adc337238",
+    "app/src/xiaozhi/xiaozhi_audio.h": "e937ecdd6390ba6518486cd05d21b57cbd3dbe9470b58093110e1f0d5bd07069",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "e11972beaf453c71225e9f02d4b9ba430b901955af5b33acd0071ca638c05a42",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "5e531323d3f0ea3a72312106166be85c301f28abbd83b6d4b788cabd141f5459",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "9596a761656f67734c588bb6922d867428c2104862275891c9cea30006af105e",
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": "5975bf48a063cefa366a23ba6b56100dd3a112719cb0fe6cbeafdb2f406acb07"
+  },
+  "sdk_patch_sha256": "7091439d7a404696c89a6edb8b44e260396635989630f2348e325f8c01e86b48",
+  "sdk_sources": {
+    "middleware/audio/audio_manager/audio_server.c": "9ff08608e7993116aec1281be6b0d521021ebf2847b179630054c16e5182d704",
+    "middleware/audio/include/audio_server.h": "b752b4d50919bcc632bc944945e19fd9cc47d0fd55aed1535c2c6dad0e3b47cf"
+  },
+  "linked_size_before": {
+    "text": 6373270,
+    "data": 13340,
+    "bss": 7164404
+  },
+  "linked_size_after": {
+    "text": 6376206,
+    "data": 13340,
+    "bss": 7164884
+  },
+  "new_bss_bytes": 480,
+  "new_internal_static_ram_bytes": 160,
+  "new_psram_scratch": {
+    "address": "0x6010d500",
+    "bytes": 320,
+    "section": "L2_RET_BSS_SECT(xz_mic_mono)"
+  },
+  "pdm_dma_startup_allocation_before": 640,
+  "pdm_dma_startup_allocation_after": 1280,
+  "new_per_frame_allocations": 0,
+  "protected_commands_unchanged": [
+    "xz_led",
+    "xz_music",
+    "xz_say",
+    "xz_listen_text",
+    "xz_mute",
+    "xz_btn_sim",
+    "xz_wsstat"
+  ],
+  "protected_files_sha256_normalized_lf": {
+    "app/src/xiaozhi/xiaozhi_ui.c": "af38f696489eea8fc3564fdfa1019c788f214d9d27a26f27bb5004cf74fdd3ae",
+    "app/src/xiaozhi/xiaozhi_music.c": "bbbd70d7dd818fe7c8893fa8cc8c12ce763dadddc8cdf43089b371dfb4d5e39b",
+    "app/src/xiaozhi/iot/iot_c_api.cc": "3af27b256699772c8a3f89c7be82a7f84d805b7bcb7eda7c6968bfef0acedaa9",
+    "app/src/xiaozhi/iot/iot_c_api.h": "bff92de98482e8445335d79aff0543bcdfa252fd58e344b090288320149a715f",
+    "app/src/xiaozhi/iot/light.cc": "c0b13595c8f9d0e80e34f0d61604512d014414d36c965f22974aba1f18e5a9df",
+    "app/src/xiaozhi/iot/music.cc": "8d33f67c9dba1584915b6f26b912e91df86576244c96864ca6d43f24acb50b6f",
+    "app/src/xiaozhi/iot/screen.cc": "cfcc184df5427c8bdf62736fdbe586b17b80d16784b142bd711c264454d2baf6",
+    "app/src/xiaozhi/iot/speaker.cc": "eee6b196767268483691a6bb4cb6b0bc9e93bd20d8cf0228dba38fef3d09f585",
+    "app/src/xiaozhi/iot/thing.cc": "ef73b44c665d83bf3f5f51fb8ab901f19e0163a71b5076024db32e6594186a92",
+    "app/src/xiaozhi/iot/thing.h": "a6fc61b0956968e52d0f925cff40df08391afd05c2b41dd6647a548ff5730b45",
+    "app/src/xiaozhi/iot/thing_manager.cc": "730d032efd9f2fabc11d8a224e91c54fdec7398245dba5bd2c1a839f3f7c47a7",
+    "app/src/xiaozhi/iot/thing_manager.h": "daf24f088ba0d9792b1b2b0efb5085a78a10473922aec33c289b4281ffa185b6"
+  },
+  "tests_passed": [
+    "test_audio.py: average/max_abs, log on/off, actual SDK adapter, actual playback stop",
+    "test_state_machine.py: standby/session/KWS/barge-in/late events",
+    "music-rx/test.ps1: TX format and live RX/3A preserved"
+  ],
+  "hardware_acceptance": "Pending user board validation; no claim of acoustic/AEC acceptance"
+}

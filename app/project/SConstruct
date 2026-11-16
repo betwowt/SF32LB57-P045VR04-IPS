@@ -33,6 +33,8 @@ env = GetCurrentEnv()
 # internal SRAM as well: the AIC8800 SDIO driver and the DPI line buffers both
 # need that SRAM, and PSRAM is fine for a CPU-rendered strip.
 env.Append(CPPDEFINES=['HAL_JPEGD_MODULE_DISABLE', 'FRAME_BUFFER_IN_PSRAM'])
+# Observe the actual post-volume 3A reference without editing SDK sources.
+env.Append(LINKFLAGS=['-Wl,--wrap=audio_3a_far_put'])
 # Build application.
 DoBuilding(TARGET, objs)
 

@@ -8,6 +8,7 @@ extern "C"
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "xiaozhi_mic_dsp.h"
 #include <rtthread.h>
 #include "lwip/api.h"
 #include "lwip/apps/websocket_client.h"
@@ -32,6 +33,13 @@ bool xz_ws_playback_allowed(void);
 uint32_t xz_ws_audio_epoch(void);
 void xz_ws_process_wake(void); /* main event thread, nonblocking */
 void xz_ws_wake_beep_done(uint32_t token, int result);
+bool xz_ws_barge_in_context(uint32_t *generation, rt_tick_t *start);
+bool xz_ws_request_barge_in(uint32_t generation, uint32_t rms, uint32_t floor,
+                          uint32_t pre, unsigned frames,
+                          bool wake_word);
+bool xz_ws_request_speech_barge_in(const xz_barge_detector_t *detector);
+void xz_ws_process_barge_in(void); /* main event thread; no audio/KWS-stack I/O */
+void xz_ws_wake_word_detected(void);
 void ws_send_speak_abort(void *ws, char *session_id, int reason);
 void ws_send_listen_start(void *ws, char *session_id,enum ListeningMode mode);
 void ws_send_listen_stop(void *ws, char *session_id);

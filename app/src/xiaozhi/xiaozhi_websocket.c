@@ -149,6 +149,18 @@ static rt_tick_t ws_hello_tick;
 static struct rt_thread ws_connect_thread;
 static uint8_t ws_connect_stack[6144] L2_RET_BSS_SECT(xz_ws_connect_stack);
 static bool ws_connect_started;
+void simulate_button_pressed(void);
+static uint32_t ws_speaking_generation;
+static rt_tick_t ws_barge_start_tick;
+static bool ws_tts_stop_pending;
+static struct
+{
+    uint32_t generation;
+    uint32_t ref_age_ms;
+    uint16_t rms, floor, pre, ref, gain, ref_hold;
+    uint8_t frames;
+    bool pending, wake_word, dtd, clipped;
+} ws_barge_request;
 
 bool xz_ws_uplink_allowed(void)
 {
@@ -181,7 +193,16 @@ static void ws_set_state(enum DeviceState state)
     /* Serialize the state boundary against binary wsock_write(). Once IDLE
      * is published, even a TX retry cannot write another microphone frame. */
     rt_mutex_take(&ws_tx_mutex, RT_WAITING_FOREVER);
+    rt_enter_critical();
+    if (state == kDeviceStateSpeaking)
+    {
+        ++ws_speaking_generation;
+        ws_barge_start_tick = rt_tick_get();
+    }
+    ws_barge_request.pending = false;
+    ws_tts_stop_pending = false;
     web_g_state = state;
+    rt_exit_critical();
     rt_mutex_release(&ws_tx_mutex);
     xiaozhi_ui_set_face_state(face_state);
     xiaozhi_ui_chat_status(status);
@@ -336,7 +357,12 @@ void send_iot_states(void)
 void ws_send_speak_abort(void *ws, char *session_id, int reason)
 {
     char message[256];
-    rt_kprintf("speak abort\n");
+    rt_enter_critical();
+    xz_audio_reset_barge_in();
+    ws_barge_request.pending = false;
+    rt_exit_critical();
+    rt_kprintf("SPEAK_ABORT reason=%s(%d) state=%d\n",
+               reason ? "wake_word_detected" : "none", reason, web_g_state);
     rt_snprintf(message, 256, "{\"session_id\":\"%s\",\"type\":\"abort\"",
                 session_id);
     if (reason)
@@ -352,6 +378,136 @@ void ws_send_speak_abort(void *ws, char *session_id, int reason)
     {
         rt_kprintf("websocket is not connected\n");
     }
+}
+
+bool xz_ws_barge_in_context(uint32_t *generation, rt_tick_t *start)
+{
+    rt_enter_critical();
+    *generation = ws_speaking_generation;
+    *start = ws_barge_start_tick;
+    bool active = g_xz_ws.is_connected && ws_session_active &&
+                  web_g_state == kDeviceStateSpeaking && !ws_tts_stop_pending;
+    rt_exit_critical();
+    return active;
+}
+
+bool xz_ws_request_barge_in(uint32_t generation, uint32_t rms, uint32_t floor,
+                          uint32_t pre, unsigned frames,
+                          bool wake_word)
+{
+    rt_enter_critical();
+    bool active = g_xz_ws.is_connected && ws_session_active &&
+                  web_g_state == kDeviceStateSpeaking &&
+                  (wake_word || !ws_tts_stop_pending) &&
+                  generation == ws_speaking_generation;
+    if (active && !ws_barge_request.pending)
+    {
+        ws_barge_request.generation = generation;
+        ws_barge_request.rms = rms;
+        ws_barge_request.floor = floor;
+        ws_barge_request.pre = pre;
+        ws_barge_request.ref = ws_barge_request.gain = 0;
+        ws_barge_request.ref_hold = 0;
+        ws_barge_request.ref_age_ms = XZ_BARGE_REF_HOLD_MS;
+        ws_barge_request.dtd = false;
+        ws_barge_request.clipped = false;
+        ws_barge_request.frames = frames;
+        ws_barge_request.wake_word = wake_word;
+        ws_barge_request.pending = true; /* publish last, no mailbox/heap allocation */
+    }
+    rt_exit_critical();
+    return active;
+}
+
+bool xz_ws_request_speech_barge_in(const xz_barge_detector_t *detector)
+{
+    rt_enter_critical();
+    bool accepted = false;
+    if (!ws_barge_request.pending)
+    {
+        accepted = xz_ws_request_barge_in(detector->generation, detector->rms,
+            detector->echo_floor, detector->pre_rms, detector->frames, false);
+        if (accepted)
+        {
+            ws_barge_request.ref = detector->ref_rms;
+            ws_barge_request.ref_hold = detector->ref_hold;
+            ws_barge_request.ref_age_ms = detector->ref_age_ms;
+            ws_barge_request.gain = detector->echo_gain_milli;
+            ws_barge_request.dtd = detector->dtd;
+            ws_barge_request.clipped = detector->clipped;
+        }
+    }
+    rt_exit_critical();
+    return accepted;
+}
+
+static void ws_abort_speaking(int reason, const char *source)
+{
+    /* Caller holds ws_tx_mutex. No reconnect/listen_start/beep and no music
+     * stop command: xz_speaker(0) releases the existing TTS music pause. */
+    if (!g_xz_ws.is_connected || !ws_session_active ||
+        web_g_state != kDeviceStateSpeaking) return;
+    rt_kprintf("SPEAK_INTERRUPT source=%s generation=%u\n", source,
+               (unsigned)ws_speaking_generation);
+    ws_send_speak_abort(&g_xz_ws.clnt, g_xz_ws.session_id, reason);
+    xz_speaker(0);
+    g_is_speaking = false;
+    ws_set_state(kDeviceStateListening);
+}
+
+void xz_ws_process_barge_in(void)
+{
+    /* Called every ~20 ms from the main event thread. The audio callback and
+     * KWS thread only publish a small request, never take the socket lock. */
+    rt_mutex_take(&ws_tx_mutex, RT_WAITING_FOREVER);
+    rt_enter_critical();
+    bool pending = ws_barge_request.pending;
+    uint32_t generation = ws_barge_request.generation;
+    uint32_t rms = ws_barge_request.rms;
+    uint32_t floor = ws_barge_request.floor;
+    uint32_t pre = ws_barge_request.pre;
+    uint32_t ref = ws_barge_request.ref;
+    uint32_t ref_hold = ws_barge_request.ref_hold;
+    uint32_t ref_age_ms = ws_barge_request.ref_age_ms;
+    uint32_t gain = ws_barge_request.gain;
+    bool dtd = ws_barge_request.dtd;
+    bool clipped = ws_barge_request.clipped;
+    unsigned frames = ws_barge_request.frames;
+    bool wake_word = ws_barge_request.wake_word;
+    ws_barge_request.pending = false;
+    rt_exit_critical();
+    if (pending && ws_session_active && g_xz_ws.is_connected &&
+        web_g_state == kDeviceStateSpeaking && generation == ws_speaking_generation &&
+        (wake_word || !ws_tts_stop_pending) &&
+        !xz_audio_wake_beep_active() && !Initiate_disconnection_flag)
+    {
+        if (!wake_word)
+            rt_kprintf("BARGE_IN gen=%u source=speech pre=%u post=%u ref=%u g=%u dtd=%u rms=%u floor=%u frames=%u refh=%u ref_age=%ums clip=%u ref_blk=%u\n",
+                       (unsigned)generation, (unsigned)pre, (unsigned)rms,
+                       (unsigned)ref, (unsigned)gain, (unsigned)dtd,
+                       (unsigned)rms, (unsigned)floor, frames,
+                       (unsigned)ref_hold, (unsigned)ref_age_ms,
+                       (unsigned)clipped, (unsigned)ref);
+        ws_abort_speaking(kAbortReasonWakeWordDetected, wake_word ? "kws" : "speech");
+    }
+    /* Normal tts stop drains queued PCM before closing the TX gate. An abort
+     * instead discards it immediately, including a partially decoded block. */
+    if (ws_tts_stop_pending && web_g_state == kDeviceStateSpeaking &&
+        xz_audio_tts_drained()) ws_end_speaking();
+    rt_mutex_release(&ws_tx_mutex);
+}
+
+void xz_ws_wake_word_detected(void)
+{
+    if (xz_audio_wake_beep_active() || Initiate_disconnection_flag) return;
+    uint32_t generation;
+    rt_tick_t start;
+    rt_kprintf("KWS_WAKE state=%d\n", web_g_state);
+    xz_ws_barge_in_context(&generation, &start);
+    /* A wake word may still explicitly interrupt PCM draining after stop;
+     * only the automatic speech detector is disabled by tts stop. */
+    if (!xz_ws_request_barge_in(generation, 0, 0, 0, 0, true))
+        simulate_button_pressed(); /* retain the existing Standby/session wake */
 }
 
 void ws_send_listen_start(void *ws, char *session_id, enum ListeningMode mode)
@@ -754,10 +910,7 @@ static void xz_button_event_handler(int32_t pin, button_action_t action)
             if (web_g_state == kDeviceStateSpeaking)
             {
                 /* 正在播报时按键 = 打断。realtime 模式下不必重发 listen。 */
-                ws_send_speak_abort(&g_xz_ws.clnt, g_xz_ws.session_id,
-                                    kAbortReasonNone);
-                xz_speaker(0);
-                g_is_speaking = false;
+                ws_abort_speaking(kAbortReasonNone, "button");
             }
             ws_set_state(kDeviceStateListening);
             goto out;
@@ -895,7 +1048,7 @@ void xz_ws_audio_init()
     g_xz_ws.frame_duration = 0;
 
     rt_kprintf("xz_audio_init\n");
-    audio_server_set_private_volume(AUDIO_TYPE_LOCAL_MUSIC, 8); // 设置音量
+    audio_server_set_private_volume(AUDIO_TYPE_LOCAL_MUSIC, VOL_DEFAULE_LEVEL);
     xz_audio_decoder_encoder_open(1); // 打开音频解码器和编码器
 
 }
@@ -1003,8 +1156,19 @@ void parse_helLo(const u8_t *data, u16_t len)
                 ws_set_state(kDeviceStateListening);
                 goto done;
             }
+            rt_mutex_take(&ws_tx_mutex, RT_WAITING_FOREVER);
+            if (!ws_session_active)
+            {
+                rt_mutex_release(&ws_tx_mutex);
+                goto done;
+            }
             xz_music_tts(true);
+            xz_audio_reset_barge_in();
             ws_set_state(kDeviceStateSpeaking);
+            rt_kprintf("BARGE_TRAIN generation=%u phase=start arm_ms=%u arm_ratio=%u/1000 "
+                       "arm_min_pre=%u echo_mult=%u dtd_margin_pm=%u\n",
+                       (unsigned)ws_speaking_generation, XZ_BARGE_ARM_MS, XZ_BARGE_ARM_RATIO,
+                       XZ_BARGE_ARM_MIN_PRE, XZ_BARGE_IN_ECHO_MULT, XZ_BARGE_DTD_MARGIN_PM);
             xz_speaker(1); // 打开扬声器
             if (!g_is_speaking)
             {
@@ -1012,9 +1176,21 @@ void parse_helLo(const u8_t *data, u16_t len)
                 g_is_speaking = true;
                 g_speaking_start_tick = rt_tick_get();
             }
+            rt_mutex_release(&ws_tx_mutex);
         }
         else if (strcmp(state, "stop") == 0)
-        {           
+        {
+            rt_mutex_take(&ws_tx_mutex, RT_WAITING_FOREVER);
+            rt_enter_critical();
+            bool no_convergence = web_g_state == kDeviceStateSpeaking && !ws_tts_stop_pending &&
+                                  !xz_audio_barge_in_armed(ws_speaking_generation);
+            if (web_g_state == kDeviceStateSpeaking) ws_tts_stop_pending = true;
+            ws_barge_request.pending = false;
+            xz_audio_reset_barge_in();
+            rt_exit_critical();
+            if (no_convergence)
+                rt_kprintf("BARGE_TRAIN generation=%u phase=skip reason=no_convergence\n",
+                           (unsigned)ws_speaking_generation);
             // 计算本次讲话时间并累加
             if (g_is_speaking) 
             {
@@ -1033,7 +1209,13 @@ void parse_helLo(const u8_t *data, u16_t len)
                 }
             }
             
-            ws_end_speaking();
+            /* A late stop for an aborted turn must not leave Thinking or
+             * Listening. Finish natural playback only after its PCM drains. */
+            if (web_g_state == kDeviceStateSpeaking)
+            {
+                if (xz_audio_tts_drained()) ws_end_speaking();
+            }
+            rt_mutex_release(&ws_tx_mutex);
         }
         else if (strncmp(state, "sentence_", 9) == 0)
         {

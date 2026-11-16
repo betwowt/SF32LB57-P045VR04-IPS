@@ -517,6 +517,7 @@ int main(void)
         rt_uint32_t value;
 
         xz_ws_process_wake();
+        xz_ws_process_barge_in();
         if (rt_mb_recv(g_bt_app_mb, (rt_uint32_t *)&value,
                        rt_tick_from_millisecond(20)) != RT_EOK)
             continue;

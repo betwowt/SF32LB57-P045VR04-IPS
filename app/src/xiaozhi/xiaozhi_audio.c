@@ -36,6 +36,23 @@
 #include "xiaozhi_websocket.h"
 #include "xiaozhi_music.h"
 #include "xiaozhi_music_source.h"
+#include "xiaozhi_mic_dsp.h"
+#include "xiaozhi_barge_ref.h"
+
+/* Kconfig writes XZ_* into rtconfig.h; retain CONFIG_* as a direct compiler
+ * override as well. Set CONFIG_XZ_MIC_LEVEL_LOG=n in proj.conf to remove it. */
+#ifndef CONFIG_XZ_MIC_LEVEL_LOG
+#ifdef XZ_MIC_LEVEL_LOG
+#define CONFIG_XZ_MIC_LEVEL_LOG 1
+#else
+#define CONFIG_XZ_MIC_LEVEL_LOG 0
+#endif
+#endif
+#ifdef XZ_MIC_DOWNMIX_MAX_ABS
+#define XZ_MIC_MIX_MAX_ABS 1
+#else
+#define XZ_MIC_MIX_MAX_ABS 0
+#endif
 
 extern xiaozhi_ws_t g_xz_ws;
 #include "app_recorder_process.h"
@@ -133,6 +150,29 @@ static void xz_music_rx_closing(void)
     xz_music_audio_shutdown(xz_music_rx_unavailable);
 }
 static volatile bool xz_wake_beep_busy;
+static bool xz_decode_inflight;
+static uint32_t xz_playback_generation;
+static struct rt_mutex xz_playback_mutex;
+static int16_t xz_mic_mono[XZ_MIC_SAMPLES_10MS] L2_RET_BSS_SECT(xz_mic_mono);
+static int16_t xz_mic_uplink[XZ_MIC_SAMPLES_10MS] L2_RET_BSS_SECT(xz_mic_uplink);
+static xz_barge_detector_t xz_barge_detector;
+/* One-shot reference: the SDK calls raw -> 3A -> post synchronously. */
+static struct { uint16_t rms, peak[2]; uint8_t ready; } xz_mic_pre;
+static xz_barge_ref_t xz_mic_ref; /* captured with raw, consumed with post */
+/* Raw peaks are safety data, independent of the optional RMS diagnostics. */
+static uint32_t xz_mic_raw_peak[2], xz_mic_peak_frames;
+static uint32_t xz_mic_raw_blocks, xz_mic_post_blocks, xz_mic_mono_samples;
+static uint64_t xz_mic_post_square;
+static uint32_t xz_mic_post_peak;
+static uint32_t xz_mic_bad_blocks, xz_mic_last_bytes, xz_mic_last_channels;
+static rt_tick_t xz_mic_log_tick;
+#if CONFIG_XZ_MIC_LEVEL_LOG
+static struct
+{
+    uint64_t square[2];
+    uint32_t peak[2], samples;
+} xz_mic_levels;
+#endif
 static uint32_t xz_wake_beep_token;
 static int xz_mic_hang;
 static uint8_t xz_encode_rb_pool[XZ_MIC_FRAME_LEN * 2
@@ -160,7 +200,8 @@ static uint32_t
 #endif
 
 static void xz_opus_thread_entry(void *p);
-static void audio_write_and_wait(xz_audio_t *thiz, uint8_t *data, uint32_t data_len);
+static void audio_write_and_wait(xz_audio_t *thiz, uint8_t *data, uint32_t data_len,
+                                 uint32_t generation);
 static void xz_button_event_handler(int32_t pin, button_action_t action);
 void xz_mic_open(xz_audio_t *thiz);
 void xz_mic_close(xz_audio_t *thiz);
@@ -433,43 +474,298 @@ static int xz_btnstat(int argc, char **argv)
 }
 MSH_CMD_EXPORT(xz_btnstat, read KEY1 pin level);
 
-static int mic_callback(audio_server_callback_cmt_t cmd,
-                        void *callback_userdata, uint32_t reserved)
-{
-    // this was called every 10ms
-    xz_audio_t *thiz = &xz_audio;
-    /* Websocket owns speaking timeout recovery and the resulting UI state. */
+bool xz_audio_wake_beep_active(void) { return xz_wake_beep_busy; }
 
-    if (cmd == as_callback_cmd_data_coming && reserved)
+void xz_audio_reset_barge_in(void)
+{
+    rt_enter_critical();
+    xz_barge_reset(&xz_barge_detector);
+    xz_barge_ref_reset();
+    xz_mic_ref = (xz_barge_ref_t){0};
+    xz_mic_pre.rms = 0;
+    xz_mic_pre.ready = 0;
+    rt_exit_critical();
+}
+
+bool xz_audio_barge_in_armed(uint32_t generation)
+{
+    rt_enter_critical();
+    bool armed = xz_barge_detector.generation == generation &&
+                 xz_barge_detector.phase == XZ_BARGE_ARMED;
+    rt_exit_critical();
+    return armed;
+}
+
+/* No writes to the SDK's const input, no allocation, exactly 160 output
+ * samples. The same conversion is used before AEC and for stereo callbacks
+ * from an SDK which can supply two processed channels. */
+static void xz_mic_downmix(const int16_t *input, unsigned channels, bool pre3a)
+{
+    uint64_t square[2] = {0, 0};
+    uint32_t peak[2] = {0, 0};
+    for (unsigned i = 0; i < XZ_MIC_SAMPLES_10MS; ++i)
     {
-        audio_server_coming_data_t *d = (audio_server_coming_data_t *)reserved;
-        int16_t *sm = (int16_t *)d->data;
-        int cnt = d->data_len >> 1;
-        g_mic_cb++;
-        xz_music_rx_frames++;
-        g_mic_bytes += d->data_len;
-        for (int i = 0; i < cnt; i++)
+        int16_t l = input[i * channels];
+        int16_t r = channels == 2 ? input[i * channels + 1] : l;
+        xz_mic_mono[i] = channels == 2 ? xz_mic_mix(l, r, XZ_MIC_MIX_MAX_ABS) : l;
+        if (pre3a)
         {
-            int v = sm[i]; if (v < 0) v = -v;
-            g_mic_abs += v;
-            if (v > (int)g_mic_peak) g_mic_peak = v;
-            if (v) g_mic_nz++;
-            g_mic_n++;
+            square[0] += (uint64_t)((int32_t)l * l);
+            square[1] += (uint64_t)((int32_t)r * r);
+            int32_t lv = l, rv = r;
+            uint32_t la = lv < 0 ? -lv : lv, ra = rv < 0 ? -rv : rv;
+            if (la > peak[0]) peak[0] = la;
+            if (ra > peak[1]) peak[1] = ra;
         }
-        if (xz_rec_on && xz_rec_idx < xz_rec_n)
+#if CONFIG_XZ_MIC_LEVEL_LOG
+        if (channels == 2)
         {
-            uint32_t pk = 0;
-            for (int i = 0; i < cnt; i++)
-            {
-                int v = sm[i]; if (v < 0) v = -v;
-                if ((uint32_t)v > pk) pk = (uint32_t)v;
-            }
-            xz_rec_peak[xz_rec_idx++] = (uint16_t)(pk > 65535 ? 65535 : pk);
+            int32_t lv = l, rv = r;
+            uint32_t la = lv < 0 ? -lv : lv, ra = rv < 0 ? -rv : rv;
+            xz_mic_levels.square[0] += (uint64_t)(lv * lv);
+            xz_mic_levels.square[1] += (uint64_t)(rv * rv);
+            if (la > xz_mic_levels.peak[0]) xz_mic_levels.peak[0] = la;
+            if (ra > xz_mic_levels.peak[1]) xz_mic_levels.peak[1] = ra;
         }
-        if (!xz_wake_beep_busy)
-            kws_feed_mic((const int16_t *)d->data, d->data_len >> 1);
+#endif
     }
-    if (thiz->is_rx_enable && cmd == as_callback_cmd_data_coming)
+    if (pre3a)
+    {
+        /* Use the louder raw channel, not a possibly phase-cancelled mix.
+         * This reference remains available with MIC_LEVEL_LOG disabled. */
+        uint64_t maximum = square[0] > square[1] ? square[0] : square[1];
+        xz_mic_pre.rms = (uint16_t)xz_mic_isqrt((uint32_t)(maximum / XZ_MIC_SAMPLES_10MS));
+        for (unsigned ch = 0; ch < 2; ++ch)
+        {
+            xz_mic_pre.peak[ch] = (uint16_t)peak[ch];
+            if (peak[ch] > xz_mic_raw_peak[ch]) xz_mic_raw_peak[ch] = peak[ch];
+        }
+        ++xz_mic_peak_frames;
+        rt_enter_critical();
+        xz_barge_ref_snapshot(&xz_mic_ref);
+        xz_mic_pre.ready = 1;
+        rt_exit_critical();
+    }
+#if CONFIG_XZ_MIC_LEVEL_LOG
+    if (channels == 2) xz_mic_levels.samples += XZ_MIC_SAMPLES_10MS;
+#endif
+}
+
+static void xz_mic_log(void)
+{
+    rt_tick_t now = rt_tick_get();
+    if (now - xz_mic_log_tick < rt_tick_from_millisecond(2000)) return;
+    xz_mic_log_tick = now;
+    rt_kprintf("MIC_PEAK L=%u R=%u clip=%u pre_valid=%u\n",
+               (unsigned)xz_mic_raw_peak[0], (unsigned)xz_mic_raw_peak[1],
+               (unsigned)xz_mic_clipped(xz_mic_raw_peak[0], xz_mic_raw_peak[1]),
+               (unsigned)(xz_mic_peak_frames != 0));
+    xz_mic_raw_peak[0] = xz_mic_raw_peak[1] = xz_mic_peak_frames = 0;
+#if CONFIG_XZ_MIC_LEVEL_LOG
+    if (xz_mic_levels.samples)
+        rt_kprintf("MIC_L rms=%u peak=%u | MIC_R rms=%u peak=%u source=%s\n",
+            (unsigned)xz_mic_isqrt((uint32_t)(xz_mic_levels.square[0] / xz_mic_levels.samples)),
+            (unsigned)xz_mic_levels.peak[0],
+            (unsigned)xz_mic_isqrt((uint32_t)(xz_mic_levels.square[1] / xz_mic_levels.samples)),
+            (unsigned)xz_mic_levels.peak[1], xz_mic_raw_blocks ? "pre3a_LR" : "post3a_LR");
+    else
+        rt_kprintf("MIC_L rms=NA peak=NA | MIC_R rms=NA peak=NA source=post3a_mono\n");
+    memset(&xz_mic_levels, 0, sizeof(xz_mic_levels));
+#endif
+    rt_kprintf("MIC_PCM raw_lr_blocks=%u post_blocks=%u mono_samples=%u "
+               "mono_rms=%u mono_peak=%u post_bytes=%u post_ch=%u frame_samples=160 fs=16000 frame_ms=10 "
+               "mix=%s bad_len=%u\n",
+               (unsigned)xz_mic_raw_blocks, (unsigned)xz_mic_post_blocks,
+               (unsigned)xz_mic_mono_samples,
+               (unsigned)xz_mic_isqrt(xz_mic_mono_samples ?
+                   (uint32_t)(xz_mic_post_square / xz_mic_mono_samples) : 0),
+               (unsigned)xz_mic_post_peak, (unsigned)xz_mic_last_bytes,
+               (unsigned)xz_mic_last_channels, XZ_MIC_MIX_MAX_ABS ? "max_abs" : "average",
+               (unsigned)xz_mic_bad_blocks);
+    xz_mic_raw_blocks = xz_mic_post_blocks = xz_mic_mono_samples = xz_mic_bad_blocks = 0;
+    xz_mic_post_square = xz_mic_post_peak = 0;
+    rt_enter_critical();
+    xz_barge_detector_t detector = xz_barge_detector;
+    rt_exit_critical();
+    if (detector.phase != XZ_BARGE_IDLE)
+        rt_kprintf("BARGE_MON generation=%u training=%u floor=%u threshold=%u "
+                   "rms=%u pre=%u ratio=%u/1000 pre_valid=%u frames=%u refh=%u ref_age=%ums\n",
+                   (unsigned)detector.generation, detector.phase == XZ_BARGE_TRAIN,
+                   (unsigned)detector.echo_floor,
+                   (unsigned)xz_barge_threshold(&detector, XZ_BARGE_IN_RMS, XZ_BARGE_IN_ECHO_MULT),
+                   (unsigned)detector.rms, (unsigned)detector.pre_rms,
+                   (unsigned)xz_barge_ratio(detector.rms, detector.pre_rms),
+                   (unsigned)detector.pre_valid, (unsigned)detector.frames,
+                   (unsigned)detector.ref_hold, (unsigned)detector.ref_age_ms);
+}
+
+static void xz_mic_barge_in(uint32_t power, int voice)
+{
+    static rt_tick_t last_frame;
+    static rt_tick_t curve_tick;
+    static uint32_t curve_generation;
+    static bool curve_valid;
+    static rt_tick_t clip_tick;
+    static bool clip_logged;
+    static rt_tick_t sync_tick;
+    static bool sync_logged;
+    uint32_t generation = 0;
+    rt_tick_t start = 0;
+    /* Lifecycle reset, context snapshot, detection and publication must not
+     * race tts stop/abort on another thread. No socket I/O in this section. */
+    rt_enter_critical();
+    bool speaking = xz_ws_barge_in_context(&generation, &start);
+    bool eligible = speaking && !xz_wake_beep_busy && !Initiate_disconnection_flag;
+    rt_tick_t now = rt_tick_get();
+    uint32_t frame_ms = (uint32_t)((uint64_t)(rt_tick_t)(now - last_frame) * 1000u / RT_TICK_PER_SECOND);
+    if (now - last_frame > rt_tick_from_millisecond(30))
+        xz_barge_break_streak(&xz_barge_detector);
+    last_frame = now;
+    uint8_t previous_phase = xz_barge_detector.phase;
+    uint32_t pre = xz_mic_pre.rms;
+    uint32_t peak_l = xz_mic_pre.peak[0], peak_r = xz_mic_pre.peak[1];
+    bool clipped = xz_mic_pre.ready && xz_mic_clipped(peak_l, peak_r);
+    bool ref_valid = xz_mic_pre.ready && xz_mic_ref.synced;
+    bool sync_log = eligible && !ref_valid &&
+                    (!sync_logged || now - sync_tick >= rt_tick_from_millisecond(2000));
+    if (sync_log)
+    {
+        sync_logged = true;
+        sync_tick = now;
+    }
+    bool clip_log = eligible && clipped &&
+                    (!clip_logged || now - clip_tick >= rt_tick_from_millisecond(2000));
+    if (clip_log)
+    {
+        clip_logged = true;
+        clip_tick = now;
+    }
+    if (!speaking) xz_barge_reset(&xz_barge_detector);
+    else if (xz_barge_step(&xz_barge_detector, generation, eligible,
+                      xz_mic_isqrt(power), pre, xz_mic_pre.ready, clipped,
+                      xz_mic_ref.rms, ref_valid,
+                      voice, XZ_BARGE_IN_RMS, XZ_BARGE_IN_ECHO_MULT,
+                      XZ_BARGE_DTD_MARGIN_PM, XZ_BARGE_IN_FRAMES,
+                      XZ_BARGE_ARM_RATIO, XZ_BARGE_ARM_MS, XZ_BARGE_ARM_MIN_PRE, frame_ms))
+    {
+        if (!xz_ws_request_speech_barge_in(&xz_barge_detector))
+            xz_barge_reset(&xz_barge_detector);
+    }
+    xz_barge_detector_t detector = xz_barge_detector;
+    rt_tick_t elapsed = now - start;
+    bool curve = eligible && elapsed < rt_tick_from_millisecond(3000) &&
+                 (!curve_valid || curve_generation != generation ||
+                  now - curve_tick >= rt_tick_from_millisecond(100));
+    if (curve)
+    {
+        curve_valid = true;
+        curve_generation = generation;
+        curve_tick = now;
+    }
+    xz_mic_pre.ready = 0; /* never reuse a raw reference for a later post frame */
+    rt_exit_critical();
+    if (sync_log)
+        rt_kprintf("BARGE_DTD_SYNC gen=%u age_ms=%u skew=%d pre_valid=%u\n",
+                   (unsigned)generation, (unsigned)xz_mic_ref.age_ms,
+                   (int)xz_mic_ref.skew, (unsigned)detector.pre_valid);
+    if (clip_log)
+        rt_kprintf("BARGE_CLIP pre=%u peakL=%u peakR=%u generation=%u\n",
+                   (unsigned)pre, (unsigned)peak_l, (unsigned)peak_r, (unsigned)generation);
+    if (detector.phase == XZ_BARGE_ARMED && previous_phase != XZ_BARGE_ARMED)
+        rt_kprintf("BARGE_TRAIN generation=%u phase=armed reason=converged t=%ums window_ms=%u frames=%u "
+                   "floor=%u threshold=%u "
+                   "rms=%u pre=%u ratio=%u/1000 pre_valid=%u g=%u ref=%u refh=%u ref_age=%ums\n",
+                   (unsigned)generation,
+                   (unsigned)((uint64_t)elapsed * 1000u / RT_TICK_PER_SECOND),
+                   (unsigned)detector.arm_frames * 10u, (unsigned)detector.arm_frames,
+                   (unsigned)detector.echo_floor,
+                   (unsigned)xz_barge_threshold(&detector, XZ_BARGE_IN_RMS, XZ_BARGE_IN_ECHO_MULT),
+                   (unsigned)detector.rms, (unsigned)detector.pre_rms,
+                   (unsigned)xz_barge_ratio(detector.rms, detector.pre_rms),
+                   (unsigned)detector.pre_valid, (unsigned)detector.echo_gain_milli,
+                   (unsigned)detector.ref_rms, (unsigned)detector.ref_hold,
+                   (unsigned)detector.ref_age_ms);
+    if (curve)
+        rt_kprintf("BARGE_CURVE gen=%u t=%ums pre=%u post=%u ratio=%u/1000 state=%s pre_valid=%u clip=%u "
+                   "ref=%u ref_peak=%u g=%u dtd=%u sync=%u refh=%u ref_age=%ums\n",
+                   (unsigned)generation,
+                   (unsigned)((uint64_t)elapsed * 1000u / RT_TICK_PER_SECOND),
+                   (unsigned)detector.pre_rms, (unsigned)detector.rms,
+                   (unsigned)xz_barge_ratio(detector.rms, detector.pre_rms),
+                   detector.phase == XZ_BARGE_ARMED ? "armed" : "train",
+                   (unsigned)detector.pre_valid, (unsigned)clipped,
+                   (unsigned)detector.ref_rms, (unsigned)xz_mic_ref.peak,
+                   (unsigned)detector.echo_gain_milli, (unsigned)detector.dtd, (unsigned)ref_valid,
+                   (unsigned)detector.ref_hold, (unsigned)detector.ref_age_ms);
+}
+
+void xz_audio_apply_pdm_gain(void)
+{
+#ifdef AUDIO_RX_USING_PDM
+    /* Already exported by drv_audprc.c, but absent from its public header.
+     * Set both the saved startup value and the live L/R registers. Repeating
+     * an absolute setting cannot accumulate attenuation across reopens. */
+    extern int Set_pdm_gain(int8_t value);
+    static bool logged;
+    int result = Set_pdm_gain(XZ_PDM_GAIN_TRIM);
+    RT_ASSERT(result == 0);
+    if (!logged)
+    {
+        logged = true;
+        rt_kprintf("PDM_GAIN set=%d\n", XZ_PDM_GAIN_TRIM);
+    }
+#endif
+}
+
+static int xz_mic_mono_frame(audio_server_coming_data_t *p)
+{
+    xz_audio_t *thiz = &xz_audio;
+    const int16_t *sm = (const int16_t *)p->data;
+    uint64_t square = 0;
+    uint32_t peak = 0;
+    uint32_t compensated_peak = 0;
+    for (unsigned i = 0; i < XZ_MIC_SAMPLES_10MS; ++i)
+    {
+        int32_t sample = sm[i];
+        /* Share one saturated +6 dB copy across KWS, VAD and uplink.
+         * All post/barge energy and clipping references remain raw. */
+        int32_t compensated = xz_mic_makeup_sample(sm[i]);
+        xz_mic_uplink[i] = (int16_t)compensated;
+        uint32_t compensated_abs = compensated < 0 ? -compensated : compensated;
+        if (compensated_abs > compensated_peak) compensated_peak = compensated_abs;
+        uint32_t v = sample < 0 ? -sample : sample;
+        square += (uint64_t)(sample * sample);
+        g_mic_abs += v;
+        if (v > g_mic_peak) g_mic_peak = v;
+        if (v > peak) peak = v;
+        if (v) g_mic_nz++;
+        g_mic_n++;
+    }
+    xz_mic_post_square += square;
+    if (peak > xz_mic_post_peak) xz_mic_post_peak = peak;
+    if (xz_rec_on && xz_rec_idx < xz_rec_n)
+        xz_rec_peak[xz_rec_idx++] = (uint16_t)compensated_peak;
+#ifdef AUDIO_RX_USING_PDM
+    static bool makeup_logged;
+    if (!makeup_logged)
+    {
+        makeup_logged = true;
+        rt_kprintf("MIC_MKUP uw=1 kws=1 vad=1\n");
+    }
+#endif
+    if (!xz_wake_beep_busy)
+        kws_feed_mic(xz_mic_uplink, XZ_MIC_SAMPLES_10MS); /* also during Speaking/Standby */
+
+    int voice = -1;
+#ifdef PKG_XIAOZHI_USING_AEC
+    /* One VAD call per post-AEC frame, shared by uplink and local barge-in.
+     * An unavailable/error VAD must never count as speech. */
+    if (thiz->inited && thiz->handle && !xz_wake_beep_busy)
+        voice = WebRtcVad_Process(thiz->handle, 16000, xz_mic_uplink, XZ_MIC_SAMPLES_10MS);
+    if (thiz->is_websocket)
+        xz_mic_barge_in((uint32_t)(square / XZ_MIC_SAMPLES_10MS), voice);
+#endif
+    if (thiz->inited && thiz->is_rx_enable)
     {
         /* Keep raw capture alive for local KWS, but never let Standby,
          * handshake, THINK, or the wake tone enter the encoder/VAD wake path. */
@@ -479,8 +775,12 @@ static int mic_callback(audio_server_callback_cmt_t cmd,
             xz_audio_reset_uplink();
             return 0;
         }
+        /* Reuse the KWS/VAD compensated copy for every uplink path,
+         * including the legacy VAD pre-roll cache; never apply gain twice. */
+        audio_server_coming_data_t uplink = *p;
+        uplink.data = (const uint8_t *)xz_mic_uplink;
+        p = &uplink;
         // data lengh is 320 bytes, which is 10ms for 16k samplerate
-        audio_server_coming_data_t *p = (audio_server_coming_data_t *)reserved;
         /* 诊断：确认麦克风回调是否还在跑、VAD 是否放行。 */
         static uint32_t cb_cnt = 0, pass_cnt = 0;
         static rt_tick_t last_dbg = 0;
@@ -501,12 +801,8 @@ static int mic_callback(audio_server_callback_cmt_t cmd,
              * 800 ms 拖尾，避免尾字被切。 */
 #ifdef PKG_XIAOZHI_USING_AEC
             {
-                int voice = thiz->vad_enabled
-                                ? WebRtcVad_Process(thiz->handle, 16000,
-                                                    (int16_t *)p->data,
-                                                    p->data_len / 2)
-                                : 1;
-                if (voice)
+                int uplink_voice = thiz->vad_enabled ? voice == 1 : 1;
+                if (uplink_voice)
                 {
                     xz_mic_hang = 80;
                 }
@@ -514,7 +810,7 @@ static int mic_callback(audio_server_callback_cmt_t cmd,
                 {
                     xz_mic_hang--;
                 }
-                if (!voice && xz_mic_hang == 0)
+                if (!uplink_voice && xz_mic_hang == 0)
                 {
                     return 0;
                 }
@@ -548,7 +844,7 @@ static int mic_callback(audio_server_callback_cmt_t cmd,
 #ifdef PKG_XIAOZHI_USING_AEC
     if (thiz->vad_enabled) 
     {
-        int ret = WebRtcVad_Process(thiz->handle, 16000, (int16_t *)p->data,p->data_len / 2); //检测是否是人声 返回1是人声
+        int ret = voice == 1;
         if(vad_enable) //如果开起了不打断功能 1是不打断
         { 
             if (XZ_DEVICE_STATE != kDeviceStateIdle) 
@@ -666,6 +962,55 @@ static int mic_callback(audio_server_callback_cmt_t cmd,
     return 0;
 }
 
+static int mic_callback(audio_server_callback_cmt_t cmd,
+                        void *callback_userdata, uint32_t reserved)
+{
+    (void)callback_userdata;
+    if (!reserved || (cmd != as_callback_cmd_data_coming &&
+                     cmd != as_callback_cmd_mic_stereo_before_3a)) return 0;
+    audio_server_coming_data_t *d = (audio_server_coming_data_t *)reserved;
+    unsigned channels = xz_mic_channels(d->data_len);
+    if (!d->data || !channels)
+    {
+        ++xz_mic_bad_blocks;
+        rt_enter_critical();
+        xz_barge_break_streak(&xz_barge_detector);
+        xz_mic_pre.ready = 0;
+        rt_exit_critical();
+        if (xz_audio.inited) xz_audio_reset_uplink();
+        if (cmd == as_callback_cmd_mic_stereo_before_3a) d->data_len = 0;
+        xz_mic_log(); /* rate limited; an unknown format is dropped, never sped up */
+        return 0;
+    }
+    if (cmd == as_callback_cmd_mic_stereo_before_3a)
+    {
+        xz_mic_downmix((const int16_t *)d->data, channels, true);
+        d->data = (const uint8_t *)xz_mic_mono;
+        d->data_len = XZ_MIC_MONO_BYTES;
+        ++xz_mic_raw_blocks;
+        return 0; /* raw capture must NOT reach KWS, VAD, encoder or barge-in */
+    }
+
+    g_mic_cb++;
+    xz_music_rx_frames++;
+    g_mic_bytes += d->data_len;
+    ++xz_mic_post_blocks;
+    xz_mic_mono_samples += XZ_MIC_SAMPLES_10MS;
+    xz_mic_last_bytes = d->data_len;
+    xz_mic_last_channels = channels;
+    audio_server_coming_data_t mono = *d;
+    if (channels == 2)
+    {
+        xz_mic_downmix((const int16_t *)d->data, channels, false);
+        mono.data = (const uint8_t *)xz_mic_mono;
+    }
+    mono.data_len = XZ_MIC_MONO_BYTES;
+    xz_mic_mono_frame(&mono);
+    xz_mic_pre.ready = 0;
+    xz_mic_log();
+    return 0;
+}
+
 void xz_mic(int on)
 {
     // Sample rate is 16K, each packet should be 60ms
@@ -779,7 +1124,7 @@ void xz_audio_init()
         udp_remove(udp_pcb);
         udp_pcb = NULL;
     }
-    audio_server_set_private_volume(AUDIO_TYPE_LOCAL_MUSIC, 12);  /* 6 -> -20 dB, 12 -> -10 dB 可闻 */
+    audio_server_set_private_volume(AUDIO_TYPE_LOCAL_MUSIC, VOL_DEFAULE_LEVEL);
     xz_audio_decoder_encoder_open(0);
 
     xz_mqtt_button_init();
@@ -790,7 +1135,7 @@ void xz_audio_init()
 }
 #endif
 static void audio_write_and_wait(xz_audio_t *thiz, uint8_t *data,
-                                 uint32_t data_len)
+                                 uint32_t data_len, uint32_t generation)
 {
     int ret;
 #if PKG_XIAOZHI_USING_AEC
@@ -802,6 +1147,12 @@ static void audio_write_and_wait(xz_audio_t *thiz, uint8_t *data,
     while (!thiz->is_exit)
     {
         if (thiz->is_websocket && !xz_ws_playback_allowed()) break;
+        rt_mutex_take(&xz_playback_mutex, RT_WAITING_FOREVER);
+        if (!thiz->is_tx_enable || generation != xz_playback_generation)
+        {
+            rt_mutex_release(&xz_playback_mutex);
+            break;
+        }
 #if PKG_XIAOZHI_USING_AEC
         ret = audio_write(thiz->speaker,
                           (uint8_t *)sifli_resample_get_output(thiz->resample),
@@ -809,6 +1160,7 @@ static void audio_write_and_wait(xz_audio_t *thiz, uint8_t *data,
 #else
         ret = audio_write(thiz->speaker, data, data_len);
 #endif
+        rt_mutex_release(&xz_playback_mutex);
         if (ret)
         {
             break;
@@ -955,8 +1307,11 @@ static void xz_opus_thread_entry(void *p)
             rt_slist_t *decode;
             rt_enter_critical();
             decode = rt_slist_first(&thiz->downlink_decode_busy);
+            if (decode) rt_slist_remove(&thiz->downlink_decode_busy, decode);
+            xz_decode_inflight = decode != NULL;
+            uint32_t playback_generation = xz_playback_generation;
             rt_exit_critical();
-            RT_ASSERT(decode);
+            if (!decode) continue; /* an abort may have drained the event's queue */
             xz_decode_queue_t *queue =
                 rt_container_of(decode, xz_decode_queue_t, node);
             opus_int32 res = opus_decode(
@@ -972,13 +1327,13 @@ static void xz_opus_thread_entry(void *p)
             if(res > 0)
             {
                 audio_write_and_wait(thiz, (uint8_t *)thiz->downlink_decode_out,
-                                 res * 2);
+                                 res * 2, playback_generation);
             }
 
             uint8_t need_decode_gain = 0;
             rt_enter_critical();
-            rt_slist_remove(&thiz->downlink_decode_busy, decode);
             rt_slist_append(&thiz->downlink_decode_idle, decode);
+            xz_decode_inflight = false;
             if (rt_slist_first(&thiz->downlink_decode_busy))
             {
                 need_decode_gain = true;
@@ -1023,14 +1378,18 @@ void xz_aec_mic_open(xz_audio_t *thiz)
         pa.write_channnel_num = 1;
         pa.write_samplerate = 16000;
         pa.read_bits_per_sample = 16;
-        pa.read_channnel_num = 1;
+        pa.read_channnel_num = 2;
+        pa.read_which_mic = AUDIO_MIC_ALL;
         pa.read_samplerate = 16000;
         pa.read_cache_size = 0;
         pa.write_cache_size = 32000;
         pa.is_need_3a = 1;
+        pa.disable_uplink_agc = 1;
+        xz_audio_apply_pdm_gain();
         thiz->mic = audio_open(AUDIO_TYPE_LOCAL_MUSIC, AUDIO_TXRX, &pa,
                                mic_callback, NULL);
         RT_ASSERT(thiz->mic);
+        xz_audio_apply_pdm_gain();
         xz_music_rx_opened(&pa);
         thiz->speaker = thiz->mic;
         thiz->is_rx_enable = 1;   //麦克风常开
@@ -1064,9 +1423,11 @@ void xz_mic_open(xz_audio_t *thiz)
         pa.read_samplerate = 16000;
         pa.read_cache_size = 0;
         pa.write_cache_size = 0;
+        xz_audio_apply_pdm_gain();
         thiz->mic = audio_open(AUDIO_TYPE_LOCAL_RECORD, AUDIO_RX, &pa,
                                mic_callback, NULL);
         RT_ASSERT(thiz->mic);
+        xz_audio_apply_pdm_gain();
         thiz->is_rx_enable = 1;
     }
 #endif
@@ -1099,11 +1460,9 @@ void xz_mic_close(xz_audio_t *thiz)
 void xz_speaker_open(xz_audio_t *thiz)
 {
 #if PKG_XIAOZHI_USING_AEC
-    #if STOP_SPEAKER_WHEN_DETECTED_MIC_VOICE
         LOG_I("speaker on");
         xiaozhi_ui_chat_status("\u8bb2\u8bdd\u4e2d...");
         thiz->is_tx_enable = 1;
-    #endif
 #else
     if (!thiz->speaker)
     {
@@ -1132,12 +1491,14 @@ void xz_speaker_open(xz_audio_t *thiz)
 void xz_speaker_close(xz_audio_t *thiz)
 {
 #if PKG_XIAOZHI_USING_AEC
-    #if STOP_SPEAKER_WHEN_DETECTED_MIC_VOICE
+    if (!thiz->inited) return;
     LOG_I("speaker off");
     xiaozhi_ui_chat_status("\u5f85\u547d\u4e2d...");
         rt_slist_t *idle;
-        thiz->is_tx_enable = 0;
+        rt_mutex_take(&xz_playback_mutex, RT_WAITING_FOREVER);
         rt_enter_critical();
+        thiz->is_tx_enable = 0;
+        ++xz_playback_generation;
         while (1)
         {
             idle = rt_slist_first(&thiz->downlink_decode_busy);
@@ -1152,7 +1513,8 @@ void xz_speaker_close(xz_audio_t *thiz)
             }
         }
         rt_exit_critical();
-    #endif
+        if (thiz->speaker) audio_ioctl(thiz->speaker, AUDIO_IOCTL_DROP_TX_CACHE, NULL);
+        rt_mutex_release(&xz_playback_mutex);
 #else
 
     if (thiz->speaker)
@@ -1191,6 +1553,18 @@ void xz_speaker_close(xz_audio_t *thiz)
 #endif
 }
 
+bool xz_audio_tts_drained(void)
+{
+    if (!xz_audio.inited) return true;
+    rt_enter_critical();
+    bool empty = !xz_decode_inflight && !rt_slist_first(&xz_audio.downlink_decode_busy);
+    rt_exit_critical();
+    if (!empty || !xz_audio.speaker) return empty;
+    uint32_t remaining = 0;
+    return audio_ioctl(xz_audio.speaker, AUDIO_IOCTL_BYTES_IN_CACHE, &remaining) == 0 &&
+           remaining == 0;
+}
+
 /**
  * @brief 打开音频解码器和编码器
  *
@@ -1208,6 +1582,7 @@ void xz_audio_decoder_encoder_open(uint8_t is_websocket)
     if (!xz_audio_boot_initialized)
     {
         memset(thiz, 0, sizeof(*thiz));
+        rt_mutex_init(&xz_playback_mutex, "xz_play", RT_IPC_FLAG_PRIO);
         xz_audio_boot_initialized = true;
     }
     // 检查模块是否已经初始化，避免重复初始化
@@ -1224,15 +1599,18 @@ void xz_audio_decoder_encoder_open(uint8_t is_websocket)
         pa.write_channnel_num = 1;
         pa.write_samplerate = 16000;
         pa.read_bits_per_sample = 16;
-        pa.read_channnel_num = 1;
+        pa.read_channnel_num = 2;
+        pa.read_which_mic = AUDIO_MIC_ALL;
         pa.read_samplerate = 16000;
         pa.read_cache_size = 0;
         pa.write_cache_size = 32000;
         pa.is_need_3a = 1;
         pa.disable_uplink_agc = 1;
+        xz_audio_apply_pdm_gain();
         thiz->mic = audio_open(AUDIO_TYPE_LOCAL_MUSIC, AUDIO_TXRX, &pa,
                                mic_callback, NULL);
         RT_ASSERT(thiz->mic);
+        xz_audio_apply_pdm_gain();
         xz_music_rx_opened(&pa);
 
         /* Analog ADC gain defaults to +12 dB. At +8 dB the on-board mic picks
@@ -1368,8 +1746,9 @@ void xz_audio_decoder_encoder_close(void)
 void reinit_audio()
 {
     xz_audio_t *thiz = &xz_audio;
-    xz_aec_mic_close(thiz);
     xz_speaker_close(thiz);
+    xz_aec_mic_close(thiz);
+    thiz->speaker = NULL; /* TXRX alias was closed with mic */
     xz_audio_decoder_encoder_close();
     // 重新打开音频解码器和编码器
     xz_audio_decoder_encoder_open(1); 

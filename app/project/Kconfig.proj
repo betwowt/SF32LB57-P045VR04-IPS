@@ -21,6 +21,113 @@ config KWS_ENABLE_DEFAULT
     bool "enable offline wake word by default"
     default n
 
+# SDK patch 0005: AUDIO_MIC_ALL is L/R on PDM1 on this board, not two buses.
+config XZ_PDM1_STEREO
+    bool
+    depends on BSP_USING_PDM1 && !BSP_USING_PDM2 && PKG_USING_WEBRTC
+    default y
+
+config XZ_MIC_LEVEL_LOG
+    bool "Log separate raw microphone levels every two seconds"
+    default y
+
+config XZ_MIC_DOWNMIX_MAX_ABS
+    bool "Select the larger absolute L/R sample instead of averaging"
+    default n
+
+config XZ_BARGE_IN_RMS
+    int "Minimum post-AEC RMS for local speech interruption"
+    range 1 32767
+    default 150
+    help
+        Absolute lower bound only. Also require the per-generation echo
+        floor multiplier, calibrated reference DTD and consecutive VAD.
+        With PDM gain trimmed by 6 dB, use 150 for far-field speech.
+        This measures the residual before KWS/uplink makeup gain.
+
+config XZ_BARGE_IN_TRAIN_MS
+    int "Legacy TTS training time (ms; retained, no longer used to arm)"
+    range 600 2000
+    default 800
+    help
+        Retained for configuration compatibility. A fixed delay from TTS
+        start cannot prove AEC convergence because PCM may arrive later.
+        This value no longer arms the detector or sets its echo baseline.
+        Use XZ_BARGE_ARM_* to require consecutive convergence with real echo.
+
+config XZ_BARGE_ARM_RATIO
+    int "Maximum post/pre RMS ratio to confirm AEC convergence (permille)"
+    range 50 250
+    default 250
+    help
+        When pre_rms >= XZ_BARGE_ARM_MIN_PRE, require post_rms * 1000 <=
+        pre_rms * this value on every arming frame. 250 means at most 1/4
+        residual with the trimmed PDM gain, rejecting the large AEC
+        startup leakage even when TTS audio arrives seconds after start.
+        Raw peaks must stay below 32000 on both channels. Silence and weak
+        echo cannot arm; no timeout bypass is allowed.
+
+config XZ_BARGE_ARM_MS
+    int "Consecutive unclipped convergence needed to arm (ms)"
+    range 100 1000
+    default 250
+    help
+        Require ceil(this value / 10) consecutive valid 10 ms frames.
+        250 ms (25 frames) rejects isolated low residuals during startup.
+        Failed conditions, either raw channel peak >= 32000, missing pre
+        data or capture gaps reset the window.
+        Freeze the mean residual of this window as the generation baseline.
+        If TTS stops first, skip automatic speech interruption for the turn.
+
+config XZ_BARGE_ARM_MIN_PRE
+    int "Minimum real pre-AEC echo RMS needed to arm"
+    range 100 8000
+    default 120
+    help
+        Require a valid paired pre-AEC RMS at or above this value and the
+        convergence ratio on every arming frame. Below this value, reset
+        the window: silence before delayed TTS audio is not convergence.
+        Large echo without convergence also remains unarmed.
+
+config XZ_BARGE_IN_ECHO_MULT
+    int "Required RMS multiple of the frozen residual mean"
+    range 3 4
+    default 4
+    help
+        Require post_rms >= max(XZ_BARGE_IN_RMS, echo_floor * this value).
+        echo_floor is the mean of the unclipped convergence window, never
+        a startup peak. Four guards later residual fluctuations; three is
+        available for measured tuning with convergence and DTD gates.
+
+config XZ_BARGE_IN_PRE_RATIO
+    int "Legacy pre/post ratio (unused; compatibility only)"
+    range 2 32
+    default 8
+    help
+        Retained for existing configurations. Does not participate in detection.
+        Use XZ_BARGE_DTD_MARGIN_PM for the calibrated reference gate.
+
+config XZ_BARGE_DTD_MARGIN_PM
+    int "Required raw mic / calibrated playback echo margin (permille)"
+    range 1000 4000
+    default 3000
+    help
+        With ref_rms >= 50, require pre_rms * 1000000 >=
+        echo_gain_milli * ref_rms * this value, using 64-bit products.
+        3000 means a 3x amplitude margin (about 9.5 dB). Gain is sum_pre * 1000 /
+        sum_ref over ref >= 50 frames of the consecutive convergence window,
+        clamped to [50, 4000]. Hold the last ref >= 50 for 300 ms through
+        silent reference blocks, then skip this DTD gate. Missing or more
+        than three frames out of sync breaks the streak, retaining the hold.
+
+config XZ_BARGE_IN_FRAMES
+    int "Consecutive 10 ms speech frames for interruption"
+    range 3 20
+    default 6
+    help
+        Six consecutive 10 ms VAD speech frames (60 ms), each satisfying
+        both energy and double-talk gates, reject isolated residual spikes.
+
 config BLUETOOTH_NAME
     string "Bluetooth device name"
     default "sifli-pan"

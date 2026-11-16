@@ -44,7 +44,9 @@ typedef int BOOL;
  #define LCD_BRIGHTNESS_DEFAULT LCD_BRIGHTNESS_MID
  #define VOL_MIN_LEVEL          (0)
  #define VOL_MAX_LEVEL          (16)
- #define VOL_DEFAULE_LEVEL      (12)
+ /* Stock SDK music table: level 8 = -20 dB, level 6 = -24 dB.
+  * Keep microphone sensitivity; reduce the default acoustic echo by 4 dB. */
+ #define VOL_DEFAULE_LEVEL      (6)
  #define UI_EVENT_SHUTDOWN 1 //正常按键关机
  #define UI_EVENT_LOW_BATTERY_SHUTDOWN 2  //低电量关机
  #define UI_EVENT_LOW_BATTERY_WARNING    3  // 低电开机警告再关机

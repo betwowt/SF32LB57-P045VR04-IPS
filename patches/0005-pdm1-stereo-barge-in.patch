@@ -1,0 +1,109 @@
+diff --git a/middleware/audio/audio_manager/audio_server.c b/middleware/audio/audio_manager/audio_server.c
+index d87eb5d0..0c23077f 100644
+--- a/middleware/audio/audio_manager/audio_server.c
++++ b/middleware/audio/audio_manager/audio_server.c
+@@ -605,7 +605,7 @@ static inline void process_speaker_rx(audio_server_t *server, audio_device_speak
+     }
+ #endif
+     rt_size_t datasize, putsize, readlen = CODEC_DATA_UNIT_LEN;
+-    rt_size_t len, len2;
++    rt_size_t len = 0, len2 = 0;
+ 
+     audio_tick_in(AUDIO_UPLINK_TIME);
+ 
+@@ -647,6 +647,41 @@ static inline void process_speaker_rx(audio_server_t *server, audio_device_speak
+         goto Exit;
+     }
+ 
++#if defined(XZ_PDM1_STEREO) && defined(AUDIO_RX_USING_PDM)
++    /* One physical PDM1 bus, two L/R-selected microphones. WebRTC accepts
++     * only 320-byte mono, so expose raw channel diagnostics/downmix first. */
++    if (my->is_need_3a && my->pdm1_dev && !my->pdm2_dev &&
++        my->rx_channels == 2 && client->parameter.read_which_mic == AUDIO_MIC_ALL)
++    {
++        audio_server_coming_data_t data = {0};
++        data.data = my->rx_data_tmp;
++        data.data_len = len;
++        if (client->callback)
++            client->callback(as_callback_cmd_mic_stereo_before_3a,
++                             client->user_data, (uint32_t)&data);
++        if (data.data == my->rx_data_tmp && data.data_len == CODEC_DATA_UNIT_LEN * 2)
++        {
++            /* Safe default for clients which do not implement the new event. */
++            int16_t *pcm = (int16_t *)my->rx_data_tmp;
++            for (unsigned i = 0; i < CODEC_DATA_UNIT_LEN / 2; ++i)
++                pcm[i] = (int16_t)(((int32_t)pcm[2*i] + pcm[2*i+1]) / 2);
++            data.data_len = CODEC_DATA_UNIT_LEN;
++        }
++        if (!data.data || data.data_len != CODEC_DATA_UNIT_LEN) goto Exit;
++        if (my->rx_drop_cnt < PDM_NOISE_DROP_FRAMES)
++        {
++            ++my->rx_drop_cnt;
++            memset((uint8_t *)data.data, 0, CODEC_DATA_UNIT_LEN);
++        }
++        audio_3a_uplink((uint8_t *)data.data, CODEC_DATA_UNIT_LEN,
++                        server->public_is_rx_mute, server->is_bt_3a);
++        if (!server->is_bt_3a && client->callback)
++            client->callback(as_callback_cmd_data_coming, client->user_data,
++                             (uint32_t)&data);
++        goto Exit;
++    }
++#endif
++
+     if (my->is_need_3a)
+     {
+ #ifdef AUDIO_RX_USING_PDM
+@@ -1501,6 +1536,16 @@ static int audio_device_speaker_open(void *user_data, audio_device_input_callbac
+     my->mic_used = client->parameter.read_which_mic;
+     my->all_mic_channels = client->parameter.read_channnel_num;
+ 
++#if defined(XZ_PDM1_STEREO) && defined(AUDIO_RX_USING_PDM)
++    /* Keep public AUDIO_MIC_ALL parameters, but acquire/clock/wait for PDM1
++     * only. In the stock server mic_used selects PDM devices, not L/R. */
++    if (my->mic_used == AUDIO_MIC_ALL)
++    {
++        RT_ASSERT(my->rx_channels == 2);
++        my->mic_used = AUDIO_MIC0_ONLY;
++    }
++#endif
++
+ #if PKG_USING_ANYKA
+     if (client->audio_type == AUDIO_TYPE_BT_VOICE)
+     {
+@@ -4140,6 +4185,14 @@ AUDIO_API int audio_ioctl(audio_client_t handle, int cmd, void *parameter)
+     {
+         handle->cache_ch = (uint32_t)parameter;
+     }
++    else if (cmd == AUDIO_IOCTL_DROP_TX_CACHE)
++    {
++        /* Scheduling exclusion matches the single-core audio producer and
++         * server consumer; do not reset the shared music mixer or RX/AEC. */
++        rt_enter_critical();
++        rt_ringbuffer32_reset(&handle->ring_buf);
++        rt_exit_critical();
++    }
+     else if (cmd == AUDIO_IOCTL_IS_FADE_OUT_DONE)
+     {
+         ret = -1;
+diff --git a/middleware/audio/include/audio_server.h b/middleware/audio/include/audio_server.h
+index d8361854..af8410c8 100644
+--- a/middleware/audio/include/audio_server.h
++++ b/middleware/audio/include/audio_server.h
+@@ -99,6 +99,9 @@ typedef enum
+     as_callback_cmd_10ms_dma         = 13,
+ 
+     as_callback_cmd_user             = 100,
++    /* Optional XZ_PDM1_STEREO adapter: 640-byte raw LR, before WebRTC AEC.
++     * A client may replace data/data_len with its 320-byte mono scratch. */
++    as_callback_cmd_mic_stereo_before_3a = 102,
+ #ifdef AUDIO_MP3_RINGBUFF_SUPPORT
+     as_callback_cmd_user_read        = 101, //notify app to get more data
+ #endif
+@@ -220,6 +223,7 @@ int audio_read(audio_client_t handle, uint8_t *buf, uint32_t buf_size);
+ #define AUDIO_IOCTL_ENABLE_CPU_LOW_SPEED            4   // parameter type is uint32_t. 1---low speed; 0---high speed
+ #define AUDIO_IOCTL_SET_CACHE_SAMPLERATE            5   // parameter type is uint32_t
+ #define AUDIO_IOCTL_SET_CACHE_CH                    6   // parameter type is uint32_t
++#define AUDIO_IOCTL_DROP_TX_CACHE                   7   // discard this client's queued PCM only
+ 
+ 
+ int audio_ioctl(audio_client_t handle, int cmd, void *parameter);

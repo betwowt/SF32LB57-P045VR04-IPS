@@ -14,6 +14,10 @@ void xz_mic_close(xz_audio_t *thiz);
 void reinit_audio(void);
 int xz_audio_request_wake_beep(uint32_t token);
 void xz_audio_reset_uplink(void);
+bool xz_audio_tts_drained(void);
+bool xz_audio_wake_beep_active(void);
+void xz_audio_reset_barge_in(void); /* synchronous, no heap/socket I/O */
+bool xz_audio_barge_in_armed(uint32_t generation); /* lifecycle diagnostic */
 
 
 #ifdef __cplusplus

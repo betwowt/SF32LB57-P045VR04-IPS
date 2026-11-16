@@ -1,0 +1,90 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "hardware_acceptance": "Not run; user will flash and verify",
+  "build_log": "verification/dual-mic-barge/convergence-build-final.log",
+  "initial_build_log": "verification/dual-mic-barge/convergence-build.log",
+  "test_logs": [
+    "verification/dual-mic-barge/convergence-audio-tests.log",
+    "verification/dual-mic-barge/convergence-state-tests.log",
+    "verification/dual-mic-barge/convergence-music-tests.log"
+  ],
+  "config": {
+    "CONFIG_XZ_BARGE_IN_RMS": 600,
+    "CONFIG_XZ_BARGE_IN_TRAIN_MS": 800,
+    "CONFIG_XZ_BARGE_ARM_RATIO": 125,
+    "CONFIG_XZ_BARGE_ARM_MS": 250,
+    "CONFIG_XZ_BARGE_ARM_MIN_PRE": 800,
+    "CONFIG_XZ_BARGE_IN_ECHO_MULT": 4,
+    "CONFIG_XZ_BARGE_IN_PRE_RATIO": 8,
+    "CONFIG_XZ_BARGE_IN_FRAMES": 6
+  },
+  "legacy_train_ms_used_for_arming": false,
+  "symbol_bytes": {
+    "xz_barge_detector": 20,
+    "xz_mic_pre": 4,
+    "curve_tick": 4,
+    "curve_generation": 4,
+    "curve_valid": 1
+  },
+  "per_frame_heap_allocations": 0,
+  "protected_files_unchanged_from_turn_start": {
+    "app/src/main.c": true,
+    "app/src/xiaozhi/xiaozhi_ui.c": true,
+    "app/src/xiaozhi/xiaozhi_music.c": true,
+    "build.ps1": true
+  },
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20755284,
+      "sha256": "32114be66ec1755eedf037620c037c0dce12e1a2c3111b58aced72450623964f"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2451172,
+      "sha256": "7e1c4b8913c993f7e1f0c75cd3316edb419657a84c831de93016cb366ca4616a"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "15a7321c0e6f15c454afe1c6bfe5684f9cd474caa9036bfeae603e08b4588a68"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a"
+    }
+  },
+  "source_sha256": {
+    "app/project/Kconfig.proj": "982dcaeedf1fd85b9b3c6bc9dc9b64a34574a1fb3cd11f424d3055fc038afe0e",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "69eb2261ee7b49e3614460ab9ed90adf6479c67647682b5225c72af67374cdf3",
+    "app/src/xiaozhi/xiaozhi_audio.c": "4269ea4f7fc42f4dd649d041e9cfbd315b5e06354e05171c2ead9657d0a4caf6",
+    "app/src/xiaozhi/xiaozhi_audio.h": "20f8d92fecf3bde9cce9d31107831216823f89097c6dfc2ea0cf96fdea6fb27e",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "67c0a5fde19867278260cb83f2113e88c244856700b0e989087e1526d2416158",
+    "app/src/main.c": "e3c3cb961083d1ba45ddb37868b168732de06bde9c30933c93da4a24846b7a84",
+    "app/src/xiaozhi/xiaozhi_ui.c": "af38f696489eea8fc3564fdfa1019c788f214d9d27a26f27bb5004cf74fdd3ae",
+    "app/src/xiaozhi/xiaozhi_music.c": "bbbd70d7dd818fe7c8893fa8cc8c12ce763dadddc8cdf43089b371dfb4d5e39b",
+    "build.ps1": "90355dcb1b8325c415c7b9c902a788465a46639158018bea8f232abf2cb10dc8",
+    "verification/dual-mic-barge/audio_host.c": "e8f4508ab3e4e99c00f8994fed6ed7bd17b0db76ce165c7aa2491d264f8b6947",
+    "verification/dual-mic-barge/test_audio.py": "6eaa62d586a52c25ca95bc7ed57461e319e27c47e3048e2779584c95a0d8e1be",
+    "verification/standby-wake/host_test.c": "ff8ddb2fd255c1d7dbb10d0a2482a10bb071932b964b10af49728d8d4e1107b6",
+    "verification/standby-wake/test_state_machine.py": "78e8fd6a2d05c6ed5df6f9a84639607bf21a1f654c2d22f8f0eb96f98725c74c"
+  },
+  "build_warnings": [
+    "SDK source warnings in initial full rebuild (LVGL/mbedTLS null-dereference and IFNAMSIZ redefinition)",
+    "GCC runtime crtn.o GNU-stack note and linker RWX LOAD segment warnings"
+  ]
+}

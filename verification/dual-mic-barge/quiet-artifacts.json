@@ -1,0 +1,99 @@
+{
+  "date": "2026-11-16",
+  "build_command": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+  "build_passed": true,
+  "host_audio_tests_passed": true,
+  "host_state_tests_passed": true,
+  "host_music_tests_passed": true,
+  "flashed": false,
+  "serial_accessed": false,
+  "COM8_accessed": false,
+  "hardware_acceptance": "Not run; user will flash and verify three reboots and 2-3 m speech interruption",
+  "logs": [
+    "verification/dual-mic-barge/quiet-build.log",
+    "verification/dual-mic-barge/quiet-audio-tests.log",
+    "verification/dual-mic-barge/quiet-state-tests.log",
+    "verification/dual-mic-barge/quiet-music-tests.log"
+  ],
+  "config": {
+    "CONFIG_XZ_BARGE_IN_RMS": 600,
+    "CONFIG_XZ_BARGE_ARM_RATIO": 125,
+    "CONFIG_XZ_BARGE_ARM_MS": 250,
+    "CONFIG_XZ_BARGE_ARM_MIN_PRE": 800,
+    "CONFIG_XZ_BARGE_IN_ECHO_MULT": 4,
+    "CONFIG_XZ_BARGE_IN_PRE_RATIO": 8,
+    "CONFIG_XZ_BARGE_IN_FRAMES": 6
+  },
+  "arming": {
+    "converged": "pre >= ARM_MIN_PRE and post * 1000 <= pre * ARM_RATIO",
+    "quiet": "pre < ARM_MIN_PRE and post <= ARM_MIN_PRE",
+    "window": "ceil(ARM_MS / 10) consecutive paired frames of the same reason",
+    "quiet_floor": "max(1, integer mean post RMS)",
+    "baseline_frozen": true,
+    "timeout_bypass": false
+  },
+  "protected_files_unchanged_from_turn_start": {
+    "app/src/xiaozhi/xiaozhi_music.c": true,
+    "app/src/main.c": true,
+    "app/src/xiaozhi/xiaozhi_websocket.h": true,
+    "build.ps1": true,
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": true,
+    "app/src/xiaozhi/xiaozhi_ui.c": true,
+    "app/src/xiaozhi/xiaozhi_audio.h": true,
+    "app/src/xiaozhi/xiaozhi_websocket.c": true
+  },
+  "per_frame_heap_allocations": 0,
+  "detector_bytes": 24,
+  "detector_growth_bytes": 4,
+  "firmware": {
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.elf": {
+      "bytes": 20755224,
+      "sha256": "82e5eb7a60f23489c21a4298c5c91b8b303a3ffe01f227468e740b371e0b4cd9"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM1.bin": {
+      "bytes": 2451276,
+      "sha256": "2424ee431ab66f935521af5c62dfc6b445ceacb39ea6573be0ac634ea6192d27"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM2.bin": {
+      "bytes": 43,
+      "sha256": "a22438c570f7025249d0341b0533b9ae57173675ac975e7409499b95f43f79ff"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/main.bin/ER_IROM3.bin": {
+      "bytes": 3939895,
+      "sha256": "4d077a2b5003d430f71f474c97310b9be930042deecce178318583fee7c0b385"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/ftab/ftab.bin": {
+      "bytes": 11288,
+      "sha256": "bbfa617211b4d77bb928471744b847feaae6ddacc132621f8c6298b2e13edcbf"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/bootloader/bootloader.bin": {
+      "bytes": 40252,
+      "sha256": "deffa32abe510c46247dfa551818a6cdf2e86440f12db680c249a398cc0cfe06"
+    },
+    "app/project/build_sf32lb57-p045vr04_hcpu/sftool_param.json": {
+      "bytes": 586,
+      "sha256": "fe104ebe0095aa13457a3db294da67c2b394f5d28c001256a3d8c68f4b43d65a"
+    }
+  },
+  "source_sha256": {
+    "app/project/Kconfig.proj": "cc84ae942b84a50d31c739c8b9f5cbb5630849a8396b265291d6a6a0a1fff0c5",
+    "app/src/xiaozhi/xiaozhi_audio.c": "1147e801005a04db632ba431d3a6594deae18370c2db4ed3f58b8f49ea772bff",
+    "app/src/xiaozhi/xiaozhi_mic_dsp.h": "1950c9e51c3c28496e8005faf42a939a3dcdac83dc3e9ae482738b3b05d990e9",
+    "verification/dual-mic-barge/audio_host.c": "af5ecb85cdb504c5c8a8d375f3af5f88f998738f4c0b3f93002691e2072da77a",
+    "verification/dual-mic-barge/test_audio.py": "6eaa62d586a52c25ca95bc7ed57461e319e27c47e3048e2779584c95a0d8e1be",
+    "verification/dual-mic-barge/quiet-fix.md": "727d69527c9bb18c6dbe28055c11920aed325a2b15cc9b33d1a5a516edd80bfb",
+    "app/src/xiaozhi/xiaozhi_music.c": "bbbd70d7dd818fe7c8893fa8cc8c12ce763dadddc8cdf43089b371dfb4d5e39b",
+    "app/src/main.c": "e3c3cb961083d1ba45ddb37868b168732de06bde9c30933c93da4a24846b7a84",
+    "app/src/xiaozhi/xiaozhi_websocket.h": "87d07142e93af40795de1f7442b5cd2738a1825bf10c2c7bb2f12e221ec38676",
+    "build.ps1": "90355dcb1b8325c415c7b9c902a788465a46639158018bea8f232abf2cb10dc8",
+    "app/src/xiaozhi/kws/bsp_et_asr_ctrl.c": "5975bf48a063cefa366a23ba6b56100dd3a112719cb0fe6cbeafdb2f406acb07",
+    "app/src/xiaozhi/xiaozhi_ui.c": "af38f696489eea8fc3564fdfa1019c788f214d9d27a26f27bb5004cf74fdd3ae",
+    "app/src/xiaozhi/xiaozhi_audio.h": "20f8d92fecf3bde9cce9d31107831216823f89097c6dfc2ea0cf96fdea6fb27e",
+    "app/src/xiaozhi/xiaozhi_websocket.c": "67c0a5fde19867278260cb83f2113e88c244856700b0e989087e1526d2416158"
+  },
+  "build_warnings": [
+    "mbedTLS certs README is not a CA file, skipped",
+    "GNU-stack note and main.elf RWX LOAD segment",
+    "ftab acpu img info undefined; newlib syscall stubs; entry symbol fallback"
+  ]
+}

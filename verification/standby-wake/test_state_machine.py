@@ -40,12 +40,14 @@ names = ["xz_ws_uplink_allowed", "xz_ws_audio_epoch", "xz_ws_playback_allowed",
          "ws_json_string", "ws_send_speak_abort", "ws_send_listen_start",
          "ws_send_listen_stop", "ws_send_hello", "xz_ws_wake_beep_done",
          "xz_ws_process_wake", "xz_audio_send_using_websocket", "xz_ws_tx_entry",
-         "my_wsapp_fn", "xz_button_event_handler", "parse_helLo"]
+         "my_wsapp_fn", "xz_button_event_handler", "parse_helLo", "ws_handle_stt_text",
+         "xz_ws_barge_in_context", "xz_ws_request_barge_in", "xz_ws_request_speech_barge_in", "ws_abort_speaking",
+         "xz_ws_process_barge_in", "xz_ws_wake_word_detected"]
 functions = [function(WS, name) for name in names]
 functions += [function((ROOT / "app/src/main.c").read_text(encoding="utf-8"), "xz_uplink")]
 functions += [function(AUDIO, name) for name in
               ["xz_beep", "xz_audio_reset_uplink", "xz_audio_request_wake_beep",
-               "xz_audio_wake_beep"]]
+               "xz_audio_wake_beep", "xz_audio_reset_barge_in", "xz_audio_barge_in_armed"]]
 prototypes = [f[:f.index("{")].rstrip() + ";" for f in functions]
 
 # Guard the constraints that cannot be exercised by the mocked peripherals.
@@ -58,7 +60,7 @@ assert re.findall(r"^.*(?:mic_gain|XZ_MIC_GAIN_TRIM_DB).*$", AUDIO, re.M) == \
 hello_branch = WS.split('if (strcmp(type, "hello") == 0)', 1)[1].split(
     'else if (strcmp(type, "goodbye") == 0)', 1)[0]
 assert "ws_send_listen_start" not in hello_branch
-mic = function(AUDIO, "mic_callback")
+mic = function(AUDIO, "xz_mic_mono_frame")
 assert mic.index("!xz_ws_uplink_allowed()") < mic.index("VOICE_STATE_IDLE ==")
 assert "xz_wake_beep_busy" in mic and "kws_feed_mic" in mic
 assert "g_kws_force_exit" not in function(WS, "xz_button_event_handler")
@@ -70,6 +72,14 @@ assert not re.search(r"\b(?:malloc|rt_malloc|rt_thread_create)\s*\(", "\n".join(
 
 with tempfile.TemporaryDirectory(prefix="xz-standby-") as tmp:
     tmp = Path(tmp)
+    kconfig = (ROOT / "app/project/Kconfig.proj").read_text(encoding="utf-8")
+    config = []
+    for name in ["XZ_BARGE_ARM_RATIO", "XZ_BARGE_ARM_MS", "XZ_BARGE_ARM_MIN_PRE",
+                 "XZ_BARGE_IN_ECHO_MULT", "XZ_BARGE_DTD_MARGIN_PM"]:
+        block = re.search(r"^config " + name + r"\n(.*?)(?=^config |\Z)", kconfig, re.M | re.S)[1]
+        value = re.search(r"^    default (\d+)$", block, re.M)[1]
+        config.append(f"#define {name} {value}")
+    (tmp / "config-under-test.h").write_text("\n".join(config), encoding="utf-8")
     (tmp / "production-under-test.inc").write_text(
         "\n".join(prototypes + functions), encoding="utf-8")
     (tmp / "rtthread.h").write_text(
@@ -84,9 +94,10 @@ with tempfile.TemporaryDirectory(prefix="xz-standby-") as tmp:
     subprocess.run([gcc, "-std=c11", "-O0", "-g", "-Wall", "-Wextra",
                     "-Wno-unused-parameter", "-Wno-pointer-to-int-cast",
                     "-Wno-unused-variable", "-Wno-pointer-sign",
-                    "-I", str(tmp), "-I", str(SDK / "external/cJSON-1.7.17"),
+                    "-I", str(tmp), "-I", str(ROOT / "app/src/xiaozhi"),
+                    "-I", str(SDK / "external/cJSON-1.7.17"),
                     str(HERE / "host_test.c"),
                     str(SDK / "external/cJSON-1.7.17/cJSON.c"), "-o", str(exe)],
                    check=True)
     subprocess.run([str(exe)], check=True)
-print("PASS: UI unchanged, mic gain unchanged, no auto-listen, no per-frame allocation")
+print("PASS: UI unchanged, analog ADC trim unchanged, no auto-listen, no per-frame allocation")
