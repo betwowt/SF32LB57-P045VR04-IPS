@@ -142,6 +142,9 @@ static volatile bool ws_beep_done;
 static volatile uint32_t ws_wake_token;
 static volatile uint32_t ws_done_token;
 static volatile int ws_beep_result;
+/* Set when a local intent (SD music) already handled the current utterance;
+ * the next server TTS reply for that turn is aborted instead of played. */
+static volatile bool ws_mute_reply;
 static rt_tick_t ws_hello_tick;
 static struct rt_thread ws_connect_thread;
 static uint8_t ws_connect_stack[6144] L2_RET_BSS_SECT(xz_ws_connect_stack);
@@ -220,6 +223,7 @@ static void ws_enter_standby(const char *reason)
     ws_wake_pending = ws_beep_pending = false;
     ws_hello_ready = ws_hello_pending = false;
     ws_reconnect_allowed = false;
+    ws_mute_reply = false;
     ws_wake_token++;
     ws_audio_generation++;
     rt_mutex_release(&ws_tx_mutex);
@@ -274,9 +278,9 @@ void send_iot_descriptors(void)
     }
 
     /* One static buffer: the descriptor array grew past 1 KB once the Light
-     * thing was added, and a truncated snprintf produced invalid JSON that the
-     * server rejected with a bare "error". */
-    static char msg[2048];
+     * thing was added (and past 1.8 KB with Music). A truncated snprintf
+     * produced invalid JSON that the server rejected with a bare "error". */
+    static char msg[3072];
     int n = snprintf(msg, sizeof(msg),
                      "{\"session_id\":\"%s\",\"type\":\"iot\",\"update\":true,"
                      "\"descriptors\":%s}",
@@ -907,7 +911,9 @@ static void ws_handle_stt_text(char *txt)
         return;
     }
     ws_set_state(kDeviceStateThinking);
-    xz_music_handle_text(txt);
+    /* A local music command is complete on its own: remember to drop the
+     * cloud reply (its music/search plugin would talk over the SD player). */
+    ws_mute_reply = xz_music_handle_text(txt);
     xiaozhi_ui_chat_output(txt);
     last_listen_tick = rt_tick_get();
 }
@@ -975,6 +981,18 @@ void parse_helLo(const u8_t *data, u16_t len)
 
         if (strcmp(state, "start") == 0)
         {
+            if (ws_mute_reply)
+            {
+                /* The SD player already handled this utterance, or the reply
+                 * comes from the cloud music/search plugin. Drop the spoken
+                 * answer and stay in Listening; music is not paused at all. */
+                ws_mute_reply = false;
+                ws_send_speak_abort(&g_xz_ws.clnt, g_xz_ws.session_id,
+                                    kAbortReasonNone);
+                rt_kprintf("MUSIC_ABORT_REPLY\n");
+                ws_set_state(kDeviceStateListening);
+                goto done;
+            }
             xz_music_tts(true);
             ws_set_state(kDeviceStateSpeaking);
             xz_speaker(1); // 打开扬声器
@@ -1307,6 +1325,59 @@ static void xz_say(int argc, char **argv)
     ws_handle_stt_text(text);
 }
 MSH_CMD_EXPORT(xz_say, feed a sentence through the local stt intent path);
+
+/* Bench helper: hand the server a text utterance as if it had recognised
+ * speech, so the cloud reply (llm/tts) can be exercised without a speaker. */
+static void xz_listen_text(int argc, char **argv)
+{
+    static char text[192];
+    static char msg[320];
+    int used = 0;
+
+    if (argc < 2)
+    {
+        rt_kprintf("usage: xz_listen_text <sentence>\n");
+        return;
+    }
+    if (!g_xz_ws.is_connected || !ws_session_active)
+    {
+        rt_kprintf("xz_listen_text: no active session\n");
+        return;
+    }
+    text[0] = '\0';
+    for (int i = 1; i < argc && used < (int)sizeof(text) - 1; i++)
+    {
+        int n = rt_snprintf(text + used, sizeof(text) - used, "%s%s",
+                            i == 1 ? "" : " ", argv[i]);
+        if (n < 0)
+            break;
+        used += (used + n < (int)sizeof(text)) ? n : (int)sizeof(text) - 1 - used;
+    }
+    int n = rt_snprintf(msg, sizeof(msg),
+                        "{\"session_id\":\"%s\",\"type\":\"listen\","
+                        "\"state\":\"detect\",\"text\":\"%s\"}",
+                        g_xz_ws.session_id, text);
+    if (n < 0 || n >= (int)sizeof(msg))
+    {
+        rt_kprintf("xz_listen_text: message too long\n");
+        return;
+    }
+    rt_kprintf("XZ_TEXT %s\n", msg);
+    xz_ws_write_locked(&g_xz_ws.clnt, msg, n, OPCODE_TEXT);
+}
+MSH_CMD_EXPORT(xz_listen_text, send a text utterance to the server);
+
+/* Bench helper: arm/disarm the reply-mute flag without speaking, so the
+ * tts-abort branch can be exercised together with xz_listen_text. */
+static void xz_mute(int argc, char **argv)
+{
+    if (argc == 2)
+    {
+        ws_mute_reply = (atoi(argv[1]) != 0);
+    }
+    rt_kprintf("xz_mute: mute_reply=%d\n", ws_mute_reply ? 1 : 0);
+}
+MSH_CMD_EXPORT(xz_mute, arm the next-reply mute flag: xz_mute 0|1);
 
 static void xz_btn_sim(int argc, char **argv)
 {

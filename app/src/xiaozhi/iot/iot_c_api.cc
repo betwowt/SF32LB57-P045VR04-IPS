@@ -17,6 +17,7 @@ void iot_initialize() {
     rt_kprintf("Registering Screen...\n");
     manager.AddThing(iot::CreateThing("Screen"));
     manager.AddThing(iot::CreateThing("Light"));
+    manager.AddThing(iot::CreateThing("Music"));
 
     McpServer::GetInstance().AddCommonTools();
 }

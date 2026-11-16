@@ -15,6 +15,9 @@ void xz_music_stop(void);
 void xz_music_audio_shutdown(void (*disable_rx_snapshot)(void));
 /* False while paused for TTS. */
 bool xz_music_is_playing(void);
+/* Basename of the current track, or "" when nothing is loaded. The pointer
+ * stays valid until the next track starts. */
+const char *xz_music_current_track(void);
 /* Called before opening TTS output, and after closing/flushing it. */
 void xz_music_tts(bool speaking);
 /* Nonblocking local intent dispatch; does not consume the original STT. */

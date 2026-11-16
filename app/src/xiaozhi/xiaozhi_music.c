@@ -520,6 +520,7 @@ void xz_music_stop(void)
     rt_kprintf("[music] stop requested\n");
 }
 bool xz_music_is_playing(void) { return playing; }
+const char *xz_music_current_track(void) { return basename_of(current_path); }
 void xz_music_tts(bool speaking)
 {
     if (!ready) return;
