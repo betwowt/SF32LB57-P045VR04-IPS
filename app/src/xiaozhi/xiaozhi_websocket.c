@@ -734,6 +734,16 @@ static void xz_button_event_handler(int32_t pin, button_action_t action)
         rt_kprintf("pressed\r\n");
         rt_kprintf("按键->对话");
 
+        /* Music is a standalone function. Standby gates the mic, so a wake is
+         * the only way to reach the device: let it silence playback first,
+         * then continue into the normal wake flow ("播放音乐" restarts it). */
+        if (xz_music_is_playing())
+        {
+            xz_music_stop();
+            rt_kprintf("BTN_MUSIC_STOP\n");
+            xiaozhi_ui_chat_output("音乐已停止");
+        }
+
         // 检查是否弹窗显示中
 
         xiaozhi_ui_update_confirm_button_event(1); // 模拟点击更新按钮
