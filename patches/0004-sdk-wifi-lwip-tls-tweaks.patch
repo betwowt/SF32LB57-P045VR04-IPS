@@ -1,3 +1,16 @@
+diff --git a/customer/peripherals/wifi/aic8800d40-n/SConscript b/customer/peripherals/wifi/aic8800d40-n/SConscript
+index a2e160f2..d807773d 100644
+--- a/customer/peripherals/wifi/aic8800d40-n/SConscript
++++ b/customer/peripherals/wifi/aic8800d40-n/SConscript
+@@ -26,6 +26,8 @@ src = [
+     cwd + '/platform/wifi/wifi_port_plt.c',       # AIC_FEATURE_PLT=1
+ ]
+ 
++
++
+ # ============================================================================
+ # 头文件搜索路径
+ #   A) port/inc            移植接口头 (host+platform 共用)
 diff --git a/customer/peripherals/wifi/aic8800d40-n/platform/hal/sdio_port.c b/customer/peripherals/wifi/aic8800d40-n/platform/hal/sdio_port.c
 index a0307cd0..82be8607 100644
 --- a/customer/peripherals/wifi/aic8800d40-n/platform/hal/sdio_port.c
